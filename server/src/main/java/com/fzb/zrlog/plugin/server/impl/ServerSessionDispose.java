@@ -1,5 +1,8 @@
 package com.fzb.zrlog.plugin.server.impl;
 
+import com.fzb.http.kit.ConfigKit;
+import com.fzb.http.kit.IOUtil;
+import com.fzb.http.kit.PathKit;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.ISessionDispose;
 import com.fzb.zrlog.plugin.data.codec.MsgPacket;
@@ -9,7 +12,9 @@ import com.fzb.zrlog.plugin.server.DataMap;
 import com.fzb.zrlog.plugin.server.dao.WebSiteDAO;
 import com.fzb.zrlog.plugin.type.ActionType;
 import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +33,12 @@ public class ServerSessionDispose implements ISessionDispose {
             DataMap.getPluginInfoMap().put(plugin.getShortName(), plugin);
             DataMap.getPluginMap().put(plugin.getShortName(), session);
             session.sendJsonMsg(new HashMap<>(), action.name(), packet.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
-            System.out.println(DataMap.getPluginInfoMap());
+            StringBuilder stringBuilder = new StringBuilder();
+            // save to file
+            for (Plugin plugin1 : DataMap.getPluginInfoMap().values()) {
+                stringBuilder.append(new JSONSerializer().serialize(plugin1));
+            }
+            IOUtil.writeBytesToFile(stringBuilder.toString().getBytes(), new File(PathKit.getRootPath() + "/plugin.json"));
         } else if (action == ActionType.HTTP_FILE) {
 
         } else if (action == ActionType.GET_WEBSITE) {

@@ -112,7 +112,7 @@ public class IOSession {
 
     public void close() {
         try {
-            ((Channel) systemAttr.get("_chanel")).close();
+            ((Channel) systemAttr.get("_channel")).close();
         } catch (IOException e) {
             e.printStackTrace();
         }

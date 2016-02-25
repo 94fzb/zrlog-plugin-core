@@ -23,14 +23,15 @@ public class PluginController extends Controller {
     }
 
     public void stop() {
-
+        DataMap.getPluginMap().get(getRequest().getParaToStr("name")).close();
+        response.renderHtmlStr("<html><body><h1>success</h1></body></html>");
     }
 
     public void index() {
 
     }
 
-    public void uninstall(){
+    public void uninstall() {
 
     }
 }
