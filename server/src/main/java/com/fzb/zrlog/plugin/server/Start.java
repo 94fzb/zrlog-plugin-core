@@ -27,8 +27,9 @@ public class Start {
         }
         DAO.setDs(dataSource);
         new WebServerBuilder.Builder().config(new HttpServerConfig()).build().startWithThread();
+        String pluginPath = (args != null && args.length > 0) ? args[0] : "/home/xiaochun/zrlog-plugin/";
 
-        ISocketServer socketServer = new NioServer();
+        ISocketServer socketServer = new NioServer(pluginPath);
         socketServer.create();
         socketServer.listener();
     }

@@ -7,7 +7,9 @@ import com.fzb.zrlog.plugin.data.codec.SocketCodec;
 import com.fzb.zrlog.plugin.data.codec.SocketDecode;
 import com.fzb.zrlog.plugin.data.codec.SocketEncode;
 import com.fzb.zrlog.plugin.server.ISocketServer;
+import com.fzb.zrlog.plugin.server.PluginConfig;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -32,6 +34,11 @@ public class NioServer implements ISocketServer {
     private Selector selector;
     private ExecutorService service = Executors.newFixedThreadPool(10);
     private Map<Socket, IOSession> decoderMap = new ConcurrentHashMap<>();
+    private String pluginPath;
+
+    public NioServer(String pluginPath) {
+        this.pluginPath = pluginPath;
+    }
 
     @Override
     public void listener() {
@@ -80,13 +87,16 @@ public class NioServer implements ISocketServer {
     @Override
     public void create() {
         try {
+            int port = ConfigKit.getServerPort();
             ServerSocketChannel serverChannel = ServerSocketChannel.open();
-            serverChannel.socket().bind(new InetSocketAddress(ConfigKit.getServerPort()));
+            serverChannel.socket().bind(new InetSocketAddress("127.0.0.1", port));
             serverChannel.configureBlocking(false);
             selector = Selector.open();
             serverChannel.register(selector, SelectionKey.OP_ACCEPT);
-            LOGGER.info("plugin listening on port -> " + ConfigKit.getServerPort());
 
+            LOGGER.info("plugin listening on port -> " + ConfigKit.getServerPort());
+            PluginConfig.loadJarPlugin(new File(pluginPath), port);
+            LOGGER.info("load jar files");
         } catch (Exception e) {
             e.printStackTrace();
         }
