@@ -5,7 +5,7 @@ import com.fzb.http.kit.PathKit;
 import com.fzb.http.server.WebServerBuilder;
 import com.fzb.zrlog.plugin.message.Plugin;
 import com.fzb.zrlog.plugin.server.impl.NioServer;
-import com.fzb.zrlog.plugin.server.manager.HttpServerConfig;
+import com.fzb.zrlog.plugin.server.config.HttpServerConfig;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import flexjson.JSONDeserializer;
 

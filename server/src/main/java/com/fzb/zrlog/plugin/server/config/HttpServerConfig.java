@@ -1,4 +1,4 @@
-package com.fzb.zrlog.plugin.server.manager;
+package com.fzb.zrlog.plugin.server.config;
 
 import com.fzb.http.server.PluginManagerInterceptor;
 import com.fzb.http.server.SimpleServerConfig;
@@ -6,6 +6,7 @@ import com.fzb.http.server.impl.RequestConfig;
 import com.fzb.http.server.impl.ResponseConfig;
 import com.fzb.http.server.impl.ServerConfig;
 import com.fzb.zrlog.plugin.server.controller.PluginController;
+import com.fzb.zrlog.plugin.server.incp.PluginInterceptor;
 
 public class HttpServerConfig extends SimpleServerConfig {
     @Override

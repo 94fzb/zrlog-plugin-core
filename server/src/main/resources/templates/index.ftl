@@ -40,28 +40,17 @@
             <thead>
             <tr>
                 <th class="hidden-480">名称</th>
-
-                <th>
-                    <i class="icon-time bigger-110 hidden-480"></i>
-                    作者
-                </th>
-                <th>
-                    <i class="icon-time bigger-110 hidden-480"></i>
-                    简介
-                </th>
-
+                <th>作者</th>
+                <th>简介</th>
                 <th>版本</th>
-                <th>安装</th>
-                <th>启动</th>
-                <th>停止</th>
-                <th>卸载</th>
+                <th>查看</th>
+                <th>安装/启动/停止/卸载</th>
             </tr>
             </thead>
 
             <tbody>
             <#list plugins as plugin>
                 <tr>
-
                     <td>
                         ${plugin.name}
                     </td>
@@ -70,7 +59,7 @@
                     <td>${plugin.version }</td>
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                            <a href="install?name=${plugin.shortName}&step=config&resultType=html">
+                            <a href="${plugin.shortName}/">
                                 <button class="btn btn-xs btn-success">
                                     <i class="icon-ok bigger-120"></i>
                                 </button>
@@ -78,32 +67,24 @@
 
                         </div>
                     </td>
-
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                            <a href="start?name=${plugin.shortName}&resultType=html">
+                            <a href="${plugin.shortName}/install">
                                 <button class="btn btn-xs btn-success">
                                     <i class="icon-ok bigger-120"></i>
                                 </button>
                             </a>
-
-                        </div>
-                    </td>
-
-                    <td>
-                        <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                            <a href="stop?name=${plugin.shortName}&resultType=html">
+                            <a href="${plugin.shortName}/start">
                                 <button class="btn btn-xs btn-success">
                                     <i class="icon-ok bigger-120"></i>
                                 </button>
                             </a>
-
-                        </div>
-                    </td>
-
-                    <td>
-                        <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                            <a href="uninstall?name=${plugin.shortName}&resultType=html">
+                            <a href="${plugin.shortName}/stop">
+                                <button class="btn btn-xs btn-success">
+                                    <i class="icon-ok bigger-120"></i>
+                                </button>
+                            </a>
+                            <a href="${plugin.shortName}/uninstall">
                                 <button class="btn btn-xs btn-danger">
                                     <i class="icon-trash bigger-120"></i>
                                 </button>
@@ -112,7 +93,6 @@
                         </div>
                     </td>
                 </tr>
-
             </#list>
             </tbody>
         </table>
@@ -122,6 +102,5 @@
         <button class="btn btn-info">下载</button>
     </a>
 </div>
-<input id="gritter-light" checked="" type="checkbox" class="ace ace-switch ace-switch-5"/>
 </body>
 </html>

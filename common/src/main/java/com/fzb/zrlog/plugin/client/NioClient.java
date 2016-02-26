@@ -1,6 +1,7 @@
 package com.fzb.zrlog.plugin.client;
 
 import com.fzb.zrlog.plugin.IOSession;
+import com.fzb.zrlog.plugin.api.IPluginAction;
 import com.fzb.zrlog.plugin.common.IdUtil;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.data.codec.SocketCodec;
@@ -20,7 +21,7 @@ import java.util.*;
 public class NioClient {
 
 
-    public void connectServerByProperties(InetSocketAddress address, List<Class> classList, String propertiesPath) throws IOException {
+    public void connectServerByProperties(InetSocketAddress address, List<Class> classList, String propertiesPath, Class<? extends IPluginAction> pluginAction) throws IOException {
         Plugin request = new Plugin();
         InputStream in = NioClient.class.getResourceAsStream(propertiesPath);
         if (in == null) {
@@ -48,10 +49,10 @@ public class NioClient {
         request.setAuthor(properties.getProperty("author", ""));
         request.setIndexPage(properties.getProperty("indexPage", ""));
         in.close();
-        connectServer(address, classList, request);
+        connectServer(address, classList, request, pluginAction);
     }
 
-    public void connectServer(InetSocketAddress serverAddress, List<Class> classList, Plugin plugin) {
+    public void connectServer(InetSocketAddress serverAddress, List<Class> classList, Plugin plugin, Class<? extends IPluginAction> pluginAction) {
         try {
             SocketChannel socketChannel = SocketChannel.open();
             socketChannel.configureBlocking(false);
@@ -74,7 +75,8 @@ public class NioClient {
                         }
                         session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode()), new ClientSessionDispose());
                         session.setPlugin(plugin);
-                        session.getAttr().put("actionClassList", classList);
+                        session.getAttr().put("_actionClassList", classList);
+                        session.getAttr().put("_pluginClass", pluginAction);
                         session.sendJsonMsg(plugin, ActionType.INIT_CONNECT.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST);
                     } else if (selectionKey.isReadable()) {
                         SocketDecode decode = new SocketDecode();

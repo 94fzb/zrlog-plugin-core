@@ -8,7 +8,7 @@ import flexjson.JSONSerializer;
 
 import java.nio.ByteBuffer;
 
-public class ConvertFileInfo {
+public class FileConvertMsgBody implements ConvertMsgBody {
     public static byte[] toByteArr(FileInfo fileInfo) {
         byte[] fileDescBytes = new JSONSerializer().deepSerialize(fileInfo.getFileDesc()).getBytes();
         ByteBuffer byteBuffer = ByteBuffer.allocate(4 + fileDescBytes.length + 32 + 4 + fileInfo.getFileBytes().length);
@@ -29,5 +29,15 @@ public class ConvertFileInfo {
         fileInfo.setDataLength(HexaConversionUtil.byteArrayToIntH(HexaConversionUtil.subByts(data, fileDescLength + 4 + 32, 4)));
         fileInfo.setFileBytes(HexaConversionUtil.subByts(data, fileDescLength + 8 + 32, fileInfo.getDataLength()));
         return fileInfo;
+    }
+
+    @Override
+    public ByteBuffer toByteBuffer(Object obj) {
+        return null;
+    }
+
+    @Override
+    public Object toObj(ByteBuffer byteBuffer) {
+        return null;
     }
 }

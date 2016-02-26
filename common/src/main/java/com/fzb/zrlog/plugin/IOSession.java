@@ -4,12 +4,10 @@ import com.fzb.common.util.IOUtil;
 import com.fzb.common.util.Md5Util;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.data.codec.*;
-import com.fzb.zrlog.plugin.data.codec.convert.ConvertFileInfo;
+import com.fzb.zrlog.plugin.data.codec.convert.FileConvertMsgBody;
 import com.fzb.zrlog.plugin.message.Plugin;
-import flexjson.JSONSerializer;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.nio.channels.Channel;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -89,7 +87,7 @@ public class IOSession {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        sendMsg(ContentType.FILE, ConvertFileInfo.toByteArr(fileInfo), method, id, status, null);
+        sendMsg(ContentType.FILE, FileConvertMsgBody.toByteArr(fileInfo), method, id, status, null);
     }
 
     public void dispose(MsgPacket msgPacket) {

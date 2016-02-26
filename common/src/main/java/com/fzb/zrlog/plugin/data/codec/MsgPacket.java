@@ -1,9 +1,7 @@
 package com.fzb.zrlog.plugin.data.codec;
 
 import com.fzb.zrlog.plugin.IMsgPacketCallBack;
-import com.fzb.zrlog.plugin.data.codec.convert.ByteConvertMsgBody;
-import com.fzb.zrlog.plugin.data.codec.convert.ConvertMsgBody;
-import com.fzb.zrlog.plugin.data.codec.convert.JsonConvertMsgBody;
+import com.fzb.zrlog.plugin.data.codec.convert.*;
 
 import java.nio.ByteBuffer;
 
@@ -29,6 +27,10 @@ public class MsgPacket {
             convertMsgBody = new ByteConvertMsgBody();
         } else if (contentType == ContentType.JSON) {
             convertMsgBody = new JsonConvertMsgBody();
+        } else if (contentType == ContentType.HTML) {
+            convertMsgBody = new StringConvertMsgBody();
+        } else if (contentType == ContentType.FILE) {
+            convertMsgBody = new FileConvertMsgBody();
         }
         if (convertMsgBody == null) {
             throw new RuntimeException("not found such convert " + contentType);

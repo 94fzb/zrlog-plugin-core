@@ -21,37 +21,35 @@ public class PluginManagerInterceptor implements Interceptor {
         if (request.getUri().contains(".")) {
             InputStream in = PluginManagerInterceptor.class.getResourceAsStream(request.getUri());
             if (in == null) {
-                response.renderCode(404);
+                return true;
             } else {
                 String e = request.getUri().substring(request.getUri().lastIndexOf(".") + 1);
                 response.addHeader("Content-Type", MimeTypeUtil.getMimeStrByExt(e));
                 response.write(in);
+                return false;
             }
-            return false;
         } else {
             Router router = request.getRequestConfig().getRouter();
-            Method method;
-            if (request.getUri().contains("-")) {
-                method = router.getMethod(request.getUri().substring(0, request.getUri().indexOf("-")));
-            } else {
-                method = router.getMethod(request.getUri());
-                if (method == null) {
-                    String e = request.getUri().substring(0, request.getUri().lastIndexOf("/") + 1) + "index";
-                    method = router.getMethod(e);
+            Method method = null;
+            if (request.getUri().contains("/")) {
+                String uri = "/index";
+                if (request.getUri().length() > 1) {
+                    String pluginName = request.getUri().substring(1);
+                    pluginName = pluginName.substring(0, pluginName.lastIndexOf("/"));
+                    // 不是一个插件名称，直接跳过检查
+                    if (pluginName.contains("/")) {
+                        return true;
+                    }
+                    uri = request.getUri().substring(request.getUri().lastIndexOf("/"));
+                    request.getParamMap().put("name", new String[]{pluginName});
                 }
+                method = router.getMethod(uri);
             }
-
-            LOGGER.info("invoke method " + method);
             if (method == null) {
-                if (request.getUri().endsWith("/")) {
-                    response.renderHtml(request.getUri() + "index.html");
-                } else {
-                    response.renderCode(404);
-                }
-
-                return false;
+                return true;
             } else {
                 try {
+                    LOGGER.info("invoke method " + method);
                     Controller e2;
                     try {
                         Constructor e1 = method.getDeclaringClass().getConstructor(HttpRequest.class, HttpResponse.class);

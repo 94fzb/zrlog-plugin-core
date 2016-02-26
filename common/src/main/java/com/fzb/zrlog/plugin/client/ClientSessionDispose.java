@@ -3,6 +3,7 @@ package com.fzb.zrlog.plugin.client;
 import com.fzb.common.util.IOUtil;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.ISessionDispose;
+import com.fzb.zrlog.plugin.api.IPluginAction;
 import com.fzb.zrlog.plugin.data.codec.ContentType;
 import com.fzb.zrlog.plugin.data.codec.HttpRequestInfo;
 import com.fzb.zrlog.plugin.data.codec.MsgPacket;
@@ -33,7 +34,7 @@ public class ClientSessionDispose implements ISessionDispose {
                 session.sendMsg(ContentType.BYTE, new byte[]{}, action.name(), packet.getMsgId(), MsgPacketStatus.RESPONSE_ERROR, null);
             }
         } else if (action == ActionType.HTTP_METHOD) {
-            List<Class> clazzList = (List<Class>) session.getAttr().get("actionClassList");
+            List<Class> clazzList = (List<Class>) session.getAttr().get("_actionClassList");
             HttpRequestInfo httpRequestInfo = new JSONDeserializer<HttpRequestInfo>().deserialize(packet.getDataStr());
             if (clazzList != null && !clazzList.isEmpty()) {
                 for (Class clazz : clazzList) {
@@ -41,15 +42,28 @@ public class ClientSessionDispose implements ISessionDispose {
                         Method method = clazz.getMethod(httpRequestInfo.getUri().replace("/", "").replace(".action", ""));
                         Constructor constructor = clazz.getConstructor(IOSession.class, MsgPacket.class, HttpRequestInfo.class);
                         method.invoke(constructor.newInstance(session, packet, httpRequestInfo));
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (InvocationTargetException e) {
+                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                         e.printStackTrace();
                     }
+                }
+            }
+        } else if (action.name().startsWith("PLUGIN")) {
+            IPluginAction pluginAction = null;
+            try {
+                pluginAction = ((Class<IPluginAction>) session.getAttr().get("_pluginClass")).newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            if (pluginAction != null) {
+                if (action == ActionType.PLUGIN_INSTALL) {
+                    HttpRequestInfo httpRequestInfo = new JSONDeserializer<HttpRequestInfo>().deserialize(packet.getDataStr());
+                    pluginAction.install(session, packet, httpRequestInfo);
+                } else if (action == ActionType.PLUGIN_START) {
+                    pluginAction.start(session, packet);
+                } else if (action == ActionType.PLUGIN_UNINSTALL) {
+                    pluginAction.uninstall(session, packet);
+                } else if (action == ActionType.PLUGIN_STOP) {
+                    pluginAction.stop(session, packet);
                 }
             }
         }

@@ -1,7 +1,7 @@
 package com.fzb.zrlog.plugin.data.codec;
 
 public enum ContentType {
-    JSON((byte) 0), FILE((byte) 1), BYTE((byte) -1), SQL((byte) 2);
+    JSON((byte) 0), FILE((byte) 1), BYTE((byte) -1), SQL((byte) 2), HTML((byte) 3);
     byte type;
 
     ContentType(byte type) {
