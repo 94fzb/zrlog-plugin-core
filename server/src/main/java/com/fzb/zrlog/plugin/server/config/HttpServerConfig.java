@@ -27,7 +27,7 @@ public class HttpServerConfig extends SimpleServerConfig {
     @Override
     public ResponseConfig getResponseConfig() {
         ResponseConfig responseConfig = new ResponseConfig();
-        responseConfig.setIsGzip(true);
+        responseConfig.setIsGzip(false);
         return responseConfig;
     }
 }

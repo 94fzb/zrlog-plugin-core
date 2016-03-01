@@ -19,6 +19,9 @@
     <script src="assets/js/ace-extra.min.js"></script>
 
     <script src="assets/js/jquery.gritter.min.js"></script>
+    <style type="text/css">#plugin {max-width: 256px;max-height: 256px;background-image:
+        url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjI0cHgiIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDUzNS41IDUzNS41IiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1MzUuNSA1MzUuNTsiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8Zz4KCTxnIGlkPSJleHRlbnNpb24iPgoJCTxwYXRoIGQ9Ik00NzEuNzUsMjU1SDQzMy41VjE1M2MwLTI4LjA1LTIyLjk1LTUxLTUxLTUxaC0xMDJWNjMuNzVDMjgwLjUsMjguMDUsMjUyLjQ1LDAsMjE2Ljc1LDBTMTUzLDI4LjA1LDE1Myw2My43NVYxMDJINTEgICAgYy0yOC4wNSwwLTUxLDIyLjk1LTUxLDUxdjk2LjloMzguMjVjMzguMjUsMCw2OC44NSwzMC42LDY4Ljg1LDY4Ljg1Uzc2LjUsMzg3LjYsMzguMjUsMzg3LjZIMHY5Ni45YzAsMjguMDUsMjIuOTUsNTEsNTEsNTFoOTYuOSAgICB2LTM4LjI1YzAtMzguMjUsMzAuNi02OC44NSw2OC44NS02OC44NXM2OC44NSwzMC42LDY4Ljg1LDY4Ljg1djM4LjI1aDk2LjljMjguMDUsMCw1MS0yMi45NSw1MS01MXYtMTAyaDM4LjI1ICAgIGMzNS43LDAsNjMuNzUtMjguMDUsNjMuNzUtNjMuNzVTNTA3LjQ1LDI1NSw0NzEuNzUsMjU1eiIgZmlsbD0iIzAwMDAwMCIvPgoJPC9nPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=)}
+    </style>
 </head>
 
 <body>
@@ -60,8 +63,8 @@
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
                             <a href="${plugin.shortName}/">
-                                <button class="btn btn-xs btn-success">
-                                    <i class="icon-ok bigger-120"></i>
+                                <button class="btn btn-xs disabled">
+                                    <i class="icon-zoom-in bigger-120"></i>
                                 </button>
                             </a>
 
@@ -75,13 +78,13 @@
                                 </button>
                             </a>
                             <a href="${plugin.shortName}/start">
-                                <button class="btn btn-xs btn-success">
-                                    <i class="icon-ok bigger-120"></i>
+                                <button class="btn btn-xs btn-primary">
+                                    <i class="icon-zoom-in bigger-120"></i>
                                 </button>
                             </a>
                             <a href="${plugin.shortName}/stop">
-                                <button class="btn btn-xs btn-success">
-                                    <i class="icon-ok bigger-120"></i>
+                                <button class="btn btn-xs btn-danger">
+                                    <i class="icon-stop bigger-120"></i>
                                 </button>
                             </a>
                             <a href="${plugin.shortName}/uninstall">
@@ -99,7 +102,7 @@
     </div>
     <!-- /.table-responsive -->
     <a href="plugin_center">
-        <button class="btn btn-info">下载</button>
+        <button class="btn btn-info"><i class="icon-download"></i>下载</button>
     </a>
 </div>
 </body>
