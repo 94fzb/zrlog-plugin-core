@@ -22,8 +22,7 @@ public class HexaConversionUtil {
     }
 
     public static String bytes2IPStr(byte[] b) {
-        String bytesStr = Long.toBinaryString(
-                Long.valueOf(bytesToHexString(b), 16)).toString();
+        String bytesStr = Long.toBinaryString(Long.valueOf(bytesToHexString(b), 16));
         int length = bytesStr.length();
         int need = 32 - length;
         String str = "";

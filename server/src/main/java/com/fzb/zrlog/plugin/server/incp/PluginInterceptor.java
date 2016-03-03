@@ -1,5 +1,6 @@
 package com.fzb.zrlog.plugin.server.incp;
 
+import com.fzb.http.kit.LoggerUtil;
 import com.fzb.http.mimetype.MimeTypeUtil;
 import com.fzb.http.server.HttpRequest;
 import com.fzb.http.server.HttpResponse;
@@ -14,11 +15,20 @@ import com.fzb.zrlog.plugin.server.DataMap;
 import com.fzb.zrlog.plugin.type.ActionType;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by xiaochun on 2016/2/12.
  */
 public class PluginInterceptor implements Interceptor {
+
+    private static Logger LOGGER = LoggerUtil.getLogger(PluginInterceptor.class);
+
     @Override
     public boolean doInterceptor(HttpRequest httpRequest, final HttpResponse httpResponse) {
         if (httpRequest.getUri().contains("/")) {
@@ -39,7 +49,20 @@ public class PluginInterceptor implements Interceptor {
                 actionType = ActionType.HTTP_METHOD;
                 msgBody.setHeader(httpRequest.getHeaderMap());
                 msgBody.setRequestBody(httpRequest.getContentByte());
-                msgBody.setParam(httpRequest.getParamMap());
+                Map<String, String[]> encodeMap = new HashMap<>();
+                for (Map.Entry<String, String[]> entry : httpRequest.getParamMap().entrySet()) {
+                    String[] strings = new String[entry.getValue().length];
+                    for (int i = 0; i < entry.getValue().length; i++) {
+                        try {
+                            strings[i] = URLDecoder.decode(entry.getValue()[i], "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            LOGGER.log(Level.SEVERE, "decode error", e);
+                        }
+                    }
+                    encodeMap.put(entry.getKey(),strings);
+                }
+
+                msgBody.setParam(encodeMap);
             }
             String fileExt = httpRequest.getUri().substring(httpRequest.getUri().lastIndexOf(".") + 1);
             if (session != null) {
@@ -49,8 +72,7 @@ public class PluginInterceptor implements Interceptor {
                 String ext = fileExt;
                 if (responseMsgPacket.getContentType() == ContentType.JSON) {
                     ext = "json";
-                }
-                else if (responseMsgPacket.getContentType() == ContentType.HTML) {
+                } else if (responseMsgPacket.getContentType() == ContentType.HTML) {
                     ext = "html";
                 }
                 InputStream in = session.getPipeInByMsgId(id);

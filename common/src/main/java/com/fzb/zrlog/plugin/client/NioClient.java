@@ -2,6 +2,7 @@ package com.fzb.zrlog.plugin.client;
 
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.api.IPluginAction;
+import com.fzb.zrlog.plugin.common.ConfigKit;
 import com.fzb.zrlog.plugin.common.IdUtil;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.data.codec.SocketCodec;
@@ -12,6 +13,7 @@ import com.fzb.zrlog.plugin.type.ActionType;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -21,18 +23,14 @@ import java.util.*;
 public class NioClient {
 
 
-    public void connectServerByProperties(InetSocketAddress address, List<Class> classList, String propertiesPath, Class<? extends IPluginAction> pluginAction) throws IOException {
+    public void connectServerByProperties(String[] args, List<Class> classList, String propertiesPath, Class<? extends IPluginAction> pluginAction) throws IOException {
         Plugin request = new Plugin();
         InputStream in = NioClient.class.getResourceAsStream(propertiesPath);
         if (in == null) {
             throw new IOException("not found properties file " + propertiesPath);
         }
         Properties properties = new Properties();
-        try {
-            properties.load(in);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        properties.load(in);
         request.setVersion(properties.getProperty("version", ""));
         request.setName(properties.getProperty("name", ""));
         request.setDesc(properties.getProperty("desc", ""));
@@ -49,10 +47,16 @@ public class NioClient {
         request.setAuthor(properties.getProperty("author", ""));
         request.setIndexPage(properties.getProperty("indexPage", ""));
         in.close();
-        connectServer(address, classList, request, pluginAction);
+        //parse args
+        int serverPort = ConfigKit.getServerPort();
+        if (args != null && args.length > 0) {
+            serverPort = Integer.valueOf(args[0]);
+        }
+        InetSocketAddress serverAddress = new InetSocketAddress("127.0.0.1", serverPort);
+        connectServer(serverAddress, classList, request, pluginAction);
     }
 
-    public void connectServer(InetSocketAddress serverAddress, List<Class> classList, Plugin plugin, Class<? extends IPluginAction> pluginAction) {
+    private void connectServer(InetSocketAddress serverAddress, List<Class> classList, Plugin plugin, Class<? extends IPluginAction> pluginAction) {
         try {
             SocketChannel socketChannel = SocketChannel.open();
             socketChannel.configureBlocking(false);

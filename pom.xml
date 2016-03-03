@@ -12,13 +12,6 @@
     <version>1.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
 
-    <dependencies>
-        <dependency>
-            <groupId>net.sf.flexjson</groupId>
-            <artifactId>flexjson</artifactId>
-            <version>3.3</version>
-        </dependency>
-    </dependencies>
     <build>
         <resources>
             <resource>
@@ -52,7 +45,7 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <outputDirectory>C:\git\deploy-script\workspace\zrlog\src\main\webapp\admin\plugins</outputDirectory>
+                    <outputDirectory>/home/xiaochun/git/deploy-script/workspace/zrlog/src/main/webapp/admin/plugins/</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

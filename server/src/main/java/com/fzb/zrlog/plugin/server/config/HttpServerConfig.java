@@ -8,6 +8,9 @@ import com.fzb.http.server.impl.ServerConfig;
 import com.fzb.zrlog.plugin.server.controller.PluginController;
 import com.fzb.zrlog.plugin.server.incp.PluginInterceptor;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+
 public class HttpServerConfig extends SimpleServerConfig {
     @Override
     public ServerConfig getServerConfig() {
@@ -16,6 +19,7 @@ public class HttpServerConfig extends SimpleServerConfig {
         serverConfig.addInterceptor(PluginManagerInterceptor.class);
         serverConfig.addInterceptor(PluginInterceptor.class);
         serverConfig.getRouter().addMapper("", PluginController.class);
+        serverConfig.setExecutor(Executors.newFixedThreadPool(50));
         return serverConfig;
     }
 
