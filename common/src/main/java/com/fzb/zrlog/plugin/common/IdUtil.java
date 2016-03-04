@@ -1,15 +1,13 @@
 package com.fzb.zrlog.plugin.common;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 
 /**
  * Created by xiaochun on 2016/2/12.
  */
 public class IdUtil {
 
-    private static AtomicInteger msgIds = new AtomicInteger();
-
     public static int getInt() {
-        return msgIds.incrementAndGet();
+        return new Random().nextInt(Integer.MAX_VALUE);
     }
 }

@@ -2,6 +2,8 @@ package com.fzb.zrlog.plugin.client;
 
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.api.IPluginAction;
+import com.fzb.zrlog.plugin.api.IPluginService;
+import com.fzb.zrlog.plugin.api.Service;
 import com.fzb.zrlog.plugin.common.ConfigKit;
 import com.fzb.zrlog.plugin.common.IdUtil;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
@@ -13,7 +15,6 @@ import com.fzb.zrlog.plugin.type.ActionType;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -23,40 +24,63 @@ import java.util.*;
 public class NioClient {
 
 
-    public void connectServerByProperties(String[] args, List<Class> classList, String propertiesPath, Class<? extends IPluginAction> pluginAction) throws IOException {
-        Plugin request = new Plugin();
+    public void connectServerByProperties(String[] args, List<Class> classList, String propertiesPath,
+                                          Class<? extends IPluginAction> pluginAction) throws IOException {
+        connectServerByProperties(args, classList, propertiesPath, pluginAction, new ArrayList<Class<? extends IPluginService>>());
+    }
+
+    public void connectServerByProperties(String[] args, List<Class> classList, String propertiesPath,
+                                          Class<? extends IPluginAction> pluginAction, Class<? extends IPluginService> service) throws IOException {
+        List<Class<? extends IPluginService>> serviceList = new ArrayList<>();
+        serviceList.add(service);
+        connectServerByProperties(args, classList, propertiesPath, pluginAction, serviceList);
+    }
+
+    public void connectServerByProperties(String[] args, List<Class> classList, String propertiesPath,
+                                          Class<? extends IPluginAction> pluginAction, List<Class<? extends IPluginService>> serviceList) throws IOException {
+        Plugin plugin = new Plugin();
         InputStream in = NioClient.class.getResourceAsStream(propertiesPath);
         if (in == null) {
             throw new IOException("not found properties file " + propertiesPath);
         }
         Properties properties = new Properties();
         properties.load(in);
-        request.setVersion(properties.getProperty("version", ""));
-        request.setName(properties.getProperty("name", ""));
-        request.setDesc(properties.getProperty("desc", ""));
+        plugin.setVersion(properties.getProperty("version", ""));
+        plugin.setName(properties.getProperty("name", ""));
+        plugin.setDesc(properties.getProperty("desc", ""));
         if (properties.get("services") != null) {
-            request.setServices(Arrays.asList(properties.get("services").toString().split(",")));
+            plugin.setServices(Arrays.asList(properties.get("services").toString().split(",")));
         }
         if (properties.get("paths") != null) {
-            request.setPaths(Arrays.asList(properties.get("paths").toString().split(",")));
+            plugin.setPaths(Arrays.asList(properties.get("paths").toString().split(",")));
         }
         if (properties.get("actions") != null) {
-            request.setActions(Arrays.asList(properties.get("actions").toString().split(",")));
+            plugin.setActions(Arrays.asList(properties.get("actions").toString().split(",")));
         }
-        request.setShortName(properties.getProperty("shortName", ""));
-        request.setAuthor(properties.getProperty("author", ""));
-        request.setIndexPage(properties.getProperty("indexPage", ""));
+        plugin.setShortName(properties.getProperty("shortName", ""));
+        plugin.setAuthor(properties.getProperty("author", ""));
+        plugin.setIndexPage(properties.getProperty("indexPage", ""));
         in.close();
+        if (serviceList != null && !serviceList.isEmpty()) {
+            for (Class<? extends IPluginService> serviceClass : serviceList) {
+                Service service = serviceClass.getAnnotation(Service.class);
+                if (service == null) {
+                    throw new RuntimeException("forget add @Service in the Class " + serviceClass);
+                }
+                plugin.getServices().add(service.value());
+            }
+        }
         //parse args
         int serverPort = ConfigKit.getServerPort();
         if (args != null && args.length > 0) {
             serverPort = Integer.valueOf(args[0]);
         }
         InetSocketAddress serverAddress = new InetSocketAddress("127.0.0.1", serverPort);
-        connectServer(serverAddress, classList, request, pluginAction);
+        connectServer(serverAddress, classList, plugin, pluginAction, serviceList);
     }
 
-    private void connectServer(InetSocketAddress serverAddress, List<Class> classList, Plugin plugin, Class<? extends IPluginAction> pluginAction) {
+    private void connectServer(InetSocketAddress serverAddress, List<Class> classList, Plugin plugin, Class<? extends IPluginAction> pluginAction,
+                               List<Class<? extends IPluginService>> serviceList) {
         try {
             SocketChannel socketChannel = SocketChannel.open();
             socketChannel.configureBlocking(false);
@@ -81,6 +105,7 @@ public class NioClient {
                         session.setPlugin(plugin);
                         session.getAttr().put("_actionClassList", classList);
                         session.getAttr().put("_pluginClass", pluginAction);
+                        session.getAttr().put("_pluginServices", serviceList);
                         session.sendJsonMsg(plugin, ActionType.INIT_CONNECT.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST);
                     } else if (selectionKey.isReadable()) {
                         SocketDecode decode = new SocketDecode();

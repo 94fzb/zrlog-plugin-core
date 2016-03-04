@@ -2,10 +2,12 @@ package com.fzb.zrlog.plugin;
 
 import com.fzb.common.util.IOUtil;
 import com.fzb.common.util.Md5Util;
+import com.fzb.zrlog.plugin.common.IdUtil;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.data.codec.*;
 import com.fzb.zrlog.plugin.data.codec.convert.FileConvertMsgBody;
 import com.fzb.zrlog.plugin.message.Plugin;
+import com.fzb.zrlog.plugin.type.ActionType;
 
 import java.io.*;
 import java.nio.channels.Channel;
@@ -13,6 +15,8 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class IOSession {
@@ -25,6 +29,7 @@ public class IOSession {
     private Map<String, Object> systemAttr = new ConcurrentHashMap<String, Object>();
     private ISessionDispose dispose;
     private Plugin plugin;
+    private AtomicInteger msgIds = new AtomicInteger();
 
     public IOSession(SocketChannel channel, Selector selector, SocketCodec socketCodec, ISessionDispose dispose) {
         systemAttr.put("_channel", channel);
@@ -48,12 +53,18 @@ public class IOSession {
         sendMsg(msgPacket, callBack);
     }
 
+    public void sendMsg(ContentType contentType, Object data, String methodStr, int msgId, MsgPacketStatus status) {
+        MsgPacket msgPacket = new MsgPacket(data, contentType, status, msgId, methodStr);
+        sendMsg(msgPacket, null);
+    }
+
     public void sendMsg(MsgPacket msgPacket, IMsgPacketCallBack callBack) {
         try {
             PipedInputStream in = new PipedInputStream();
             PipedOutputStream out = new PipedOutputStream(in);
             Object[] inAndOut = new Object[]{in, out, callBack, msgPacket, null};
             pipeMap.put(msgPacket.getMsgId(), inAndOut);
+            getAttr().put("count", msgIds.incrementAndGet());
             new SocketEncode().doEncode(this, msgPacket);
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,9 +96,21 @@ public class IOSession {
             fileInfo.setFileBytes(fileBytes);
             fileInfo.setMd5sum(Md5Util.MD5(fileBytes));
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.WARNING, "fileInputStream error");
         }
         sendMsg(ContentType.FILE, FileConvertMsgBody.toByteArr(fileInfo), method, id, status, null);
+    }
+
+    public int requestService(String name, Map map, IMsgPacketCallBack msgPacketCallBack) {
+        int msgId = IdUtil.getInt();
+        map.put("name", name);
+        MsgPacket msgPacket = new MsgPacket(map, ContentType.JSON, MsgPacketStatus.SEND_REQUEST, msgId, ActionType.SERVICE.name());
+        sendMsg(msgPacket, msgPacketCallBack);
+        return msgId;
+    }
+
+    public int requestService(String name, Map map) {
+        return requestService(name, map, null);
     }
 
     public void dispose(MsgPacket msgPacket) {
@@ -102,7 +125,7 @@ public class IOSession {
                     callBack.handler(msgPacket);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, "close outputStream error");
             }
         }
         dispose.handler(this, msgPacket);

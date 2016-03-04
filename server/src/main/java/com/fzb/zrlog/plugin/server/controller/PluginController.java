@@ -61,4 +61,18 @@ public class PluginController extends Controller {
         getResponse().addHeader("Content-Type", "text/html");
         getResponse().write(getSession().getPipeInByMsgId(id));
     }
+
+    public void service() {
+        String name = getRequest().getParaToStr("name");
+        if (name != null && !"".equals(name)) {
+            IOSession session = DataMap.getServiceMap().get(name);
+            if (session != null) {
+                int msgId = session.requestService(name, request.decodeParamMap());
+                getResponse().addHeader("Content-Type", "application/json");
+                getResponse().write(session.getPipeInByMsgId(msgId));
+            } else {
+                getResponse().renderCode(404);
+            }
+        }
+    }
 }

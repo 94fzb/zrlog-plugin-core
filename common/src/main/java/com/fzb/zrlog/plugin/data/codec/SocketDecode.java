@@ -71,7 +71,7 @@ public class SocketDecode {
                 flag = !packet.getData().hasRemaining();
             }
             if (flag) {
-                LOGGER.info("recv <<< " + packet);
+                LOGGER.info("recv <<< " + session.getAttr().get("count") + " " + packet);
                 session.dispose(packet);
             }
         }

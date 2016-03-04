@@ -35,13 +35,16 @@ public class PluginManagerInterceptor implements Interceptor {
                 String uri = "/index";
                 if (request.getUri().length() > 1) {
                     String pluginName = request.getUri().substring(1);
-                    pluginName = pluginName.substring(0, pluginName.lastIndexOf("/"));
-                    // 不是一个插件名称，直接跳过检查
-                    if (pluginName.contains("/")) {
-                        return true;
+                    if (pluginName.lastIndexOf("/") == -1) {
+                        uri = request.getUri();
+                    } else {
+                        pluginName = pluginName.substring(0, pluginName.lastIndexOf("/"));
+                        // 不是一个插件名称，直接跳过检查
+                        if (!pluginName.contains("/")) {
+                            uri = request.getUri().substring(request.getUri().lastIndexOf("/"));
+                            request.getParamMap().put("name", new String[]{pluginName});
+                        }
                     }
-                    uri = request.getUri().substring(request.getUri().lastIndexOf("/"));
-                    request.getParamMap().put("name", new String[]{pluginName});
                 }
                 method = router.getMethod(uri);
             }

@@ -49,20 +49,7 @@ public class PluginInterceptor implements Interceptor {
                 actionType = ActionType.HTTP_METHOD;
                 msgBody.setHeader(httpRequest.getHeaderMap());
                 msgBody.setRequestBody(httpRequest.getContentByte());
-                Map<String, String[]> encodeMap = new HashMap<>();
-                for (Map.Entry<String, String[]> entry : httpRequest.getParamMap().entrySet()) {
-                    String[] strings = new String[entry.getValue().length];
-                    for (int i = 0; i < entry.getValue().length; i++) {
-                        try {
-                            strings[i] = URLDecoder.decode(entry.getValue()[i], "UTF-8");
-                        } catch (UnsupportedEncodingException e) {
-                            LOGGER.log(Level.SEVERE, "decode error", e);
-                        }
-                    }
-                    encodeMap.put(entry.getKey(),strings);
-                }
-
-                msgBody.setParam(encodeMap);
+                msgBody.setParam(httpRequest.decodeParamMap());
             }
             String fileExt = httpRequest.getUri().substring(httpRequest.getUri().lastIndexOf(".") + 1);
             if (session != null) {

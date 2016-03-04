@@ -1,6 +1,5 @@
 package com.fzb.zrlog.plugin.data.codec;
 
-import com.fzb.zrlog.plugin.IMsgPacketCallBack;
 import com.fzb.zrlog.plugin.data.codec.convert.*;
 
 import java.nio.ByteBuffer;
@@ -65,13 +64,6 @@ public class MsgPacket {
         this.data = data;
     }
 
-    public void setDataAndContentType(Object data, ContentType contentType) {
-        ByteBuffer byteBuffer;
-        if (contentType == ContentType.JSON) {
-
-        }
-    }
-
     public int getMsgId() {
         return msgId;
     }
@@ -121,8 +113,7 @@ public class MsgPacket {
     public String toString() {
         if (contentType == ContentType.JSON) {
             return "MsgPacket{" +
-                    "msgId=" + msgId +
-                    ", contentType=" + contentType +
+                    "contentType=" + contentType +
                     ", status=" + status.name().toLowerCase() +
                     ", methodStr=" + methodStr +
                     ", data=" + new String(data.array()) +
@@ -130,9 +121,8 @@ public class MsgPacket {
                     '}';
         } else {
             return "MsgPacket{" +
-                    "msgId=" + msgId +
+                    "contentType=" + contentType +
                     ", status=" + status.name().toLowerCase() +
-                    ", contentType=" + contentType +
                     ", methodStr=" + methodStr +
                     ", data= this file" +
                     ", dataLength=" + dataLength +
