@@ -12,6 +12,10 @@ public class HttpRequestInfo {
     private Map header;
     private byte[] requestBody;
     private Map<String, String[]> param;
+    private String userName;
+    private Integer userId;
+    private String version;
+    private String fullUrl;
 
     public String getUri() {
         return uri;
@@ -63,5 +67,40 @@ public class HttpRequestInfo {
             }
         }
         return map;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getFullUrl() {
+        if (fullUrl == null) {
+            return uri;
+        }
+        return fullUrl;
+    }
+
+    public void setFullUrl(String fullUrl) {
+        this.fullUrl = fullUrl;
     }
 }

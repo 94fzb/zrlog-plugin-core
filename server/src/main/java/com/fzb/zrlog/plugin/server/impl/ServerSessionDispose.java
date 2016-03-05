@@ -30,7 +30,7 @@ public class ServerSessionDispose implements ISessionDispose {
     private static Logger LOGGER = LoggerUtil.getLogger(ServerSessionDispose.class);
 
     @Override
-    public void handler(final IOSession session, MsgPacket msgPacket) {
+    public void handler(final IOSession session, final MsgPacket msgPacket) {
         ActionType action = ActionType.valueOf(msgPacket.getMethodStr());
         if (action == ActionType.INIT_CONNECT) {
             Plugin plugin = new JSONDeserializer<Plugin>().deserialize(msgPacket.getDataStr());
@@ -104,6 +104,7 @@ public class ServerSessionDispose implements ISessionDispose {
                     serviceSession.requestService(name, map, new IMsgPacketCallBack() {
                         @Override
                         public void handler(MsgPacket responseMsgPacket) {
+                            responseMsgPacket.setMsgId(msgPacket.getMsgId());
                             session.sendMsg(responseMsgPacket);
                         }
                     });

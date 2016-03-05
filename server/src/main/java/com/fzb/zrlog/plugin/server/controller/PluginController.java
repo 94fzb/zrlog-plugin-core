@@ -9,6 +9,7 @@ import com.fzb.zrlog.plugin.data.codec.HttpRequestInfo;
 import com.fzb.zrlog.plugin.data.codec.MsgPacket;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.server.DataMap;
+import com.fzb.zrlog.plugin.server.HttpMsgUtil;
 import com.fzb.zrlog.plugin.type.ActionType;
 
 public class PluginController extends Controller {
@@ -22,26 +23,23 @@ public class PluginController extends Controller {
     }
 
     public void install() {
-        HttpRequestInfo requestInfo = new HttpRequestInfo();
         int id = IdUtil.getInt();
-        getSession().sendMsg(new MsgPacket(requestInfo, ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_INSTALL.name()));
+        getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_INSTALL.name()));
         getResponse().addHeader("Content-Type", "text/html");
         getResponse().write(getSession().getPipeInByMsgId(id));
     }
 
     public void stop() {
-        HttpRequestInfo requestInfo = new HttpRequestInfo();
         int id = IdUtil.getInt();
-        getSession().sendMsg(new MsgPacket(requestInfo, ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_STOP.name()));
+        getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_STOP.name()));
         getResponse().addHeader("Content-Type", "text/html");
         getResponse().write(getSession().getPipeInByMsgId(id));
         getSession().close();
     }
 
     public void start() {
-        HttpRequestInfo requestInfo = new HttpRequestInfo();
         int id = IdUtil.getInt();
-        getSession().sendMsg(new MsgPacket(requestInfo, ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_START.name()));
+        getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_START.name()));
         getResponse().addHeader("Content-Type", "text/html");
         getResponse().write(getSession().getPipeInByMsgId(id));
     }
@@ -55,9 +53,8 @@ public class PluginController extends Controller {
     }
 
     public void uninstall() {
-        HttpRequestInfo requestInfo = new HttpRequestInfo();
         int id = IdUtil.getInt();
-        getSession().sendMsg(new MsgPacket(requestInfo, ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_UNINSTALL.name()));
+        getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_UNINSTALL.name()));
         getResponse().addHeader("Content-Type", "text/html");
         getResponse().write(getSession().getPipeInByMsgId(id));
     }
@@ -74,5 +71,9 @@ public class PluginController extends Controller {
                 getResponse().renderCode(404);
             }
         }
+    }
+
+    private HttpRequestInfo genInfo() {
+        return HttpMsgUtil.genInfo(getRequest());
     }
 }

@@ -12,6 +12,7 @@ import com.fzb.zrlog.plugin.data.codec.HttpRequestInfo;
 import com.fzb.zrlog.plugin.data.codec.MsgPacket;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.server.DataMap;
+import com.fzb.zrlog.plugin.server.HttpMsgUtil;
 import com.fzb.zrlog.plugin.type.ActionType;
 
 import java.io.InputStream;
@@ -32,12 +33,13 @@ public class PluginInterceptor implements Interceptor {
     @Override
     public boolean doInterceptor(HttpRequest httpRequest, final HttpResponse httpResponse) {
         if (httpRequest.getUri().contains("/")) {
+            LOGGER.info("request uri "+httpRequest.getUri());
             String pluginName = httpRequest.getUri().substring(1);
             pluginName = pluginName.substring(0, pluginName.indexOf("/"));
             ActionType actionType = ActionType.HTTP_FILE;
-            HttpRequestInfo msgBody = new HttpRequestInfo();
+            //Full Blog System ENV
+            HttpRequestInfo msgBody = HttpMsgUtil.genInfo(httpRequest);
             msgBody.setUri(httpRequest.getUri().replace(pluginName + "/", ""));
-            msgBody.setUrl(httpRequest.getFullUrl());
             final IOSession session = DataMap.getPluginMap().get(pluginName);
             if (("/".equals(msgBody.getUri()) || "".equals(msgBody.getUri())) && !"".equals(session.getPlugin().getIndexPage())) {
                 msgBody.setUri(session.getPlugin().getIndexPage());

@@ -35,9 +35,11 @@ public class NioServer implements ISocketServer {
     private ExecutorService service = Executors.newFixedThreadPool(10);
     private Map<Socket, IOSession> decoderMap = new ConcurrentHashMap<>();
     private String pluginPath;
+    private Integer serverPort;
 
-    public NioServer(String pluginPath) {
+    public NioServer(String pluginPath, Integer serverPort) {
         this.pluginPath = pluginPath;
+        this.serverPort = serverPort;
     }
 
     @Override
@@ -87,15 +89,14 @@ public class NioServer implements ISocketServer {
     @Override
     public void create() {
         try {
-            int port = ConfigKit.getServerPort();
             ServerSocketChannel serverChannel = ServerSocketChannel.open();
-            serverChannel.socket().bind(new InetSocketAddress("127.0.0.1", port));
+            serverChannel.socket().bind(new InetSocketAddress("127.0.0.1", serverPort));
             serverChannel.configureBlocking(false);
             selector = Selector.open();
             serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-            LOGGER.info("plugin listening on port -> " + ConfigKit.getServerPort());
-            PluginConfig.loadJarPlugin(new File(pluginPath), port);
+            LOGGER.info("plugin listening on port -> " + serverPort);
+            PluginConfig.loadJarPlugin(new File(pluginPath), serverPort);
             LOGGER.info("load jar files");
         } catch (Exception e) {
             e.printStackTrace();

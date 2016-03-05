@@ -48,7 +48,7 @@ public class LoggerUtil {
     }
 
     private synchronized static String getLogFilePath() {
-        StringBuffer logFilePath = new StringBuffer();
+        StringBuilder logFilePath = new StringBuilder();
         logFilePath.append(PathKit.getRootPath());
         logFilePath.append(File.separatorChar);
         logFilePath.append(LOG_FOLDER_NAME);
@@ -60,7 +60,6 @@ public class LoggerUtil {
         logFilePath.append(File.separatorChar);
         logFilePath.append(sdf.format(new Date()));
         logFilePath.append(LOG_FILE_SUFFIX);
-        System.out.println(logFilePath.toString());
         return logFilePath.toString().replace("\\", "/");
     }
 
