@@ -1,7 +1,6 @@
 package com.fzb.zrlog.plugin.server.impl;
 
 import com.fzb.zrlog.plugin.IOSession;
-import com.fzb.zrlog.plugin.common.ConfigKit;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.data.codec.SocketCodec;
 import com.fzb.zrlog.plugin.data.codec.SocketDecode;
@@ -67,7 +66,7 @@ public class NioServer implements ISocketServer {
                         if (channel != null) {
                             IOSession session = decoderMap.get(channel.socket());
                             if (session == null) {
-                                session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode()), new ServerSessionDispose());
+                                session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode()), new ServerActionHandler());
                                 decoderMap.put(channel.socket(), session);
                             }
                             dispose(session, channel, key);

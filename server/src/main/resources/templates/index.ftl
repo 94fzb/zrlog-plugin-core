@@ -23,7 +23,6 @@
 
 <body>
 <div class="main-container">
-    <div class="page-content">
         <div class="page-header">
             <h1>
                 插件
@@ -62,7 +61,7 @@
                             <td>
                                 <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
                                     <a href="${plugin.shortName}/">
-                                        <button class="btn btn-xs disabled">
+                                        <button class="btn btn-xs btn-primary">
                                             <i class="icon-zoom-in bigger-120"></i>
                                         </button>
                                     </a>
@@ -105,6 +104,5 @@
             </a>
         </div>
     </div>
-</div>
 </body>
 </html>

@@ -101,7 +101,7 @@ public class NioClient {
                         if (channel.isConnectionPending()) {
                             channel.finishConnect();
                         }
-                        session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode()), new ClientSessionDispose());
+                        session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode()), new ClientActionHandler());
                         session.setPlugin(plugin);
                         session.getAttr().put("_actionClassList", classList);
                         session.getAttr().put("_pluginClass", pluginAction);

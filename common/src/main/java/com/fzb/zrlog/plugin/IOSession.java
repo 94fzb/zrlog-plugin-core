@@ -2,6 +2,7 @@ package com.fzb.zrlog.plugin;
 
 import com.fzb.common.util.IOUtil;
 import com.fzb.common.util.Md5Util;
+import com.fzb.zrlog.plugin.api.IActionHandler;
 import com.fzb.zrlog.plugin.common.IdUtil;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.data.codec.*;
@@ -27,17 +28,18 @@ public class IOSession {
     private Map<String, Object> attr = new ConcurrentHashMap<String, Object>();
     private Map<Integer, Object[]> pipeMap = new ConcurrentHashMap<Integer, Object[]>();
     private Map<String, Object> systemAttr = new ConcurrentHashMap<String, Object>();
-    private ISessionDispose dispose;
+    private IActionHandler actionHandler;
     private Plugin plugin;
     private AtomicInteger msgIds = new AtomicInteger();
+    private MsgPacketDispose msgPacketDispose = new MsgPacketDispose();
 
-    public IOSession(SocketChannel channel, Selector selector, SocketCodec socketCodec, ISessionDispose dispose) {
+    public IOSession(SocketChannel channel, Selector selector, SocketCodec socketCodec, IActionHandler actionHandler) {
         systemAttr.put("_channel", channel);
         systemAttr.put("_selector", selector);
         systemAttr.put("_decode", socketCodec.getSocketDecode());
         systemAttr.put("_encode", socketCodec.getSocketEncode());
-        systemAttr.put("_sessionDispose", dispose);
-        this.dispose = dispose;
+        systemAttr.put("_actionHandler", actionHandler);
+        this.actionHandler = actionHandler;
     }
 
     public Plugin getPlugin() {
@@ -123,12 +125,14 @@ public class IOSession {
                 outputStream.close();
                 if (callBack != null) {
                     callBack.handler(msgPacket);
+                    // 不进行多次处理
+                    return;
                 }
             } catch (IOException e) {
                 LOGGER.log(Level.WARNING, "close outputStream error");
             }
         }
-        dispose.handler(this, msgPacket);
+        msgPacketDispose.handler(this, msgPacket, actionHandler);
     }
 
     public void close() {
