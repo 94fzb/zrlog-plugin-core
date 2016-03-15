@@ -1,6 +1,7 @@
 package com.fzb.zrlog.plugin.server.impl;
 
 import com.fzb.common.dao.impl.CommentDAO;
+import com.fzb.common.util.RunConstants;
 import com.fzb.http.kit.IOUtil;
 import com.fzb.http.kit.LoggerUtil;
 import com.fzb.http.kit.PathKit;
@@ -71,7 +72,9 @@ public class ServerActionHandler implements IActionHandler {
             }
             DataMap.getServiceMap().put(actionName, session);
         }
-        session.sendJsonMsg(new HashMap<>(), msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
+        Map<String, Object> map = new HashMap<>();
+        map.put("runType", RunConstants.runType);
+        session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         StringBuilder stringBuilder = new StringBuilder();
         // save to file
         for (Plugin plugin1 : DataMap.getPluginInfoMap().values()) {

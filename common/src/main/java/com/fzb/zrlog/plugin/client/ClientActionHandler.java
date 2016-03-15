@@ -1,6 +1,7 @@
 package com.fzb.zrlog.plugin.client;
 
 import com.fzb.common.util.IOUtil;
+import com.fzb.common.util.RunConstants;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.api.IActionHandler;
 import com.fzb.zrlog.plugin.api.IPluginAction;
@@ -12,6 +13,7 @@ import com.fzb.zrlog.plugin.data.codec.HttpRequestInfo;
 import com.fzb.zrlog.plugin.data.codec.MsgPacket;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.type.ActionType;
+import com.fzb.zrlog.plugin.type.RunType;
 import flexjson.JSONDeserializer;
 
 import java.io.InputStream;
@@ -61,7 +63,8 @@ public class ClientActionHandler implements IActionHandler {
 
     @Override
     public void initConnect(IOSession session, MsgPacket msgPacket) {
-
+        Map<String, Object> map = new JSONDeserializer<Map<String, Object>>().deserialize(msgPacket.getDataStr());
+        RunConstants.runType = RunType.valueOf(map.get("runType").toString());
     }
 
     @Override

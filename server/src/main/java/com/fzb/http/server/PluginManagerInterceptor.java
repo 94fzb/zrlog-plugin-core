@@ -18,15 +18,23 @@ public class PluginManagerInterceptor implements Interceptor {
     }
 
     public boolean doInterceptor(HttpRequest request, HttpResponse response) {
+        boolean isLogin = Boolean.valueOf(request.getHeader("isLogin"));
+        request.getAttr().put("isLogin", isLogin);
+        boolean next = false;
         if (request.getUri().contains(".")) {
             InputStream in = PluginManagerInterceptor.class.getResourceAsStream(request.getUri());
             if (in == null) {
-                return true;
+                next = true;
             } else {
-                String e = request.getUri().substring(request.getUri().lastIndexOf(".") + 1);
-                response.addHeader("Content-Type", MimeTypeUtil.getMimeStrByExt(e));
-                response.write(in);
-                return false;
+                if (!isLogin) {
+                    response.renderCode(403);
+                    next = false;
+                } else {
+                    String e = request.getUri().substring(request.getUri().lastIndexOf(".") + 1);
+                    response.addHeader("Content-Type", MimeTypeUtil.getMimeStrByExt(e));
+                    response.write(in);
+                    next = false;
+                }
             }
         } else {
             Router router = request.getRequestConfig().getRouter();
@@ -49,29 +57,32 @@ public class PluginManagerInterceptor implements Interceptor {
                 method = router.getMethod(uri);
             }
             if (method == null) {
-                return true;
+                next = true;
             } else {
-                try {
-                    LOGGER.info("invoke method " + method);
-                    Controller e2;
+                if (isLogin) {
                     try {
-                        Constructor e1 = method.getDeclaringClass().getConstructor(HttpRequest.class, HttpResponse.class);
-                        e2 = (Controller) e1.newInstance(request, response);
-                    } catch (NoSuchMethodException var7) {
-                        e2 = (Controller) method.getDeclaringClass().newInstance();
-                        e2.request = request;
-                        e2.response = response;
+                        LOGGER.info("invoke method " + method);
+                        Controller e2;
+                        try {
+                            Constructor e1 = method.getDeclaringClass().getConstructor(HttpRequest.class, HttpResponse.class);
+                            e2 = (Controller) e1.newInstance(request, response);
+                        } catch (NoSuchMethodException var7) {
+                            e2 = (Controller) method.getDeclaringClass().newInstance();
+                            e2.request = request;
+                            e2.response = response;
+                        }
+
+                        method.invoke(e2);
+                    } catch (Exception var8) {
+                        var8.printStackTrace();
+                        LOGGER.log(Level.SEVERE, var8.getMessage());
                     }
-
-                    method.invoke(e2);
-                    return false;
-                } catch (Exception var8) {
-                    var8.printStackTrace();
-                    LOGGER.log(Level.SEVERE, var8.getMessage());
+                } else {
+                    response.renderCode(403);
                 }
-
-                return true;
+                next = false;
             }
         }
+        return next;
     }
 }

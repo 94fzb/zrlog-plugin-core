@@ -3,6 +3,7 @@ package com.fzb.zrlog.plugin.server;
 import com.fzb.http.kit.PathKit;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.message.Plugin;
+import com.fzb.zrlog.plugin.type.RunType;
 import flexjson.JSONDeserializer;
 import org.apache.log4j.Logger;
 

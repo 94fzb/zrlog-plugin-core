@@ -32,14 +32,16 @@ public class SocketEncode {
             SocketChannel channel = (SocketChannel) session.getSystemAttr().get("_channel");
             Selector selector = (Selector) session.getSystemAttr().get("_selector");
             //channel.register(selector, SelectionKey.OP_WRITE);
-            while (sendBuffer.hasRemaining()) {
-                int len = channel.write(sendBuffer);
-                if (len < 0) {
-                    throw new EOFException();
+            if (selector.isOpen()) {
+                while (sendBuffer.hasRemaining()) {
+                    int len = channel.write(sendBuffer);
+                    if (len < 0) {
+                        throw new EOFException();
+                    }
                 }
+                LOGGER.info("send >>> " + session.getAttr().get("count") + " " + msgPacket);
+                channel.register(selector, SelectionKey.OP_READ);
             }
-            LOGGER.info("send >>> " + session.getAttr().get("count") + " " + msgPacket);
-            channel.register(selector, SelectionKey.OP_READ);
         } catch (Exception e) {
             e.printStackTrace();
         }

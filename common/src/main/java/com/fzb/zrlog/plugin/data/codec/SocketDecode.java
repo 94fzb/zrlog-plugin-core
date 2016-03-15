@@ -7,6 +7,9 @@ import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Logger;
 
 public class SocketDecode {
@@ -16,6 +19,7 @@ public class SocketDecode {
     private MsgPacket packet;
     private ByteBuffer header = ByteBuffer.allocate(7);
     private ByteBuffer methodAndLengthAndContentType;
+    private static ExecutorService service = new ForkJoinPool();
 
     public SocketDecode() {
         packet = new MsgPacket();
@@ -30,7 +34,7 @@ public class SocketDecode {
         this.packet = packet;
     }
 
-    public boolean doDecode(IOSession session) throws Exception {
+    public boolean doDecode(final IOSession session) throws Exception {
         SocketChannel channel = (SocketChannel) session.getSystemAttr().get("_channel");
         //LOGGER.info(channel.getRemoteAddress() + " decoding ");
         boolean flag = false;
@@ -72,7 +76,12 @@ public class SocketDecode {
             }
             if (flag) {
                 LOGGER.info("recv <<< " + session.getAttr().get("count") + " " + packet);
-                session.dispose(packet);
+                service.execute(new Thread() {
+                    @Override
+                    public void run() {
+                        session.dispose(packet);
+                    }
+                });
             }
         }
         return flag;

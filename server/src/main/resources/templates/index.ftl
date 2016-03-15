@@ -23,86 +23,221 @@
 
 <body>
 <div class="main-container">
-        <div class="page-header">
-            <h1>
-                插件
-                <small>
-                    <i class="icon-double-angle-right"></i>
-                    管理插件
-                </small>
-            </h1>
-        </div>
-        <!-- /.page-header -->
+    <div class="page-header">
+        <h1>
+            插件
+            <small>
+                <i class="icon-double-angle-right"></i>
+                管理插件
+            </small>
+        </h1>
+    </div>
+    <!-- /.page-header -->
 
-        <div class="col-xs-12">
+    <div class="tabbable">
+        <ul id="plugintab" class="nav nav-tabs padding-12 tab-color-blue background-blue">
+            <li class="active">
+                <a href="#all" data-toggle="tab">所有</a>
+            </li>
 
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hover" id="sample-table-1">
-                    <thead>
-                    <tr>
-                        <th class="hidden-480">名称</th>
-                        <th>作者</th>
-                        <th>简介</th>
-                        <th>版本</th>
-                        <th>查看</th>
-                        <th>安装/启动/停止/卸载</th>
-                    </tr>
-                    </thead>
+            <li class="">
+                <a href="#used" data-toggle="tab">使用中</a>
+            </li>
 
-                    <tbody>
-                    <#list plugins as plugin>
+            <li class="">
+                <a href="#unused" data-toggle="tab">未使用</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="all">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="sample-table-1">
+                        <thead>
                         <tr>
-                            <td>
-                                ${plugin.name}
-                            </td>
-                            <td class="hidden-480">${plugin.author }</td>
-                            <td>${plugin.desc }</td>
-                            <td>${plugin.version }</td>
-                            <td>
-                                <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                                    <a href="${plugin.shortName}/">
-                                        <button class="btn btn-xs btn-primary">
-                                            <i class="icon-zoom-in bigger-120"></i>
-                                        </button>
-                                    </a>
-
-                                </div>
-                            </td>
-                            <td>
-                                <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                                    <a href="${plugin.shortName}/install">
-                                        <button class="btn btn-xs btn-success">
-                                            <i class="icon-ok bigger-120"></i>
-                                        </button>
-                                    </a>
-                                    <a href="${plugin.shortName}/start">
-                                        <button class="btn btn-xs btn-primary">
-                                            <i class="icon-zoom-in bigger-120"></i>
-                                        </button>
-                                    </a>
-                                    <a href="${plugin.shortName}/stop">
-                                        <button class="btn btn-xs btn-danger">
-                                            <i class="icon-stop bigger-120"></i>
-                                        </button>
-                                    </a>
-                                    <a href="${plugin.shortName}/uninstall">
-                                        <button class="btn btn-xs btn-danger">
-                                            <i class="icon-trash bigger-120"></i>
-                                        </button>
-                                    </a>
-
-                                </div>
-                            </td>
+                            <th class="hidden-480">名称</th>
+                            <th>作者</th>
+                            <th>简介</th>
+                            <th>版本</th>
+                            <th>查看</th>
+                            <th>安装/启动|停止/卸载</th>
                         </tr>
-                    </#list>
-                    </tbody>
-                </table>
+                        </thead>
+
+                        <tbody>
+                        <#list plugins as plugin>
+                            <tr>
+                                <td>
+                                    ${plugin.name}
+                                </td>
+                                <td class="hidden-480">${plugin.author }</td>
+                                <td>${plugin.desc }</td>
+                                <td>${plugin.version }</td>
+                                <td>
+                                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                        <a href="${plugin.shortName}/">
+                                            <button class="btn btn-xs btn-primary">
+                                                <i class="icon-zoom-in bigger-120"></i>
+                                            </button>
+                                        </a>
+
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                        <a href="${plugin.shortName}/install">
+                                            <button class="btn btn-xs btn-success">
+                                                <i class="icon-ok bigger-120"></i>
+                                            </button>
+                                        </a>
+                                        <a href="${plugin.shortName}/start">
+                                            <button class="btn btn-xs btn-primary">
+                                                <i class="icon-zoom-in bigger-120"></i>
+                                            </button>
+                                        </a>
+                                        <a href="${plugin.shortName}/stop">
+                                            <button class="btn btn-xs btn-danger">
+                                                <i class="icon-stop bigger-120"></i>
+                                            </button>
+                                        </a>
+                                        <a href="${plugin.shortName}/uninstall">
+                                            <button class="btn btn-xs btn-danger">
+                                                <i class="icon-trash bigger-120"></i>
+                                            </button>
+                                        </a>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <!-- /.table-responsive -->
-            <a href="plugin_center">
-                <button class="btn btn-info"><i class="icon-download"></i>下载</button>
-            </a>
+            <div class="tab-pane" id="used">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="sample-table-1">
+                        <thead>
+                        <tr>
+                            <th class="hidden-480">名称</th>
+                            <th>作者</th>
+                            <th>简介</th>
+                            <th>版本</th>
+                            <th>查看</th>
+                            <th>安装/停止/卸载</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <#list usedPlugins as plugin>
+                            <tr>
+                                <td>
+                                    ${plugin.name}
+                                </td>
+                                <td class="hidden-480">${plugin.author }</td>
+                                <td>${plugin.desc }</td>
+                                <td>${plugin.version }</td>
+                                <td>
+                                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                        <a href="${plugin.shortName}/">
+                                            <button class="btn btn-xs btn-primary">
+                                                <i class="icon-zoom-in bigger-120"></i>
+                                            </button>
+                                        </a>
+
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                        <a href="${plugin.shortName}/install">
+                                            <button class="btn btn-xs btn-success">
+                                                <i class="icon-ok bigger-120"></i>
+                                            </button>
+                                        </a>
+                                        <a href="${plugin.shortName}/stop">
+                                            <button class="btn btn-xs btn-danger">
+                                                <i class="icon-stop bigger-120"></i>
+                                            </button>
+                                        </a>
+                                        <a href="${plugin.shortName}/uninstall">
+                                            <button class="btn btn-xs btn-danger">
+                                                <i class="icon-trash bigger-120"></i>
+                                            </button>
+                                        </a>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane" id="unused">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover" id="sample-table-1">
+                        <thead>
+                        <tr>
+                            <th class="hidden-480">名称</th>
+                            <th>作者</th>
+                            <th>简介</th>
+                            <th>版本</th>
+                            <th>查看</th>
+                            <th>安装/停止/卸载</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <#list unusedPlugins as plugin>
+                            <tr>
+                                <td>
+                                    ${plugin.name}
+                                </td>
+                                <td class="hidden-480">${plugin.author }</td>
+                                <td>${plugin.desc }</td>
+                                <td>${plugin.version }</td>
+                                <td>
+                                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                        <a href="${plugin.shortName}/">
+                                            <button class="btn btn-xs btn-primary">
+                                                <i class="icon-zoom-in bigger-120"></i>
+                                            </button>
+                                        </a>
+
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                        <a href="${plugin.shortName}/install">
+                                            <button class="btn btn-xs btn-success">
+                                                <i class="icon-ok bigger-120"></i>
+                                            </button>
+                                        </a>
+                                        <a href="${plugin.shortName}/start">
+                                            <button class="btn btn-xs btn-primary">
+                                                <i class="icon-zoom-in bigger-120"></i>
+                                            </button>
+                                        </a>
+                                        <a href="${plugin.shortName}/uninstall">
+                                            <button class="btn btn-xs btn-danger">
+                                                <i class="icon-trash bigger-120"></i>
+                                            </button>
+                                        </a>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </#list>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
+    <!-- /.table-responsive -->
+    <a href="center">
+        <button class="btn btn-info"><i class="icon-download"></i>下载</button>
+    </a>
+</div>
 </body>
 </html>

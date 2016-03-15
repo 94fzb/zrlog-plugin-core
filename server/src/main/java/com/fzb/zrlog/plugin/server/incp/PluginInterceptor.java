@@ -1,5 +1,6 @@
 package com.fzb.zrlog.plugin.server.incp;
 
+import com.fzb.common.util.RunConstants;
 import com.fzb.http.kit.LoggerUtil;
 import com.fzb.http.mimetype.MimeTypeUtil;
 import com.fzb.http.server.HttpRequest;
@@ -14,6 +15,7 @@ import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.server.DataMap;
 import com.fzb.zrlog.plugin.server.HttpMsgUtil;
 import com.fzb.zrlog.plugin.type.ActionType;
+import com.fzb.zrlog.plugin.type.RunType;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -33,14 +35,22 @@ public class PluginInterceptor implements Interceptor {
     @Override
     public boolean doInterceptor(HttpRequest httpRequest, final HttpResponse httpResponse) {
         if (httpRequest.getUri().contains("/")) {
-            LOGGER.info("request uri "+httpRequest.getUri());
+            LOGGER.info("request uri " + httpRequest.getUri());
             String pluginName = httpRequest.getUri().substring(1);
+            String path = pluginName.substring(pluginName.indexOf("/"));
+            LOGGER.log(Level.INFO, "request path " + path);
             pluginName = pluginName.substring(0, pluginName.indexOf("/"));
+            final IOSession session = DataMap.getPluginMap().get(pluginName);
+            boolean isLogin = (boolean) httpRequest.getAttr().get("isLogin");
+            if (!isLogin && RunConstants.runType != RunType.DEV && (session == null || !session.getPlugin().getPaths().contains(path))) {
+                httpResponse.renderCode(403);
+                return false;
+            }
+
             ActionType actionType = ActionType.HTTP_FILE;
             //Full Blog System ENV
             HttpRequestInfo msgBody = HttpMsgUtil.genInfo(httpRequest);
             msgBody.setUri(httpRequest.getUri().replace(pluginName + "/", ""));
-            final IOSession session = DataMap.getPluginMap().get(pluginName);
             if (("/".equals(msgBody.getUri()) || "".equals(msgBody.getUri())) && !"".equals(session.getPlugin().getIndexPage())) {
                 msgBody.setUri(session.getPlugin().getIndexPage());
             }

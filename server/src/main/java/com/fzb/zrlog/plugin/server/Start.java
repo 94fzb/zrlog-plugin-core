@@ -1,6 +1,7 @@
 package com.fzb.zrlog.plugin.server;
 
 import com.fzb.common.dao.impl.DAO;
+import com.fzb.common.util.RunConstants;
 import com.fzb.http.kit.ConfigKit;
 import com.fzb.http.kit.PathKit;
 import com.fzb.http.server.WebServerBuilder;
@@ -8,6 +9,7 @@ import com.fzb.http.server.impl.ServerConfig;
 import com.fzb.zrlog.plugin.message.Plugin;
 import com.fzb.zrlog.plugin.server.impl.NioServer;
 import com.fzb.zrlog.plugin.server.config.HttpServerConfig;
+import com.fzb.zrlog.plugin.type.RunType;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import flexjson.JSONDeserializer;
 
@@ -51,6 +53,7 @@ public class Start {
         HttpServerConfig config = new HttpServerConfig();
         ServerConfig serverConfig = config.getServerConfig();
         serverConfig.setPort(serverPort);
+        serverConfig.setDisableCookie(true);
         new WebServerBuilder.Builder().config(config).serverConfig(serverConfig).build().startWithThread();
     }
 
@@ -63,6 +66,7 @@ public class Start {
                 properties.load(Start.class.getResourceAsStream("/db.properties"));
             } else {
                 properties.load(new FileInputStream(dbProperties));
+                RunConstants.runType = RunType.BLOG;
             }
             dataSource.setJdbcUrl(properties.get("jdbcUrl").toString());
             dataSource.setPassword(properties.get("password").toString());

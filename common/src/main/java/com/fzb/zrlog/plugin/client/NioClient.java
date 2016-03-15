@@ -49,13 +49,13 @@ public class NioClient {
         plugin.setName(properties.getProperty("name", ""));
         plugin.setDesc(properties.getProperty("desc", ""));
         if (properties.get("services") != null) {
-            plugin.setServices(Arrays.asList(properties.get("services").toString().split(",")));
+            plugin.setServices(new LinkedHashSet<>(Arrays.asList(properties.get("services").toString().split(","))));
         }
         if (properties.get("paths") != null) {
-            plugin.setPaths(Arrays.asList(properties.get("paths").toString().split(",")));
+            plugin.setPaths(new LinkedHashSet<>(Arrays.asList(properties.get("paths").toString().split(","))));
         }
         if (properties.get("actions") != null) {
-            plugin.setActions(Arrays.asList(properties.get("actions").toString().split(",")));
+            plugin.setActions(new LinkedHashSet<>(Arrays.asList(properties.get("actions").toString().split(","))));
         }
         plugin.setShortName(properties.getProperty("shortName", ""));
         plugin.setAuthor(properties.getProperty("author", ""));

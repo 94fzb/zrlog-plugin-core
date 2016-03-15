@@ -31,7 +31,6 @@ public class NioServer implements ISocketServer {
     private static final Logger LOGGER = LoggerUtil.getLogger(NioServer.class);
 
     private Selector selector;
-    private ExecutorService service = Executors.newFixedThreadPool(10);
     private Map<Socket, IOSession> decoderMap = new ConcurrentHashMap<>();
     private String pluginPath;
     private Integer serverPort;

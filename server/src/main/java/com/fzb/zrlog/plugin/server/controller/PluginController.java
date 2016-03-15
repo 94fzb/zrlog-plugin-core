@@ -49,7 +49,24 @@ public class PluginController extends Controller {
      */
     public void index() {
         getRequest().getAttr().put("plugins", DataMap.getPluginInfoMap().values());
+        getRequest().getAttr().put("usedPlugins", DataMap.getPluginInfoMap().values());
+        getRequest().getAttr().put("unusedPlugins", DataMap.getPluginInfoMap().values());
         response.renderHtmlStr(FreeMarkerKit.renderToFM(PluginController.class.getResourceAsStream("/templates/index.ftl"), getRequest()));
+    }
+
+    /**
+     * 得到插件列表
+     */
+    public void center() {
+        request.getAttr().put("url", request.getHeader("Full-Url"));
+        response.renderHtmlStr(FreeMarkerKit.renderToFM(PluginController.class.getResourceAsStream("/templates/center.ftl"), getRequest()));
+    }
+
+    /**
+     *
+     */
+    public void download() {
+        //TODO 
     }
 
     public void uninstall() {

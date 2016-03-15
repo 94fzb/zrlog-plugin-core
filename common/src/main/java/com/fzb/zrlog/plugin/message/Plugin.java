@@ -1,7 +1,6 @@
 package com.fzb.zrlog.plugin.message;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by xiaochun on 2016/2/12.
@@ -10,13 +9,13 @@ public class Plugin {
 
     private String version;
     private String name;
-    private List<String> paths = new ArrayList<>();
-    private List<String> actions = new ArrayList<>();
+    private Set<String> paths = new LinkedHashSet<>();
+    private Set<String> actions = new LinkedHashSet<>();
     private String desc;
     private String author;
     private String shortName;
     private String indexPage;
-    private List<String> services = new ArrayList<>();
+    private Set<String> services = new LinkedHashSet<>();
 
     public String getVersion() {
         return version;
@@ -32,22 +31,6 @@ public class Plugin {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<String> getPaths() {
-        return paths;
-    }
-
-    public void setPaths(List<String> paths) {
-        this.paths = paths;
-    }
-
-    public List<String> getActions() {
-        return actions;
-    }
-
-    public void setActions(List<String> actions) {
-        this.actions = actions;
     }
 
     public String getDesc() {
@@ -74,19 +57,35 @@ public class Plugin {
         this.shortName = shortName;
     }
 
-    public List<String> getServices() {
-        return services;
-    }
-
-    public void setServices(List<String> services) {
-        this.services = services;
-    }
-
     public String getIndexPage() {
         return indexPage;
     }
 
     public void setIndexPage(String indexPage) {
         this.indexPage = indexPage;
+    }
+
+    public Set<String> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(Set<String> paths) {
+        this.paths = paths;
+    }
+
+    public Set<String> getActions() {
+        return actions;
+    }
+
+    public void setActions(Set<String> actions) {
+        this.actions = actions;
+    }
+
+    public Set<String> getServices() {
+        return services;
+    }
+
+    public void setServices(Set<String> services) {
+        this.services = services;
     }
 }
