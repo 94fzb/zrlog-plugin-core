@@ -18,9 +18,9 @@ public class PluginManagerInterceptor implements Interceptor {
     }
 
     public boolean doInterceptor(HttpRequest request, HttpResponse response) {
-        boolean isLogin = Boolean.valueOf(request.getHeader("isLogin"));
+        boolean isLogin = Boolean.valueOf(request.getHeader("IsLogin"));
         request.getAttr().put("isLogin", isLogin);
-        boolean next = false;
+        boolean next;
         if (request.getUri().contains(".")) {
             InputStream in = PluginManagerInterceptor.class.getResourceAsStream(request.getUri());
             if (in == null) {

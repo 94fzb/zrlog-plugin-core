@@ -39,11 +39,9 @@
             <li class="active">
                 <a href="#all" data-toggle="tab">所有</a>
             </li>
-
             <li class="">
                 <a href="#used" data-toggle="tab">使用中</a>
             </li>
-
             <li class="">
                 <a href="#unused" data-toggle="tab">未使用</a>
             </li>
@@ -124,7 +122,7 @@
                             <th>简介</th>
                             <th>版本</th>
                             <th>查看</th>
-                            <th>安装/停止/卸载</th>
+                            <th>停止/卸载</th>
                         </tr>
                         </thead>
 
@@ -149,11 +147,6 @@
                                 </td>
                                 <td>
                                     <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                                        <a href="${plugin.shortName}/install">
-                                            <button class="btn btn-xs btn-success">
-                                                <i class="icon-ok bigger-120"></i>
-                                            </button>
-                                        </a>
                                         <a href="${plugin.shortName}/stop">
                                             <button class="btn btn-xs btn-danger">
                                                 <i class="icon-stop bigger-120"></i>
@@ -183,7 +176,7 @@
                             <th>简介</th>
                             <th>版本</th>
                             <th>查看</th>
-                            <th>安装/停止/卸载</th>
+                            <th>安装/启动/卸载</th>
                         </tr>
                         </thead>
 
