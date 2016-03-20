@@ -23,4 +23,8 @@ public interface IActionHandler {
 
     void plugin(final IOSession session, final MsgPacket msgPacket);
 
+    void getDbProperties(final IOSession session, final MsgPacket msgPacket);
+
+    void attachment(final IOSession session, final MsgPacket msgPacket);
+
 }

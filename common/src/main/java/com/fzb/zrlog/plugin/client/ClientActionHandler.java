@@ -3,10 +3,7 @@ package com.fzb.zrlog.plugin.client;
 import com.fzb.common.util.IOUtil;
 import com.fzb.common.util.RunConstants;
 import com.fzb.zrlog.plugin.IOSession;
-import com.fzb.zrlog.plugin.api.IActionHandler;
-import com.fzb.zrlog.plugin.api.IPluginAction;
-import com.fzb.zrlog.plugin.api.IPluginService;
-import com.fzb.zrlog.plugin.api.Service;
+import com.fzb.zrlog.plugin.api.*;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.data.codec.ContentType;
 import com.fzb.zrlog.plugin.data.codec.HttpRequestInfo;
@@ -65,6 +62,10 @@ public class ClientActionHandler implements IActionHandler {
     public void initConnect(IOSession session, MsgPacket msgPacket) {
         Map<String, Object> map = new JSONDeserializer<Map<String, Object>>().deserialize(msgPacket.getDataStr());
         RunConstants.runType = RunType.valueOf(map.get("runType").toString());
+        IConnectHandler connectHandler = (IConnectHandler) session.getAttr().get("_connectHandle");
+        if (connectHandler != null) {
+            connectHandler.handler(session, msgPacket);
+        }
     }
 
     @Override
@@ -133,9 +134,21 @@ public class ClientActionHandler implements IActionHandler {
                 pluginAction.start(session, msgPacket);
             } else if (action == ActionType.PLUGIN_UNINSTALL) {
                 pluginAction.uninstall(session, msgPacket);
+                System.exit(1);
             } else if (action == ActionType.PLUGIN_STOP) {
                 pluginAction.stop(session, msgPacket);
+                System.exit(1);
             }
         }
+    }
+
+    @Override
+    public void getDbProperties(IOSession session, MsgPacket msgPacket) {
+
+    }
+
+    @Override
+    public void attachment(IOSession session, MsgPacket msgPacket) {
+
     }
 }

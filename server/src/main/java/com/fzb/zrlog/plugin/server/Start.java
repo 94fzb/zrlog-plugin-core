@@ -1,46 +1,47 @@
 package com.fzb.zrlog.plugin.server;
 
 import com.fzb.common.dao.impl.DAO;
+import com.fzb.common.util.IOUtil;
 import com.fzb.common.util.RunConstants;
 import com.fzb.http.kit.ConfigKit;
-import com.fzb.http.kit.PathKit;
 import com.fzb.http.server.WebServerBuilder;
 import com.fzb.http.server.impl.ServerConfig;
-import com.fzb.zrlog.plugin.message.Plugin;
-import com.fzb.zrlog.plugin.server.impl.NioServer;
 import com.fzb.zrlog.plugin.server.config.HttpServerConfig;
-import com.fzb.zrlog.plugin.type.RunType;
+import com.fzb.zrlog.plugin.server.impl.NioServer;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import flexjson.JSONDeserializer;
 
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 
 public class Start {
+
+    public static Integer MASTER_PORT = 0;
 
     public static void main(String[] args) throws IOException {
         if (args != null && args.length > 0) {
             System.out.println("args = " + Arrays.toString(args));
         }
-        Integer serverPort = (args != null && args.length > 0) ? Integer.valueOf(args[0]) : ConfigKit.getServerPort();
-        Integer masterPort = (args != null && args.length > 1) ? Integer.valueOf(args[1]) : com.fzb.zrlog.plugin.common.ConfigKit.getServerPort();
+        Integer serverPort = (args != null && args.length > 0) ? Integer.valueOf(args[0]) : 9089;
+        MASTER_PORT = (args != null && args.length > 1) ? Integer.valueOf(args[1]) : com.fzb.zrlog.plugin.common.ConfigKit.getServerPort();
         String dbProperties = (args != null && args.length > 2) ? args[2] : null;
         String pluginPath = (args != null && args.length > 3) ? args[3] : "/home/xiaochun/zrlog-plugin";
+        if (dbProperties == null) {
+            File tmpFile = File.createTempFile("blog-db", ".properties");
+            dbProperties = tmpFile.toString();
+            IOUtil.writeBytesToFile(IOUtil.getByteByInputStream(Start.class.getResourceAsStream("/db.properties")), tmpFile);
+        }
         //load Db
         initDb(dbProperties);
 
         loadHttpServer(serverPort);
 
-        DataMap.initData();
+        DataMap.initData(dbProperties);
 
-        loadPluginServer(pluginPath, masterPort);
+        loadPluginServer(pluginPath, MASTER_PORT);
     }
 
     private static void loadPluginServer(String pluginPath, Integer masterPort) {
@@ -53,6 +54,7 @@ public class Start {
         HttpServerConfig config = new HttpServerConfig();
         ServerConfig serverConfig = config.getServerConfig();
         serverConfig.setPort(serverPort);
+        serverConfig.setHost("127.0.0.1");
         serverConfig.setDisableCookie(true);
         new WebServerBuilder.Builder().config(config).serverConfig(serverConfig).build().startWithThread();
     }
@@ -62,12 +64,7 @@ public class Start {
         ComboPooledDataSource dataSource = new ComboPooledDataSource(false);
         try {
             Properties properties = new Properties();
-            if (dbProperties == null) {
-                properties.load(Start.class.getResourceAsStream("/db.properties"));
-            } else {
-                properties.load(new FileInputStream(dbProperties));
-                RunConstants.runType = RunType.BLOG;
-            }
+            properties.load(new FileInputStream(dbProperties));
             dataSource.setJdbcUrl(properties.get("jdbcUrl").toString());
             dataSource.setPassword(properties.get("password").toString());
             dataSource.setDriverClass(properties.get("driverClass").toString());

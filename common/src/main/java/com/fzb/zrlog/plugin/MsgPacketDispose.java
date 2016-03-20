@@ -29,6 +29,10 @@ public class MsgPacketDispose {
             actionHandler.httpMethod(session, msgPacket);
         } else if (action == ActionType.DELETE_COMMENT) {
             actionHandler.deleteComment(session, msgPacket);
+        } else if (action == ActionType.GET_DB_PROPERTIES) {
+            actionHandler.getDbProperties(session, msgPacket);
+        } else if (action == ActionType.HTTP_ATTACHMENT_FILE) {
+            actionHandler.attachment(session, msgPacket);
         } else {
             System.err.println("UnSupport Method " + action);
         }

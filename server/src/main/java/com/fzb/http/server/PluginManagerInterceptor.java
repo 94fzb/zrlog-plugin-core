@@ -1,8 +1,10 @@
 package com.fzb.http.server;
 
+import com.fzb.common.util.RunConstants;
 import com.fzb.http.kit.LoggerUtil;
 import com.fzb.http.kit.PathKit;
 import com.fzb.http.mimetype.MimeTypeUtil;
+import com.fzb.zrlog.plugin.type.RunType;
 
 import java.io.File;
 import java.io.InputStream;
@@ -19,6 +21,9 @@ public class PluginManagerInterceptor implements Interceptor {
 
     public boolean doInterceptor(HttpRequest request, HttpResponse response) {
         boolean isLogin = Boolean.valueOf(request.getHeader("IsLogin"));
+        if (RunConstants.runType == RunType.DEV) {
+            isLogin = true;
+        }
         request.getAttr().put("isLogin", isLogin);
         boolean next;
         if (request.getUri().contains(".")) {

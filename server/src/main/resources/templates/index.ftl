@@ -19,6 +19,7 @@
     <script src="assets/js/ace-extra.min.js"></script>
 
     <script src="assets/js/jquery.gritter.min.js"></script>
+    <script src="js/plugin.js"></script>
 </head>
 
 <body>
@@ -93,8 +94,8 @@
                                                 <i class="icon-zoom-in bigger-120"></i>
                                             </button>
                                         </a>
-                                        <a href="${plugin.shortName}/stop">
-                                            <button class="btn btn-xs btn-danger">
+                                        <a>
+                                            <button class="btn btn-xs btn-danger stop" name="${plugin.shortName}">
                                                 <i class="icon-stop bigger-120"></i>
                                             </button>
                                         </a>
@@ -147,8 +148,8 @@
                                 </td>
                                 <td>
                                     <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                                        <a href="${plugin.shortName}/stop">
-                                            <button class="btn btn-xs btn-danger">
+                                        <a>
+                                            <button class="btn btn-xs btn-danger stop" name="${plugin.shortName}">
                                                 <i class="icon-stop bigger-120"></i>
                                             </button>
                                         </a>
@@ -232,5 +233,6 @@
         <button class="btn btn-info"><i class="icon-download"></i>下载</button>
     </a>
 </div>
+<input id="gritter-light" checked="" type="checkbox" class="ace ace-switch ace-switch-5" />
 </body>
 </html>

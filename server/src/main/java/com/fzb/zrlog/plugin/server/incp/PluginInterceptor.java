@@ -1,5 +1,6 @@
 package com.fzb.zrlog.plugin.server.incp;
 
+import com.fzb.common.util.IOUtil;
 import com.fzb.common.util.RunConstants;
 import com.fzb.http.kit.LoggerUtil;
 import com.fzb.http.mimetype.MimeTypeUtil;
@@ -8,15 +9,14 @@ import com.fzb.http.server.HttpResponse;
 import com.fzb.http.server.Interceptor;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.common.IdUtil;
-import com.fzb.zrlog.plugin.data.codec.ContentType;
-import com.fzb.zrlog.plugin.data.codec.HttpRequestInfo;
-import com.fzb.zrlog.plugin.data.codec.MsgPacket;
-import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
+import com.fzb.zrlog.plugin.data.codec.*;
+import com.fzb.zrlog.plugin.data.codec.convert.FileConvertMsgBody;
 import com.fzb.zrlog.plugin.server.DataMap;
 import com.fzb.zrlog.plugin.server.HttpMsgUtil;
 import com.fzb.zrlog.plugin.type.ActionType;
 import com.fzb.zrlog.plugin.type.RunType;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -68,15 +68,21 @@ public class PluginInterceptor implements Interceptor {
                 int id = IdUtil.getInt();
                 session.sendJsonMsg(msgBody, actionType.name(), id, MsgPacketStatus.SEND_REQUEST);
                 MsgPacket responseMsgPacket = session.getResponseMsgPacketByMsgId(id);
-                String ext = fileExt;
-                if (responseMsgPacket.getContentType() == ContentType.JSON) {
-                    ext = "json";
-                } else if (responseMsgPacket.getContentType() == ContentType.HTML) {
-                    ext = "html";
+                if (responseMsgPacket.getMethodStr().equals(ActionType.HTTP_ATTACHMENT_FILE.name())) {
+                    InputStream in = session.getPipeInByMsgId(id);
+                    File file = new FileConvertMsgBody().toFile(IOUtil.getByteByInputStream(in));
+                    httpResponse.renderFile(file);
+                } else {
+                    String ext = fileExt;
+                    if (responseMsgPacket.getContentType() == ContentType.JSON) {
+                        ext = "json";
+                    } else if (responseMsgPacket.getContentType() == ContentType.HTML) {
+                        ext = "html";
+                    }
+                    InputStream in = session.getPipeInByMsgId(id);
+                    httpResponse.addHeader("Content-Type", MimeTypeUtil.getMimeStrByExt(ext));
+                    httpResponse.write(in, 200);
                 }
-                InputStream in = session.getPipeInByMsgId(id);
-                httpResponse.addHeader("Content-Type", MimeTypeUtil.getMimeStrByExt(ext));
-                httpResponse.write(in, 200);
             } else {
                 httpResponse.renderCode(404);
             }

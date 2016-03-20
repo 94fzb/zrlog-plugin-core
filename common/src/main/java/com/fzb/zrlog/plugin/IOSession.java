@@ -85,22 +85,8 @@ public class IOSession {
         sendMsg(ContentType.JSON, data, method, id, status, callBack);
     }
 
-    public void sendFileMsg(File file, String method, int id, MsgPacketStatus status) {
-        FileInfo fileInfo = new FileInfo();
-        try {
-            byte[] fileBytes = IOUtil.getByteByInputStream(new FileInputStream(file));
-            FileDesc fileDesc = new FileDesc();
-            fileDesc.setFileName(file.getName());
-            fileDesc.setFilePath(file.getParent());
-            fileInfo.setFileDesc(fileDesc);
-
-            fileInfo.setDataLength(fileBytes.length);
-            fileInfo.setFileBytes(fileBytes);
-            fileInfo.setMd5sum(Md5Util.MD5(fileBytes));
-        } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "fileInputStream error");
-        }
-        sendMsg(ContentType.FILE, FileConvertMsgBody.toByteArr(fileInfo), method, id, status, null);
+    public void sendFileMsg(File file, int id, MsgPacketStatus status) {
+        sendMsg(ContentType.FILE, file, ActionType.HTTP_ATTACHMENT_FILE.name(), id, status, null);
     }
 
     public int requestService(String name, Map map, IMsgPacketCallBack msgPacketCallBack) {

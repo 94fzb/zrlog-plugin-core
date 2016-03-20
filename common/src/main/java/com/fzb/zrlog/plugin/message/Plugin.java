@@ -7,6 +7,7 @@ import java.util.*;
  */
 public class Plugin {
 
+    private String id;
     private String version;
     private String name;
     private Set<String> paths = new LinkedHashSet<>();
@@ -16,6 +17,7 @@ public class Plugin {
     private String shortName;
     private String indexPage;
     private Set<String> services = new LinkedHashSet<>();
+    private Set<String> dependentService = new LinkedHashSet<>();
 
     public String getVersion() {
         return version;
@@ -87,5 +89,21 @@ public class Plugin {
 
     public void setServices(Set<String> services) {
         this.services = services;
+    }
+
+    public Set<String> getDependentService() {
+        return dependentService;
+    }
+
+    public void setDependentService(Set<String> dependentService) {
+        this.dependentService = dependentService;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

@@ -1,6 +1,7 @@
 package com.fzb.zrlog.plugin.client;
 
 import com.fzb.zrlog.plugin.IOSession;
+import com.fzb.zrlog.plugin.api.IConnectHandler;
 import com.fzb.zrlog.plugin.api.IPluginAction;
 import com.fzb.zrlog.plugin.api.IPluginService;
 import com.fzb.zrlog.plugin.api.Service;
@@ -23,6 +24,14 @@ import java.util.*;
 
 public class NioClient {
 
+    private IConnectHandler connectHandler;
+
+    public NioClient() {
+    }
+
+    public NioClient(IConnectHandler connectHandler) {
+        this.connectHandler = connectHandler;
+    }
 
     public void connectServerByProperties(String[] args, List<Class> classList, String propertiesPath,
                                           Class<? extends IPluginAction> pluginAction) throws IOException {
@@ -48,8 +57,8 @@ public class NioClient {
         plugin.setVersion(properties.getProperty("version", ""));
         plugin.setName(properties.getProperty("name", ""));
         plugin.setDesc(properties.getProperty("desc", ""));
-        if (properties.get("services") != null) {
-            plugin.setServices(new LinkedHashSet<>(Arrays.asList(properties.get("services").toString().split(","))));
+        if (properties.get("dependentService") != null) {
+            plugin.setDependentService(new LinkedHashSet<>(Arrays.asList(properties.get("dependentService").toString().split(","))));
         }
         if (properties.get("paths") != null) {
             plugin.setPaths(new LinkedHashSet<>(Arrays.asList(properties.get("paths").toString().split(","))));
@@ -74,6 +83,9 @@ public class NioClient {
         int serverPort = ConfigKit.getServerPort();
         if (args != null && args.length > 0) {
             serverPort = Integer.valueOf(args[0]);
+        }
+        if (args != null && args.length > 1) {
+            plugin.setId(args[1]);
         }
         InetSocketAddress serverAddress = new InetSocketAddress("127.0.0.1", serverPort);
         connectServer(serverAddress, classList, plugin, pluginAction, serviceList);
@@ -106,6 +118,9 @@ public class NioClient {
                         session.getAttr().put("_actionClassList", classList);
                         session.getAttr().put("_pluginClass", pluginAction);
                         session.getAttr().put("_pluginServices", serviceList);
+                        if (connectHandler != null) {
+                            session.getAttr().put("_connectHandle", connectHandler);
+                        }
                         session.sendJsonMsg(plugin, ActionType.INIT_CONNECT.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST);
                     } else if (selectionKey.isReadable()) {
                         SocketDecode decode = new SocketDecode();

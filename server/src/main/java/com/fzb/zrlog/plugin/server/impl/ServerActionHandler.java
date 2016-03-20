@@ -13,6 +13,7 @@ import com.fzb.zrlog.plugin.data.codec.MsgPacket;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.message.Plugin;
 import com.fzb.zrlog.plugin.server.DataMap;
+import com.fzb.zrlog.plugin.server.PluginStatus;
 import com.fzb.zrlog.plugin.server.dao.WebSiteDAO;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
@@ -75,12 +76,7 @@ public class ServerActionHandler implements IActionHandler {
         Map<String, Object> map = new HashMap<>();
         map.put("runType", RunConstants.runType);
         session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
-        StringBuilder stringBuilder = new StringBuilder();
-        // save to file
-        for (Plugin plugin1 : DataMap.getPluginInfoMap().values()) {
-            stringBuilder.append(new JSONSerializer().serialize(plugin1));
-        }
-        IOUtil.writeBytesToFile(stringBuilder.toString().getBytes(), new File(PathKit.getRootPath() + "/plugin.json"));
+        DataMap.getPluginStatusMap().put(plugin.getShortName(), PluginStatus.START);
     }
 
     @Override
@@ -197,6 +193,18 @@ public class ServerActionHandler implements IActionHandler {
 
     @Override
     public void plugin(IOSession session, MsgPacket msgPacket) {
+
+    }
+
+    @Override
+    public void getDbProperties(IOSession session, MsgPacket msgPacket) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("dbProperties", DataMap.getDbProperties().toString());
+        session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
+    }
+
+    @Override
+    public void attachment(IOSession session, MsgPacket msgPacket) {
 
     }
 }
