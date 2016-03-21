@@ -3,11 +3,11 @@ package com.fzb.zrlog.plugin.server;
 import com.fzb.common.dao.impl.DAO;
 import com.fzb.common.util.IOUtil;
 import com.fzb.common.util.RunConstants;
-import com.fzb.http.kit.ConfigKit;
 import com.fzb.http.server.WebServerBuilder;
 import com.fzb.http.server.impl.ServerConfig;
 import com.fzb.zrlog.plugin.server.config.HttpServerConfig;
 import com.fzb.zrlog.plugin.server.impl.NioServer;
+import com.fzb.zrlog.plugin.type.RunType;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import java.beans.PropertyVetoException;
@@ -33,6 +33,8 @@ public class Start {
             File tmpFile = File.createTempFile("blog-db", ".properties");
             dbProperties = tmpFile.toString();
             IOUtil.writeBytesToFile(IOUtil.getByteByInputStream(Start.class.getResourceAsStream("/db.properties")), tmpFile);
+        } else {
+            RunConstants.runType = RunType.BLOG;
         }
         //load Db
         initDb(dbProperties);

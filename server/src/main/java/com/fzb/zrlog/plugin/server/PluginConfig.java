@@ -13,7 +13,7 @@ import java.util.Map;
 public class PluginConfig {
 
     private static Logger LOGGER = Logger.getLogger(PluginConfig.class);
-    private static Map<String, Process> processMap = new HashMap<String, Process>();
+    private static Map<String, Process> processMap = new HashMap<>();
 
     public static void loadJarPlugin(File pluginBasePath, final int serverPort) {
         try {
@@ -65,7 +65,7 @@ public class PluginConfig {
                 String str;
                 try {
                     while ((str = br.readLine()) != null) {
-                        System.out.println("P " + pluginName + "  - " + str);
+                        System.out.println("PPP: " + pluginName + "  - " + str);
                     }
                 } catch (IOException e) {
                     LOGGER.error("plugin output error", e);

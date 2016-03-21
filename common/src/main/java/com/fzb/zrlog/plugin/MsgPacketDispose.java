@@ -33,6 +33,8 @@ public class MsgPacketDispose {
             actionHandler.getDbProperties(session, msgPacket);
         } else if (action == ActionType.HTTP_ATTACHMENT_FILE) {
             actionHandler.attachment(session, msgPacket);
+        } else if (action == ActionType.LOAD_PUBLIC_INFO) {
+            actionHandler.loadPublicInfo(session, msgPacket);
         } else {
             System.err.println("UnSupport Method " + action);
         }

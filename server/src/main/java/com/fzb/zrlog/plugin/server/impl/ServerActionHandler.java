@@ -9,6 +9,7 @@ import com.fzb.zrlog.plugin.IMsgPacketCallBack;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.api.IActionHandler;
 import com.fzb.zrlog.plugin.common.modle.Comment;
+import com.fzb.zrlog.plugin.common.modle.PublicInfo;
 import com.fzb.zrlog.plugin.data.codec.MsgPacket;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.message.Plugin;
@@ -29,7 +30,7 @@ import java.util.logging.Logger;
 
 public class ServerActionHandler implements IActionHandler {
 
-    private static Logger LOGGER = LoggerUtil.getLogger(MsgPacketDispose.class);
+    private static Logger LOGGER = LoggerUtil.getLogger(ServerActionHandler.class);
 
     @Override
     public void service(final IOSession session, final MsgPacket msgPacket) {
@@ -206,5 +207,25 @@ public class ServerActionHandler implements IActionHandler {
     @Override
     public void attachment(IOSession session, MsgPacket msgPacket) {
 
+    }
+
+    @Override
+    public void loadPublicInfo(IOSession session, MsgPacket msgPacket) {
+        String[] keys = "title,second_title,home".split(",");
+        try {
+            Map<String, String> response = new HashMap();
+            for (String key : keys) {
+                String str = (String) new WebSiteDAO().set("name", key).queryFirst("value");
+                response.put(key, str);
+            }
+            // convert to publicInfo
+            PublicInfo publicInfo = new PublicInfo();
+            publicInfo.setHomeUrl(response.get("home"));
+            publicInfo.setTitle(response.get("title"));
+            publicInfo.setSecondTitle(response.get("second_title"));
+            session.sendJsonMsg(publicInfo, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

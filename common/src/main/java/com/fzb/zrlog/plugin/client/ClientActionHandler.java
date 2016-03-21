@@ -151,4 +151,9 @@ public class ClientActionHandler implements IActionHandler {
     public void attachment(IOSession session, MsgPacket msgPacket) {
 
     }
+
+    @Override
+    public void loadPublicInfo(IOSession session, MsgPacket msgPacket) {
+
+    }
 }

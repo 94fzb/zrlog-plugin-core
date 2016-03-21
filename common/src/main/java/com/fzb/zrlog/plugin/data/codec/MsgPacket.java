@@ -1,6 +1,7 @@
 package com.fzb.zrlog.plugin.data.codec;
 
 import com.fzb.zrlog.plugin.data.codec.convert.*;
+import flexjson.JSONDeserializer;
 
 import java.nio.ByteBuffer;
 
@@ -107,6 +108,10 @@ public class MsgPacket {
 
     public void setStatus(MsgPacketStatus status) {
         this.status = status;
+    }
+
+    public <T> T convertToClass(Class<T> clazz) {
+        return new JSONDeserializer<T>().deserialize(getDataStr());
     }
 
     @Override
