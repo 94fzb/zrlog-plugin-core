@@ -40,7 +40,7 @@
                             <mainClass>com.fzb.zrlog.plugin.server.Start</mainClass>
                         </manifest>
                     </archive>
-                    <finalName>zrlog-plugin-core</finalName>
+                    <finalName>plugin-core</finalName>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
