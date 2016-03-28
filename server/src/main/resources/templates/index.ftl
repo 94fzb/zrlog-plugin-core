@@ -73,7 +73,7 @@
                                 <td>${plugin.desc }</td>
                                 <td>${plugin.version }</td>
                                 <td>
-                                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                    <div class="visible-md visible-lg btn-group">
                                         <a href="${plugin.shortName}/">
                                             <button class="btn btn-xs btn-primary">
                                                 <i class="icon-zoom-in bigger-120"></i>
@@ -83,7 +83,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                    <div class="visible-md visible-lg btn-group">
                                         <a href="${plugin.shortName}/install">
                                             <button class="btn btn-xs btn-success">
                                                 <i class="icon-ok bigger-120"></i>
@@ -137,7 +137,7 @@
                                 <td>${plugin.desc }</td>
                                 <td>${plugin.version }</td>
                                 <td>
-                                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                    <div class="visible-md visible-lg btn-group">
                                         <a href="${plugin.shortName}/">
                                             <button class="btn btn-xs btn-primary">
                                                 <i class="icon-zoom-in bigger-120"></i>
@@ -147,7 +147,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                    <div class="visible-md visible-lg btn-group">
                                         <a>
                                             <button class="btn btn-xs btn-danger stop" name="${plugin.shortName}">
                                                 <i class="icon-stop bigger-120"></i>
@@ -191,7 +191,7 @@
                                 <td>${plugin.desc }</td>
                                 <td>${plugin.version }</td>
                                 <td>
-                                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                    <div class="visible-md visible-lg btn-group">
                                         <a href="${plugin.shortName}/">
                                             <button class="btn btn-xs btn-primary">
                                                 <i class="icon-zoom-in bigger-120"></i>
@@ -201,7 +201,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                    <div class="visible-md visible-lg btn-group">
                                         <a href="${plugin.shortName}/install">
                                             <button class="btn btn-xs btn-success">
                                                 <i class="icon-ok bigger-120"></i>

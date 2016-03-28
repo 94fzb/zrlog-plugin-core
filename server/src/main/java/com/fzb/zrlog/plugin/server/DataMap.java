@@ -33,7 +33,7 @@ public class DataMap {
     private static Map<String, Plugin> pluginInfoMap = new ConcurrentSkipListMap<>();
     private static Map<String, PluginStatus> pluginStatusMap = new ConcurrentHashMap<>();
     private static File dbProperties;
-    private static File file = new File(PathKit.getRootPath() + "/plugin.json");
+    private static File file = new File(PathKit.getRootPath() + "/plugin.txt");
     private static Map<String, PluginStatus> filePluginStatusMap = new ConcurrentHashMap<>();
     private static Map<String, File> pluginFileMap = new ConcurrentHashMap<>();
     private static String SPLIT_FLAG = "!!!!";
