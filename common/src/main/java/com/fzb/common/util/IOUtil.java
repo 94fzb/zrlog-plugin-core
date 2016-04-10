@@ -26,7 +26,7 @@ public class IOUtil {
         return bout.toByteArray();
     }
 
-    public static final String getStringInputStream(InputStream in) {
+    public static String getStringInputStream(InputStream in) {
         return new String(getByteByInputStream(in));
     }
 
@@ -109,12 +109,11 @@ public class IOUtil {
             FileOutputStream out = new FileOutputStream(tag);
             // 小于1M(大小根据自己的情况而定)的文件直接一次性写入。
             byte[] b = new byte[1024];
-            int length = 0; // 出来cnt次后 文件 跳出循环
+            int length; // 出来cnt次后 文件 跳出循环
             while ((length = in.read(b)) != -1) {
                 out.write(b, 0, length);
             }
             in.read(b);
-            out.write(b);
             // 一定要记得关闭流额。 不然其他程序那个文件无法进行操作
             in.close();
             out.close();
