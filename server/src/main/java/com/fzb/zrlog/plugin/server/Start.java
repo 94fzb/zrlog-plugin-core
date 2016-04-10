@@ -20,6 +20,8 @@ import java.util.Properties;
 public class Start {
 
     public static Integer MASTER_PORT = 0;
+    private static String PLUGIN_BASE_PATH;
+
 
     public static void main(String[] args) throws IOException {
         if (args != null && args.length > 0) {
@@ -47,6 +49,8 @@ public class Start {
     }
 
     private static void loadPluginServer(String pluginPath, Integer masterPort) {
+        new File(PLUGIN_BASE_PATH).mkdir();
+        PLUGIN_BASE_PATH = pluginPath;
         ISocketServer socketServer = new NioServer(pluginPath, masterPort);
         socketServer.create();
         socketServer.listener();
@@ -75,5 +79,9 @@ public class Start {
             e.printStackTrace();
         }
         DAO.setDs(dataSource);
+    }
+
+    public static String getPluginBasePath() {
+        return PLUGIN_BASE_PATH;
     }
 }
