@@ -29,11 +29,11 @@ public class PluginConfig {
                                     startPlugin(file, serverPort);
                                 }
                             }
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                        }
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
                     }
                 }
@@ -84,9 +84,10 @@ public class PluginConfig {
                     str = br.readLine();
                     if ("PERROR".equals(pr) && str.startsWith("Error: Invalid or corrupt jarfile")) {
                         processMap.remove(pluginName);
-                    }
-                    while ((str = br.readLine()) != null) {
-                        System.out.println("[" + pr + "]" + ": " + pluginName + " - " + str);
+                    } else {
+                        while ((str = br.readLine()) != null) {
+                            System.out.println("[" + pr + "]" + ": " + pluginName + " - " + str);
+                        }
                     }
                 } catch (IOException e) {
                     LOGGER.error("plugin output error", e);

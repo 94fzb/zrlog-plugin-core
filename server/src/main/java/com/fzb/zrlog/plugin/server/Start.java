@@ -49,8 +49,8 @@ public class Start {
     }
 
     private static void loadPluginServer(String pluginPath, Integer masterPort) {
-        new File(PLUGIN_BASE_PATH).mkdir();
         PLUGIN_BASE_PATH = pluginPath;
+        new File(PLUGIN_BASE_PATH).mkdir();
         ISocketServer socketServer = new NioServer(pluginPath, masterPort);
         socketServer.create();
         socketServer.listener();

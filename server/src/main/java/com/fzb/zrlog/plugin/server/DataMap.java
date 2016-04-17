@@ -11,10 +11,12 @@ import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -42,7 +44,7 @@ public class DataMap {
         if (file.exists()) {
             List<String> plugins;
             try {
-                plugins = Files.readAllLines(Paths.get(file.toURI()));
+		plugins = Arrays.asList(IOUtil.getStringInputStream(new FileInputStream(file)).split("\n")); 
                 for (String plugin : plugins) {
                     String pluginArr[] = plugin.split(SPLIT_FLAG);
                     Plugin p = new JSONDeserializer<Plugin>().deserialize(pluginArr[0]);
@@ -75,7 +77,7 @@ public class DataMap {
                     file.delete();
                     IOUtil.writeBytesToFile(stringBuilder.toString().getBytes(), file);
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(10000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

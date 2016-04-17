@@ -39,7 +39,11 @@ public class HttpFileHandle extends HttpHandle<File> {
             }
         }
         if (getT() == null) {
-            setT(new File(filePath + path.substring(path.lastIndexOf("/")) + "." + randomFile()));
+            if (path.contains(".")) {
+                setT(new File(filePath + path.substring(path.lastIndexOf("/"))));
+            } else {
+                setT(new File(filePath + path.substring(path.lastIndexOf("/")) + "." + randomFile()));
+            }
         }
         FileOutputStream fin;
         try {
