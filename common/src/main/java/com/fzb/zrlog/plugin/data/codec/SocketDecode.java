@@ -5,6 +5,7 @@ import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.concurrent.ExecutorService;
@@ -42,7 +43,10 @@ public class SocketDecode {
             if (packet.getDataLength() == -1) {
                 //read header
                 if (header.hasRemaining()) {
-                    channel.read(header);
+                    int length = channel.read(header);
+                    if (length == -1) {
+                        throw new IOException("connect closed");
+                    }
                     if (header.hasRemaining()) {
                         return false;
                     }

@@ -7,6 +7,8 @@
     <modules>
         <module>common</module>
         <module>server</module>
+        <module>freemarker-render</module>
+        <module>jtwig-render</module>
     </modules>
     <groupId>com.fzb.zrlog.plugin</groupId>
     <version>1.0-SNAPSHOT</version>

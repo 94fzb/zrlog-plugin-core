@@ -1,16 +1,17 @@
 package com.fzb.zrlog.plugin;
 
-import com.fzb.common.util.IOUtil;
-import com.fzb.common.util.Md5Util;
 import com.fzb.zrlog.plugin.api.IActionHandler;
 import com.fzb.zrlog.plugin.common.IdUtil;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.data.codec.*;
-import com.fzb.zrlog.plugin.data.codec.convert.FileConvertMsgBody;
 import com.fzb.zrlog.plugin.message.Plugin;
+import com.fzb.zrlog.plugin.render.IRenderHandler;
 import com.fzb.zrlog.plugin.type.ActionType;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.nio.channels.Channel;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
@@ -32,6 +33,17 @@ public class IOSession {
     private Plugin plugin;
     private AtomicInteger msgIds = new AtomicInteger();
     private MsgPacketDispose msgPacketDispose = new MsgPacketDispose();
+    private IRenderHandler renderHandler;
+
+    public IOSession(SocketChannel channel, Selector selector, SocketCodec socketCodec, IActionHandler actionHandler, IRenderHandler renderHandler) {
+        systemAttr.put("_channel", channel);
+        systemAttr.put("_selector", selector);
+        systemAttr.put("_decode", socketCodec.getSocketDecode());
+        systemAttr.put("_encode", socketCodec.getSocketEncode());
+        systemAttr.put("_actionHandler", actionHandler);
+        this.actionHandler = actionHandler;
+        this.renderHandler = renderHandler;
+    }
 
     public IOSession(SocketChannel channel, Selector selector, SocketCodec socketCodec, IActionHandler actionHandler) {
         systemAttr.put("_channel", channel);
@@ -83,6 +95,22 @@ public class IOSession {
 
     public void sendJsonMsg(Object data, String method, int id, MsgPacketStatus status, IMsgPacketCallBack callBack) {
         sendMsg(ContentType.JSON, data, method, id, status, callBack);
+    }
+
+    public void responseHtml(String templatePath, Map dataMap, String method, int id, IMsgPacketCallBack callBack) {
+        if (renderHandler != null) {
+            sendMsg(ContentType.HTML, renderHandler.render(templatePath, getPlugin(), dataMap), method, id, MsgPacketStatus.RESPONSE_SUCCESS, callBack);
+        } else {
+            LOGGER.warning("not found render");
+        }
+    }
+
+    public void responseHtml(String templatePath, Map dataMap, String method, int id) {
+        if (renderHandler != null) {
+            sendMsg(ContentType.HTML, renderHandler.render(templatePath, getPlugin(), dataMap), method, id, MsgPacketStatus.RESPONSE_SUCCESS, null);
+        } else {
+            LOGGER.warning("not found render");
+        }
     }
 
     public void sendFileMsg(File file, int id, MsgPacketStatus status) {

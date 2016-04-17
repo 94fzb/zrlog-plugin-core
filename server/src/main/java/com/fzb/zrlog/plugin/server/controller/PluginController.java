@@ -16,6 +16,7 @@ import com.fzb.zrlog.plugin.message.Plugin;
 import com.fzb.zrlog.plugin.server.*;
 import com.fzb.zrlog.plugin.type.ActionType;
 
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,21 +54,34 @@ public class PluginController extends Controller {
         /*getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_STOP.name()));*/
         /*getResponse().addHeader("Content-Type", "text/html");
         getResponse().write(getSession().getPipeInByMsgId(id));*/
-        getSession().close();
-        DataMap.getPluginStatusMap().put(getSession().getPlugin().getShortName(), PluginStatus.STOP);
         Map<String, Object> map = new HashMap<>();
-        map.put("code", 0);
-        map.put("message", "停止成功");
+        if (getSession() != null) {
+            String pluginName = getSession().getPlugin().getShortName();
+            getSession().close();
+            DataMap.getPluginMap().remove(pluginName);
+            DataMap.getPluginStatusMap().put(pluginName, PluginStatus.STOP);
+            map.put("code", 0);
+            map.put("message", "停止成功");
+        } else {
+            map.put("code", 1);
+            map.put("message", "插件没有启动");
+        }
         getResponse().renderJson(map);
+
     }
 
     public void start() {
-        String pluginName = getRequest().getParaToStr("name");
-        PluginConfig.startPlugin(DataMap.getPluginFileMap().get(pluginName), Start.MASTER_PORT);
-        int id = IdUtil.getInt();
-        getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_START.name()));
-        getResponse().addHeader("Content-Type", "text/html");
-        getResponse().write(getSession().getPipeInByMsgId(id));
+        if (getSession() != null) {
+            request.getAttr().put("message", "插件已经在运行了");
+            response.renderHtmlStr(FreeMarkerKit.renderToFM(PluginController.class.getResourceAsStream("/templates/message.ftl"), getRequest()));
+        } else {
+            String pluginName = getRequest().getParaToStr("name");
+            PluginConfig.startPlugin(DataMap.getPluginFileMap().get(pluginName), Start.MASTER_PORT);
+            int id = IdUtil.getInt();
+            getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_START.name()));
+            getResponse().addHeader("Content-Type", "text/html");
+            getResponse().write(getSession().getPipeInByMsgId(id));
+        }
     }
 
     /**
@@ -95,7 +109,11 @@ public class PluginController extends Controller {
      */
     public void center() {
         String fullUrl = request.getHeader("Full-Url");
-        request.getAttr().put("from", fullUrl.substring(0, fullUrl.lastIndexOf("/")));
+        if (fullUrl == null) {
+            request.getAttr().put("from", request.getScheme() + "://" + request.getHeader("Host"));
+        } else {
+            request.getAttr().put("from", fullUrl.substring(0, fullUrl.lastIndexOf("/")));
+        }
         response.renderHtmlStr(FreeMarkerKit.renderToFM(PluginController.class.getResourceAsStream("/templates/center.ftl"), getRequest()));
     }
 

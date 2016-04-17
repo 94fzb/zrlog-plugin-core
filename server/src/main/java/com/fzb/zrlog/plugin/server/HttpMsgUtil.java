@@ -1,7 +1,9 @@
 package com.fzb.zrlog.plugin.server;
 
+import com.fzb.common.util.RunConstants;
 import com.fzb.http.server.HttpRequest;
 import com.fzb.zrlog.plugin.data.codec.HttpRequestInfo;
+import com.fzb.zrlog.plugin.type.RunType;
 
 public class HttpMsgUtil {
 
@@ -16,6 +18,11 @@ public class HttpMsgUtil {
             msgBody.setUserId(Integer.valueOf(request.getHeader("LoginUserId")));
         }
         msgBody.setVersion(request.getHeader("Blog-Version"));
+        if (RunConstants.runType == RunType.DEV) {
+            msgBody.setFullUrl(request.getScheme() + "://" + request.getHeader("Host") + request.getUri());
+            msgBody.setUserName("LOC_DEV");
+            msgBody.setUserId(1);
+        }
         return msgBody;
     }
 }

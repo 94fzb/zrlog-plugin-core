@@ -22,7 +22,6 @@ public class Start {
     public static Integer MASTER_PORT = 0;
     private static String PLUGIN_BASE_PATH;
 
-
     public static void main(String[] args) throws IOException {
         if (args != null && args.length > 0) {
             System.out.println("args = " + Arrays.toString(args));

@@ -44,14 +44,16 @@ public class DataMap {
         if (file.exists()) {
             List<String> plugins;
             try {
-		plugins = Arrays.asList(IOUtil.getStringInputStream(new FileInputStream(file)).split("\n")); 
+                plugins = Arrays.asList(IOUtil.getStringInputStream(new FileInputStream(file)).split("\n"));
                 for (String plugin : plugins) {
                     String pluginArr[] = plugin.split(SPLIT_FLAG);
-                    Plugin p = new JSONDeserializer<Plugin>().deserialize(pluginArr[0]);
-                    DataMap.getPluginInfoMap().put(p.getShortName(), p);
-                    pluginStatusMap.put(p.getShortName(), PluginStatus.valueOf(pluginArr[1]));
-                    filePluginStatusMap.put(pluginArr[2], PluginStatus.valueOf(pluginArr[1]));
-                    pluginFileMap.put(p.getShortName(), new File(pluginArr[2]));
+                    if (pluginArr.length > 2) {
+                        Plugin p = new JSONDeserializer<Plugin>().deserialize(pluginArr[0]);
+                        DataMap.getPluginInfoMap().put(p.getShortName(), p);
+                        pluginStatusMap.put(p.getShortName(), PluginStatus.valueOf(pluginArr[1]));
+                        filePluginStatusMap.put(pluginArr[2], PluginStatus.valueOf(pluginArr[1]));
+                        pluginFileMap.put(p.getShortName(), new File(pluginArr[2]));
+                    }
                 }
             } catch (IOException e) {
                 LOGGER.error(e);

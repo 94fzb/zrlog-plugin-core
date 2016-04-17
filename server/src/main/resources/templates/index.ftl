@@ -59,7 +59,7 @@
                             <th>简介</th>
                             <th>版本</th>
                             <th>查看</th>
-                            <th>安装/启动|停止/卸载</th>
+                            <th>设置/启动|停止/卸载</th>
                         </tr>
                         </thead>
 
@@ -75,7 +75,7 @@
                                 <td>
                                     <div class="btn-group">
                                         <a href="${plugin.shortName}/">
-                                            <button class="btn btn-xs btn-primary">
+                                            <button class="btn btn-xs btn-light">
                                                 <i class="icon-zoom-in bigger-120"></i>
                                             </button>
                                         </a>
@@ -85,13 +85,13 @@
                                 <td>
                                     <div class="btn-group">
                                         <a href="${plugin.shortName}/install">
-                                            <button class="btn btn-xs btn-success">
-                                                <i class="icon-ok bigger-120"></i>
+                                            <button class="btn btn-xs btn-gray">
+                                                <i class="icon-cogs bigger-120"></i>
                                             </button>
                                         </a>
                                         <a href="${plugin.shortName}/start">
                                             <button class="btn btn-xs btn-primary">
-                                                <i class="icon-zoom-in bigger-120"></i>
+                                                <i class="icon-play bigger-120"></i>
                                             </button>
                                         </a>
                                         <a>
@@ -139,7 +139,7 @@
                                 <td>
                                     <div class="btn-group">
                                         <a href="${plugin.shortName}/">
-                                            <button class="btn btn-xs btn-primary">
+                                            <button class="btn btn-xs btn-light">
                                                 <i class="icon-zoom-in bigger-120"></i>
                                             </button>
                                         </a>
@@ -176,8 +176,7 @@
                             <th>作者</th>
                             <th>简介</th>
                             <th>版本</th>
-                            <th>查看</th>
-                            <th>安装/启动/卸载</th>
+                            <th>设置/启动/卸载</th>
                         </tr>
                         </thead>
 
@@ -190,26 +189,17 @@
                                 <td class="hidden-480">${plugin.author }</td>
                                 <td>${plugin.desc }</td>
                                 <td>${plugin.version }</td>
-                                <td>
-                                    <div class="btn-group">
-                                        <a href="${plugin.shortName}/">
-                                            <button class="btn btn-xs btn-primary">
-                                                <i class="icon-zoom-in bigger-120"></i>
-                                            </button>
-                                        </a>
 
-                                    </div>
-                                </td>
                                 <td>
                                     <div class="btn-group">
                                         <a href="${plugin.shortName}/install">
-                                            <button class="btn btn-xs btn-success">
-                                                <i class="icon-ok bigger-120"></i>
+                                            <button class="btn btn-xs btn-gray">
+                                                <i class="icon-cogs bigger-120"></i>
                                             </button>
                                         </a>
                                         <a href="${plugin.shortName}/start">
                                             <button class="btn btn-xs btn-primary">
-                                                <i class="icon-zoom-in bigger-120"></i>
+                                                <i class="icon-play bigger-120"></i>
                                             </button>
                                         </a>
                                         <a href="${plugin.shortName}/uninstall">

@@ -15,3 +15,5 @@
 *.*~
 *.log
 server/plugin.json
+server/plugin.txt
+.attach_pid*

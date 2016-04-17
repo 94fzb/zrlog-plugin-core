@@ -12,6 +12,7 @@ import com.fzb.zrlog.plugin.data.codec.SocketCodec;
 import com.fzb.zrlog.plugin.data.codec.SocketDecode;
 import com.fzb.zrlog.plugin.data.codec.SocketEncode;
 import com.fzb.zrlog.plugin.message.Plugin;
+import com.fzb.zrlog.plugin.render.IRenderHandler;
 import com.fzb.zrlog.plugin.type.ActionType;
 
 import java.io.IOException;
@@ -25,12 +26,14 @@ import java.util.*;
 public class NioClient {
 
     private IConnectHandler connectHandler;
+    private IRenderHandler renderHandler;
 
     public NioClient() {
     }
 
-    public NioClient(IConnectHandler connectHandler) {
+    public NioClient(IConnectHandler connectHandler, IRenderHandler renderHandler) {
         this.connectHandler = connectHandler;
+        this.renderHandler = renderHandler;
     }
 
     public void connectServerByProperties(String[] args, List<Class> classList, String propertiesPath,
@@ -113,7 +116,7 @@ public class NioClient {
                         if (channel.isConnectionPending()) {
                             channel.finishConnect();
                         }
-                        session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode()), new ClientActionHandler());
+                        session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode()), new ClientActionHandler(), renderHandler);
                         session.setPlugin(plugin);
                         session.getAttr().put("_actionClassList", classList);
                         session.getAttr().put("_pluginClass", pluginAction);

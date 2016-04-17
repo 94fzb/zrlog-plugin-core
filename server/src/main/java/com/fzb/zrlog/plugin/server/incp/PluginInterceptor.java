@@ -47,6 +47,7 @@ public class PluginInterceptor implements Interceptor {
                 return false;
             }
 
+
             ActionType actionType = ActionType.HTTP_FILE;
             //Full Blog System ENV
             HttpRequestInfo msgBody = HttpMsgUtil.genInfo(httpRequest);

@@ -22,18 +22,23 @@ public class PluginConfig {
                 @Override
                 public void run() {
                     while (true) {
-                        File[] files = pluginBasePath.listFiles();
-                        if (files != null && files.length > 0) {
-                            for (File file : files) {
-                                if (file.getName().endsWith(".jar")) {
-                                    startPlugin(file, serverPort);
-                                }
-                            }
-                        }
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
+                        }
+                        File[] files = pluginBasePath.listFiles();
+                        if (files != null && files.length > 0) {
+                            for (File file : files) {
+                                if (file.getName().endsWith(".jar")) {
+                                    if (DataMap.getFilePluginStatusMap().get(file.toString()) == null) {
+                                        startPlugin(file, serverPort);
+                                    }
+                                    if (DataMap.getFilePluginStatusMap().get(file.toString()) != PluginStatus.STOP) {
+                                        startPlugin(file, serverPort);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -49,19 +54,10 @@ public class PluginConfig {
         new Thread() {
             @Override
             public void run() {
-                if (DataMap.getFilePluginStatusMap().get(file.toString()) == null) {
-                    go(file, serverPort);
-                }
-                if (DataMap.getFilePluginStatusMap().get(file.toString()) != PluginStatus.STOP) {
-                    go(file, serverPort);
-                }
-            }
-
-            public void go(File file, int serverPort) {
                 String pluginName = file.getName().replace(".jar", "");
                 if (!processMap.containsKey(pluginName)) {
                     LOGGER.info("run plugin " + pluginName);
-                    Process pr = CmdUtil.getProcess("java -Xms4m -Xmx16m -jar " + file.toString() + " " + serverPort + " " + file.toString());
+                    Process pr = CmdUtil.getProcess("java -Dfile.encoding=UTF-8 -Xms4m -Xmx16m -jar " + file.toString() + " " + serverPort + " " + file.toString());
                     if (pr != null) {
                         processMap.put(pluginName, pr);
                         printInputStreamWithThread(pr.getInputStream(), pluginName, "PINFO");
@@ -70,7 +66,12 @@ public class PluginConfig {
                 }
             }
         }.start();
-
+        try {
+            // 等待链接初始化完成
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 

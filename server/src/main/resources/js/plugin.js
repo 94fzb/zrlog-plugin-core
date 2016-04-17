@@ -8,7 +8,7 @@ $(function(){
 				});
 			}else{
 				$.gritter.add({
-					title: '  发生了一些异常...',
+					title: e.message,
 					class_name: 'gritter-error' + (!$('#gritter-light').get(0).checked ? ' gritter-light' : ''),
 				});
 			}
