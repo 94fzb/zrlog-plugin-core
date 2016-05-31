@@ -1,23 +1,39 @@
 package com.fzb.zrlog.plugin.render;
 
 import com.fzb.common.util.IOUtil;
+import com.fzb.common.util.RunConstants;
+import com.fzb.zrlog.plugin.common.LoggerUtil;
+import com.fzb.zrlog.plugin.common.PathKit;
 import com.fzb.zrlog.plugin.message.Plugin;
+import com.fzb.zrlog.plugin.type.RunType;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
+import java.io.*;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FreeMarkerRenderHandler implements IRenderHandler {
 
     private static Configuration cfg = new Configuration(Configuration.VERSION_2_3_0);
+    private static String devEnvPath = PathKit.getRootPath() + "/src/main/resources";
+    private static Logger LOGGER = LoggerUtil.getLogger(FreeMarkerRenderHandler.class);
 
     @Override
     public String render(String templatePath, Plugin plugin, Map<String, Object> map) {
-        return render(FreeMarkerRenderHandler.class.getResourceAsStream(templatePath), plugin, map);
+        InputStream inputStream;
+        if (RunConstants.runType == RunType.DEV && new File(devEnvPath + templatePath).exists()) {
+            try {
+                inputStream = new FileInputStream(devEnvPath + templatePath);
+            } catch (FileNotFoundException e) {
+                LOGGER.log(Level.SEVERE, "not found file ", e);
+                return LoggerUtil.recordStackTraceMsg(e);
+            }
+        } else {
+            inputStream = FreeMarkerRenderHandler.class.getResourceAsStream(templatePath);
+        }
+        return render(inputStream, plugin, map);
     }
 
     @Override

@@ -70,7 +70,7 @@ public class Start {
         try {
             Properties properties = new Properties();
             properties.load(new FileInputStream(dbProperties));
-            dataSource.setJdbcUrl(properties.get("jdbcUrl").toString());
+            dataSource.setJdbcUrl(properties.get("jdbcUrl").toString() + "&autoReconnect=true");
             dataSource.setPassword(properties.get("password").toString());
             dataSource.setDriverClass(properties.get("driverClass").toString());
             dataSource.setUser(properties.get("user").toString());

@@ -75,6 +75,10 @@ public class PluginConfig {
     }
 
 
+    public static void closeProcess(String pluginName) {
+        processMap.remove(pluginName);
+    }
+
     private static void printInputStreamWithThread(final InputStream in, final String pluginName, final String pr) {
         new Thread() {
             @Override

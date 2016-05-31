@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <title> 插件管理 </title>
+    <title> 插件管理 - V${pluginVersion} </title>
     <link href="assets/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="assets/css/font-awesome.min.css"/>
 
@@ -19,7 +19,7 @@
     <script src="assets/js/ace-extra.min.js"></script>
 
     <script src="assets/js/jquery.gritter.min.js"></script>
-    <script src="js/plugin.js"></script>
+    <script src="assets/js/plugin.js"></script>
 </head>
 
 <body>
@@ -29,9 +29,10 @@
             插件
             <small>
                 <i class="icon-double-angle-right"></i>
-                管理插件
+                管理插件 (v${pluginVersion})
             </small>
         </h1>
+
     </div>
     <!-- /.page-header -->
 

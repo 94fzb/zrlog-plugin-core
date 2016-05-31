@@ -7,6 +7,7 @@ import com.fzb.http.kit.FreeMarkerKit;
 import com.fzb.http.kit.LoggerUtil;
 import com.fzb.http.server.Controller;
 import com.fzb.zrlog.plugin.IOSession;
+import com.fzb.zrlog.plugin.common.ConfigKit;
 import com.fzb.zrlog.plugin.common.IdUtil;
 import com.fzb.zrlog.plugin.data.codec.ContentType;
 import com.fzb.zrlog.plugin.data.codec.HttpRequestInfo;
@@ -16,7 +17,6 @@ import com.fzb.zrlog.plugin.message.Plugin;
 import com.fzb.zrlog.plugin.server.*;
 import com.fzb.zrlog.plugin.type.ActionType;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +60,8 @@ public class PluginController extends Controller {
             getSession().close();
             DataMap.getPluginMap().remove(pluginName);
             DataMap.getPluginStatusMap().put(pluginName, PluginStatus.STOP);
+            DataMap.getFilePluginStatusMap().put(DataMap.getPluginFileMap().get(pluginName).toString(), PluginStatus.STOP);
+            PluginConfig.closeProcess(pluginName);
             map.put("code", 0);
             map.put("message", "停止成功");
         } else {
@@ -80,7 +82,7 @@ public class PluginController extends Controller {
             int id = IdUtil.getInt();
             getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_START.name()));
             getResponse().addHeader("Content-Type", "text/html");
-            getResponse().write(getSession().getPipeInByMsgId(id));
+            getResponse().write(getSession().getPipeInByMsgId(id), 200);
         }
     }
 
@@ -101,6 +103,7 @@ public class PluginController extends Controller {
         }
         getRequest().getAttr().put("usedPlugins", usedPlugins);
         getRequest().getAttr().put("unusedPlugins", unusedPlugins);
+        getRequest().getAttr().put("pluginVersion", ConfigKit.get("plugin.version", ""));
         response.renderHtmlStr(FreeMarkerKit.renderToFM(PluginController.class.getResourceAsStream("/templates/index.ftl"), getRequest()));
     }
 
