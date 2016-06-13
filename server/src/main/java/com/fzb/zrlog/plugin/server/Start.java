@@ -72,6 +72,10 @@ public class Start {
             properties.load(new FileInputStream(dbProperties));
             dataSource.setJdbcUrl(properties.get("jdbcUrl").toString() + "&autoReconnect=true");
             dataSource.setMaxIdleTime(20);
+            dataSource.setAcquireIncrement(2);
+            dataSource.setInitialPoolSize(10);
+            dataSource.setMaxPoolSize(100);
+            dataSource.setMinPoolSize(10);
             dataSource.setPassword(properties.get("password").toString());
             dataSource.setDriverClass(properties.get("driverClass").toString());
             dataSource.setUser(properties.get("user").toString());
@@ -80,6 +84,7 @@ public class Start {
         }
         DAO.setDs(dataSource);
     }
+
 
     public static String getPluginBasePath() {
         return PLUGIN_BASE_PATH;
