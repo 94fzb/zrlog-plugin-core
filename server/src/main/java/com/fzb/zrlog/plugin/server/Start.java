@@ -71,6 +71,7 @@ public class Start {
             Properties properties = new Properties();
             properties.load(new FileInputStream(dbProperties));
             dataSource.setJdbcUrl(properties.get("jdbcUrl").toString() + "&autoReconnect=true");
+            dataSource.setMaxIdleTime(20);
             dataSource.setPassword(properties.get("password").toString());
             dataSource.setDriverClass(properties.get("driverClass").toString());
             dataSource.setUser(properties.get("user").toString());
