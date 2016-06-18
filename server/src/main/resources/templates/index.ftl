@@ -8,18 +8,35 @@
 
     <link rel="stylesheet" href="assets/css/ace.min.css"/>
     <link rel="stylesheet" href="assets/css/ace-rtl.min.css"/>
+    <link rel="stylesheet" href="assets/css/ace-rtl.min.css"/>
     <link rel="stylesheet" href="assets/css/ace-skins.min.css"/>
     <link rel="stylesheet" href="assets/css/jquery.gritter.css"/>
+    <style>
+        .modal-setting {
+        width:800px;
+        }
+    </style>
 
     <script src="assets/js/jquery-2.0.3.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/typeahead-bs2.min.js"></script>
-    <script src="assets/js/ace-elements.min.js"></script>
     <script src="assets/js/ace.min.js"></script>
     <script src="assets/js/ace-extra.min.js"></script>
 
     <script src="assets/js/jquery.gritter.min.js"></script>
+    <script src="assets/js/eModal.min.js"></script>
     <script src="assets/js/plugin.js"></script>
+    <script>
+        $(function(){
+            $("#ace-settings-btn").click(function(){
+                var options = {
+                    "url":"setting",
+                    "title":"插件服务配置",
+                    "size":"setting"
+                }
+                eModal.iframe(options);
+            });
+        })
+    </script>
 </head>
 
 <body>
@@ -32,7 +49,11 @@
                 管理插件 (v${pluginVersion})
             </small>
         </h1>
-
+        <div id="ace-settings-container" class="ace-settings-container">
+            <div id="ace-settings-btn" class="btn btn-app btn-xs btn-warning ace-settings-btn">
+                <i class="icon-cog bigger-150"></i>
+            </div>
+        </div>
     </div>
     <!-- /.page-header -->
 
@@ -100,8 +121,8 @@
                                                 <i class="icon-stop bigger-120"></i>
                                             </button>
                                         </a>
-                                        <a href="${plugin.shortName}/uninstall">
-                                            <button class="btn btn-xs btn-danger">
+                                        <a>
+                                            <button class="btn btn-xs btn-danger uninstall" name="${plugin.shortName}">
                                                 <i class="icon-trash bigger-120"></i>
                                             </button>
                                         </a>
@@ -154,8 +175,8 @@
                                                 <i class="icon-stop bigger-120"></i>
                                             </button>
                                         </a>
-                                        <a href="${plugin.shortName}/uninstall">
-                                            <button class="btn btn-xs btn-danger">
+                                        <a>
+                                            <button class="btn btn-xs btn-danger uninstall" name="${plugin.shortName}">
                                                 <i class="icon-trash bigger-120"></i>
                                             </button>
                                         </a>
@@ -203,8 +224,8 @@
                                                 <i class="icon-play bigger-120"></i>
                                             </button>
                                         </a>
-                                        <a href="${plugin.shortName}/uninstall">
-                                            <button class="btn btn-xs btn-danger">
+                                        <a>
+                                            <button class="btn btn-xs btn-danger uninstall" name="${plugin.shortName}">
                                                 <i class="icon-trash bigger-120"></i>
                                             </button>
                                         </a>
@@ -224,6 +245,6 @@
         <button class="btn btn-info"><i class="icon-download"></i>下载</button>
     </a>
 </div>
-<input id="gritter-light" checked="" type="checkbox" class="ace ace-switch ace-switch-5" />
+<input id="gritter-light" checked="" type="checkbox" class="ace ace-switch ace-switch-5"/>
 </body>
 </html>

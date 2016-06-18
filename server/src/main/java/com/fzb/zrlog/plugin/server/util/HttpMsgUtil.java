@@ -1,4 +1,4 @@
-package com.fzb.zrlog.plugin.server;
+package com.fzb.zrlog.plugin.server.util;
 
 import com.fzb.common.util.RunConstants;
 import com.fzb.http.server.HttpRequest;

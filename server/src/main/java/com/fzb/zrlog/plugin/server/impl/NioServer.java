@@ -5,8 +5,9 @@ import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.data.codec.SocketCodec;
 import com.fzb.zrlog.plugin.data.codec.SocketDecode;
 import com.fzb.zrlog.plugin.data.codec.SocketEncode;
-import com.fzb.zrlog.plugin.server.ISocketServer;
-import com.fzb.zrlog.plugin.server.PluginConfig;
+import com.fzb.net.socket.ISocketServer;
+import com.fzb.zrlog.plugin.server.config.PluginConfig;
+import com.fzb.zrlog.plugin.server.util.PluginUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,12 +31,8 @@ public class NioServer implements ISocketServer {
 
     private Selector selector;
     private Map<Socket, IOSession> decoderMap = new ConcurrentHashMap<>();
-    private String pluginPath;
-    private Integer serverPort;
 
-    public NioServer(String pluginPath, Integer serverPort) {
-        this.pluginPath = pluginPath;
-        this.serverPort = serverPort;
+    public NioServer() {
     }
 
     @Override
@@ -88,13 +83,13 @@ public class NioServer implements ISocketServer {
     public void create() {
         try {
             ServerSocketChannel serverChannel = ServerSocketChannel.open();
-            serverChannel.socket().bind(new InetSocketAddress("127.0.0.1", serverPort));
+            serverChannel.socket().bind(new InetSocketAddress("127.0.0.1", PluginConfig.getInstance().getMasterPort()));
             serverChannel.configureBlocking(false);
             selector = Selector.open();
             serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-            LOGGER.info("plugin listening on port -> " + serverPort);
-            PluginConfig.loadJarPlugin(new File(pluginPath), serverPort);
+            LOGGER.info("plugin listening on port -> " + PluginConfig.getInstance().getMasterPort());
+            PluginUtil.loadJarPlugin();
             LOGGER.info("load jar files");
         } catch (Exception e) {
             e.printStackTrace();

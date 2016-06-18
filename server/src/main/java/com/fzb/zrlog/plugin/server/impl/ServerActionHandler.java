@@ -2,9 +2,7 @@ package com.fzb.zrlog.plugin.server.impl;
 
 import com.fzb.common.dao.impl.CommentDAO;
 import com.fzb.common.util.RunConstants;
-import com.fzb.http.kit.IOUtil;
 import com.fzb.http.kit.LoggerUtil;
-import com.fzb.http.kit.PathKit;
 import com.fzb.zrlog.plugin.IMsgPacketCallBack;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.api.IActionHandler;
@@ -13,18 +11,16 @@ import com.fzb.zrlog.plugin.common.modle.PublicInfo;
 import com.fzb.zrlog.plugin.data.codec.MsgPacket;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.message.Plugin;
-import com.fzb.zrlog.plugin.server.DataMap;
-import com.fzb.zrlog.plugin.server.PluginStatus;
+import com.fzb.zrlog.plugin.server.util.PluginUtil;
+import com.fzb.zrlog.plugin.server.config.PluginConfig;
+import com.fzb.zrlog.plugin.server.type.PluginStatus;
 import com.fzb.zrlog.plugin.server.dao.WebSiteDAO;
 import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
 
-import java.io.File;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,7 +33,7 @@ public class ServerActionHandler implements IActionHandler {
         if (msgPacket.getStatus() == MsgPacketStatus.SEND_REQUEST) {
             Map<String, Object> map = new JSONDeserializer<Map>().deserialize(msgPacket.getDataStr());
             String name = map.get("name").toString();
-            final IOSession serviceSession = DataMap.getServiceMap().get(name);
+            final IOSession serviceSession = PluginConfig.getInstance().getIOSessionByService(name);
             if (serviceSession != null) {
                 // 消息中转
                 serviceSession.requestService(name, map, new IMsgPacketCallBack() {
@@ -60,24 +56,10 @@ public class ServerActionHandler implements IActionHandler {
     public void initConnect(IOSession session, MsgPacket msgPacket) {
         Plugin plugin = new JSONDeserializer<Plugin>().deserialize(msgPacket.getDataStr());
         session.setPlugin(plugin);
-        DataMap.getPluginInfoMap().put(plugin.getShortName(), plugin);
-        DataMap.getPluginMap().put(plugin.getShortName(), session);
-        for (String serviceName : plugin.getServices()) {
-            if (DataMap.getServiceMap().containsKey(serviceName)) {
-                LOGGER.log(Level.WARNING, "exists service ", serviceName);
-            }
-            DataMap.getServiceMap().put(serviceName, session);
-        }
-        for (String actionName : plugin.getActions()) {
-            if (DataMap.getActionMap().containsKey(actionName)) {
-                LOGGER.log(Level.WARNING, "exists actionPath ", actionName);
-            }
-            DataMap.getServiceMap().put(actionName, session);
-        }
         Map<String, Object> map = new HashMap<>();
         map.put("runType", RunConstants.runType);
         session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
-        DataMap.getPluginStatusMap().put(plugin.getShortName(), PluginStatus.START);
+        PluginUtil.registerPlugin(session.getPlugin().getId(), PluginStatus.START, session);
     }
 
     @Override
@@ -107,16 +89,9 @@ public class ServerActionHandler implements IActionHandler {
         Map<String, Object> resultMap = new HashMap<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String key = session.getPlugin().getShortName() + "_" + entry.getKey();
-            Map<String, Object> cond = new HashMap();
-            cond.put("name", key);
             Map<String, Object> result = new HashMap<>();
             try {
-                Object object = new WebSiteDAO().set("name", key).queryFirst("value");
-                if (object != null) {
-                    result.put("result", new WebSiteDAO().set("value", entry.getValue()).update(cond));
-                } else {
-                    result.put("result", new WebSiteDAO().set("name", key).set("value", entry.getValue()).save());
-                }
+                result.put("result", new WebSiteDAO().saveOrUpdate(key, entry.getValue()));
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -128,9 +103,9 @@ public class ServerActionHandler implements IActionHandler {
     @Override
     public void httpMethod(final IOSession session, final MsgPacket msgPacket) {
         if (msgPacket.getStatus() == MsgPacketStatus.SEND_REQUEST) {
-            Map<String, Object> map = new JSONDeserializer<Map>().deserialize(msgPacket.getDataStr());
+            Map<String, Object> map = new JSONDeserializer<Map<String, Object>>().deserialize(msgPacket.getDataStr());
             String name = map.get("name").toString();
-            final IOSession serviceSession = DataMap.getServiceMap().get(name);
+            final IOSession serviceSession = PluginConfig.getInstance().getIOSessionByService(name);
             if (serviceSession != null) {
                 // 消息中转
                 serviceSession.requestService(name, map, new IMsgPacketCallBack() {
@@ -200,7 +175,7 @@ public class ServerActionHandler implements IActionHandler {
     @Override
     public void getDbProperties(IOSession session, MsgPacket msgPacket) {
         Map<String, Object> map = new HashMap<>();
-        map.put("dbProperties", DataMap.getDbProperties().toString());
+        map.put("dbProperties", PluginConfig.getInstance().getDbPropertiesFile().toString());
         session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
     }
 
