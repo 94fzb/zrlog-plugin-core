@@ -130,7 +130,7 @@ public class PluginController extends Controller {
             File file = new File(path + "/" + fileName);
             if (!file.exists()) {
                 String downloadUrl = getRequest().getParaToStr("host") + "/plugin/download?id=" + getRequest().getParaToInt("id");
-                PluginUtil.downloadPlugin(downloadUrl, fileName);
+                PluginUtil.downloadPlugin(fileName, downloadUrl);
                 getRequest().getAttr().put("message", "下载插件成功");
             } else {
                 getRequest().getAttr().put("message", "插件已经存在了");
