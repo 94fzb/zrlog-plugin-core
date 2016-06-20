@@ -47,7 +47,7 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <appendAssemblyId>false</appendAssemblyId>
-                    <outputDirectory>/home/xiaochun/git/deploy-script/workspace/zrlog/src/main/webapp/admin/plugins/</outputDirectory>
+                    <outputDirectory>/home/xiaochun/plugins/</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>

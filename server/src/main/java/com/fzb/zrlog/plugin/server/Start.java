@@ -9,6 +9,7 @@ import com.fzb.zrlog.plugin.common.ConfigKit;
 import com.fzb.zrlog.plugin.server.config.HttpServerConfig;
 import com.fzb.zrlog.plugin.server.config.PluginConfig;
 import com.fzb.zrlog.plugin.server.impl.NioServer;
+import com.fzb.zrlog.plugin.server.util.ListenWebServerThread;
 import com.fzb.zrlog.plugin.type.RunType;
 
 import java.io.File;
@@ -32,6 +33,10 @@ public class Start {
             IOUtil.writeBytesToFile(IOUtil.getByteByInputStream(Start.class.getResourceAsStream("/db.properties")), tmpFile);
         } else {
             RunConstants.runType = RunType.BLOG;
+            int port = (args.length > 4) ? Integer.valueOf(args[4]) : -1;
+            if (port > 0) {
+                new ListenWebServerThread(port).start();
+            }
         }
         loadHttpServer(serverPort);
         //load Db
