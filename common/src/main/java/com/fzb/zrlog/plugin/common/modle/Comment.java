@@ -12,6 +12,7 @@ public class Comment {
     private Date createdTime;
     private String content;
     private Long postId;
+    private String headPortrait;
 
     public String getHome() {
         return home;
@@ -75,5 +76,13 @@ public class Comment {
 
     public void setPostId(Long postId) {
         this.postId = postId;
+    }
+
+    public String getHeadPortrait() {
+        return headPortrait;
+    }
+
+    public void setHeadPortrait(String headPortrait) {
+        this.headPortrait = headPortrait;
     }
 }

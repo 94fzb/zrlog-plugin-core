@@ -11,7 +11,8 @@ public enum ActionType {
     SERVICE(1, "注册服务，调用其他服务"),
     ADD_COMMENT(1, "添加文章评论"), DELETE_COMMENT(1, "删除文章评论"),
     GET_DB_PROPERTIES(1, "读取程序数据库配置文件"),
-    HTTP_ATTACHMENT_FILE(0, "响应HTTP附件"), LOAD_PUBLIC_INFO(0, "读取程序公开信息");
+    HTTP_ATTACHMENT_FILE(0, "响应HTTP附件"), LOAD_PUBLIC_INFO(0, "读取程序公开信息"),
+    CURRENT_TEMPLATE(1, ""), BLOG_RUN_TIME(1, "");
 
     private int level;
     private String desc;

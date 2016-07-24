@@ -5,17 +5,22 @@
     <parent>
         <artifactId>core</artifactId>
         <groupId>com.fzb.zrlog.plugin</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>server</artifactId>
+    <version>1.3.1</version>
+
+    <properties>
+        <outputDirectory>/home/xiaochun/plugins/</outputDirectory>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.fzb.zrlog.plugin</groupId>
             <artifactId>common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.3</version>
         </dependency>
         <dependency>
             <groupId>com.fzb</groupId>
@@ -58,5 +63,35 @@
             <version>1.2.17</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/**</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.5</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.fzb.zrlog.plugin.server.Start</mainClass>
+                        </manifest>
+                    </archive>
+                    <finalName>plugin-core</finalName>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <outputDirectory>${outputDirectory}</outputDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

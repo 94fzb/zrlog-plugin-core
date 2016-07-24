@@ -28,4 +28,8 @@ public interface IActionHandler {
     void attachment(final IOSession session, final MsgPacket msgPacket);
 
     void loadPublicInfo(final IOSession session, final MsgPacket msgPacket);
+
+    void getCurrentTemplate(final IOSession session, final MsgPacket msgPacket);
+
+    void getBlogRuntimePath(final IOSession session, final MsgPacket msgPacket);
 }

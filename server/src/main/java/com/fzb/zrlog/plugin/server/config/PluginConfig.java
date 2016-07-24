@@ -2,6 +2,7 @@ package com.fzb.zrlog.plugin.server.config;
 
 import com.fzb.common.dao.impl.DAO;
 import com.fzb.zrlog.plugin.IOSession;
+import com.fzb.zrlog.plugin.common.modle.BlogRunTime;
 import com.fzb.zrlog.plugin.server.dao.WebSiteDAO;
 import com.fzb.zrlog.plugin.type.RunType;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
@@ -27,6 +28,7 @@ public class PluginConfig {
     private String pluginBasePath;
     private Map<String, IOSession> sessionMap = new HashMap<>();
     private PluginCore pluginCore;
+    private BlogRunTime blogRunTime;
 
     private PluginConfig() {
     }
@@ -35,11 +37,12 @@ public class PluginConfig {
         return instance;
     }
 
-    public static void init(RunType _runType, File _dbPropertiesFile, int masterPort, String pluginBasePath) {
+    public static void init(RunType _runType, File _dbPropertiesFile, int masterPort, String pluginBasePath, BlogRunTime blogRunTime) {
         instance.runType = _runType;
         instance.dbPropertiesFile = _dbPropertiesFile;
         instance.masterPort = masterPort;
         instance.pluginBasePath = pluginBasePath;
+        instance.blogRunTime = blogRunTime;
         new File(pluginBasePath).mkdir();
         ComboPooledDataSource dataSource = new ComboPooledDataSource(false);
         try {
@@ -156,5 +159,9 @@ public class PluginConfig {
 
     public PluginCore getPluginCore() {
         return pluginCore;
+    }
+
+    public BlogRunTime getBlogRunTime() {
+        return blogRunTime;
     }
 }

@@ -145,11 +145,11 @@ public class PluginController extends Controller {
 
     public void uninstall() {
         IOSession session = getSession();
+        String pluginName = getRequest().getParaToStr("name");
         if (session != null) {
-            String pluginName = getRequest().getParaToStr("name");
             session.sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, IdUtil.getInt(), ActionType.PLUGIN_UNINSTALL.name()));
-            PluginUtil.deletePlugin(pluginName);
         }
+        PluginUtil.deletePlugin(pluginName);
         Map<String, Object> map = new HashMap<>();
         map.put("code", 0);
         map.put("message", "移除成功");

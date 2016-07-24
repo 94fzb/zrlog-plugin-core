@@ -98,9 +98,11 @@ public class PluginUtil {
         PluginVO pluginVO = PluginConfig.getInstance().getPluginVOByName(pluginName);
         String sessionId = pluginVO.getSessionId();
         IOSession session = PluginConfig.getInstance().getSessionMap().get(sessionId);
-        session.close();
+        if (session != null) {
+            session.close();
+            destroy(pluginName);
+        }
 
-        destroy(pluginName);
         if (RunConstants.runType != RunType.DEV) {
             new File(pluginVO.getFile()).delete();
         }

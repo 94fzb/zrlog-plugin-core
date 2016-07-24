@@ -35,6 +35,10 @@ public class MsgPacketDispose {
             actionHandler.attachment(session, msgPacket);
         } else if (action == ActionType.LOAD_PUBLIC_INFO) {
             actionHandler.loadPublicInfo(session, msgPacket);
+        } else if (action == ActionType.CURRENT_TEMPLATE) {
+            actionHandler.getCurrentTemplate(session, msgPacket);
+        } else if (action == ActionType.BLOG_RUN_TIME) {
+            actionHandler.getBlogRuntimePath(session, msgPacket);
         } else {
             System.err.println("UnSupport Method " + action);
         }

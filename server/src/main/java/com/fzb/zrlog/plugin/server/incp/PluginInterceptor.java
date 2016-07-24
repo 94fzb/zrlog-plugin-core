@@ -65,6 +65,8 @@ public class PluginInterceptor implements Interceptor {
                 String fileExt = httpRequest.getUri().substring(httpRequest.getUri().lastIndexOf(".") + 1);
                 int id = IdUtil.getInt();
                 session.sendJsonMsg(msgBody, actionType.name(), id, MsgPacketStatus.SEND_REQUEST);
+                session.getAttr().put("accessUrl", httpRequest.getHeader("AccessUrl"));
+                session.getAttr().put("cookie", httpRequest.getHeader("Cookie"));
                 MsgPacket responseMsgPacket = session.getResponseMsgPacketByMsgId(id);
                 if (responseMsgPacket.getMethodStr().equals(ActionType.HTTP_ATTACHMENT_FILE.name())) {
                     InputStream in = session.getPipeInByMsgId(id);

@@ -156,4 +156,14 @@ public class ClientActionHandler implements IActionHandler {
     public void loadPublicInfo(IOSession session, MsgPacket msgPacket) {
 
     }
+
+    @Override
+    public void getCurrentTemplate(IOSession session, MsgPacket msgPacket) {
+
+    }
+
+    @Override
+    public void getBlogRuntimePath(IOSession session, MsgPacket msgPacket) {
+
+    }
 }

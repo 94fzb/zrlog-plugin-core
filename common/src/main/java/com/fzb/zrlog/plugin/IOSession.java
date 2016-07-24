@@ -1,9 +1,11 @@
 package com.fzb.zrlog.plugin;
 
 import com.fzb.zrlog.plugin.api.IActionHandler;
+import com.fzb.zrlog.plugin.api.MessageResponseHandler;
 import com.fzb.zrlog.plugin.common.IdUtil;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.data.codec.*;
+import com.fzb.zrlog.plugin.data.codec.convert.JsonConvertMsgBody;
 import com.fzb.zrlog.plugin.message.Plugin;
 import com.fzb.zrlog.plugin.render.IRenderHandler;
 import com.fzb.zrlog.plugin.type.ActionType;
@@ -60,6 +62,22 @@ public class IOSession {
 
     public void setPlugin(Plugin plugin) {
         this.plugin = plugin;
+    }
+
+    public <T> T getResponseSync(ContentType contentType, Object data, ActionType actionType, Class<T> clazz) {
+        int msgId = IdUtil.getInt();
+        MsgPacketStatus status = MsgPacketStatus.SEND_REQUEST;
+        MsgPacket msgPacket = new MsgPacket(data, contentType, status, msgId, actionType.name());
+        sendMsg(msgPacket);
+        MsgPacket response = getResponseMsgPacketByMsgId(msgId);
+        if (response.getStatus() == MsgPacketStatus.RESPONSE_SUCCESS) {
+            if (response.getContentType() == ContentType.JSON) {
+                return new JsonConvertMsgBody().toObj(response.getData(), clazz);
+            }
+        } else {
+            throw new RuntimeException("some error");
+        }
+        throw new RuntimeException("unSupport response " + response.getContentType());
     }
 
     public void sendMsg(ContentType contentType, Object data, String methodStr, int msgId, MsgPacketStatus status, IMsgPacketCallBack callBack) {

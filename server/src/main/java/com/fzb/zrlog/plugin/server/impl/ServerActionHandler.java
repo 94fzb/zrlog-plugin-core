@@ -2,21 +2,27 @@ package com.fzb.zrlog.plugin.server.impl;
 
 import com.fzb.common.dao.impl.CommentDAO;
 import com.fzb.common.util.RunConstants;
+import com.fzb.common.util.http.HttpUtil;
+import com.fzb.common.util.http.handle.HttpStringHandle;
 import com.fzb.http.kit.LoggerUtil;
 import com.fzb.zrlog.plugin.IMsgPacketCallBack;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.api.IActionHandler;
 import com.fzb.zrlog.plugin.common.modle.Comment;
 import com.fzb.zrlog.plugin.common.modle.PublicInfo;
+import com.fzb.zrlog.plugin.common.modle.TemplatePath;
 import com.fzb.zrlog.plugin.data.codec.MsgPacket;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.message.Plugin;
-import com.fzb.zrlog.plugin.server.util.PluginUtil;
 import com.fzb.zrlog.plugin.server.config.PluginConfig;
-import com.fzb.zrlog.plugin.server.type.PluginStatus;
 import com.fzb.zrlog.plugin.server.dao.WebSiteDAO;
+import com.fzb.zrlog.plugin.server.type.PluginStatus;
+import com.fzb.zrlog.plugin.server.util.PluginUtil;
+import com.fzb.zrlog.plugin.type.ActionType;
+import com.fzb.zrlog.plugin.type.RunType;
 import flexjson.JSONDeserializer;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,6 +55,16 @@ public class ServerActionHandler implements IActionHandler {
                 response.put("status", 500);
                 session.sendJsonMsg(response, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_ERROR);
             }
+        }
+    }
+
+    private void refreshCache(String url, String cookie) {
+        Map<String, String> requestHeaders = new HashMap<>();
+        requestHeaders.put("Cookie", cookie);
+        try {
+            HttpUtil.sendGetRequest(url, new HttpStringHandle(), requestHeaders);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -86,6 +102,7 @@ public class ServerActionHandler implements IActionHandler {
     @Override
     public void setWebSite(IOSession session, MsgPacket msgPacket) {
         Map<String, Object> map = new JSONDeserializer<Map>().deserialize(msgPacket.getDataStr());
+
         Map<String, Object> resultMap = new HashMap<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             String key = session.getPlugin().getShortName() + "_" + entry.getKey();
@@ -97,7 +114,33 @@ public class ServerActionHandler implements IActionHandler {
             }
             resultMap.put(entry.getKey(), result);
         }
+        if (map.get("syncTemplate") != null) {
+            if ("on".equals(map.get("syncTemplate"))) {
+                String accessHost = (String) map.get("host");
+                String accessFolder = (String) map.get("folder");
+                if (accessHost != null && accessFolder != null) {
+                    accessHost = accessFolder + "/" + accessFolder;
+                }
+                if (accessHost != null) {
+                    try {
+                        new WebSiteDAO().saveOrUpdate("staticResourceHost", accessHost);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                try {
+                    new WebSiteDAO().saveOrUpdate("staticResourceHost", "");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         session.sendJsonMsg(resultMap, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
+        if (RunConstants.runType == RunType.BLOG) {
+            refreshCache(session.getAttr().get("accessUrl") + "/admin/cleanCache", session.getAttr().get("cookie").toString());
+
+        }
     }
 
     @Override
@@ -156,6 +199,7 @@ public class ServerActionHandler implements IActionHandler {
                     .set("userComment", comment.getContent())
                     .set("commTime", comment.getCreatedTime())
                     .set("td", new Date())
+                    .set("header", comment.getHeadPortrait())
                     .set("hide", 1).save();
 
             map.put("result", result);
@@ -202,5 +246,22 @@ public class ServerActionHandler implements IActionHandler {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void getCurrentTemplate(IOSession session, MsgPacket msgPacket) {
+        try {
+            String templatePath = (String) new WebSiteDAO().set("name", "template").queryFirst("value");
+            TemplatePath template = new TemplatePath();
+            template.setValue(templatePath);
+            session.sendJsonMsg(template, ActionType.CURRENT_TEMPLATE.name(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void getBlogRuntimePath(IOSession session, MsgPacket msgPacket) {
+        session.sendJsonMsg(PluginConfig.getInstance().getBlogRunTime(), ActionType.BLOG_RUN_TIME.name(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
     }
 }
