@@ -17,6 +17,9 @@
 
     <properties>
         <parent.version>1.3</parent.version>
+        <common.version>1.2</common.version>
+        <freemarker-render.version>1.0</freemarker-render.version>
+        <jtwig-render.version>1.0</jtwig-render.version>
     </properties>
 
     <build>
