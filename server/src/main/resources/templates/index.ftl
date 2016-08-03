@@ -35,12 +35,12 @@
 
 <body>
     <div class="page-header">
-        <h2>管理插件 (v${pluginVersion})
+        <h3>管理插件 (v${pluginVersion})
             <button id="settings-btn" class="btn btn-info" style="float:right">
                 <i class="icon-cog bigger-150"></i>
                 设置
             </button>
-        </h2>
+        </h3>
     </div>
     <!-- /.page-header -->
 
