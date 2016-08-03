@@ -6,9 +6,6 @@
     <link href="assets/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="assets/css/font-awesome.min.css"/>
 
-    <link rel="stylesheet" href="assets/css/ace.min.css"/>
-    <link rel="stylesheet" href="assets/css/ace-rtl.min.css"/>
-    <link rel="stylesheet" href="assets/css/ace-skins.min.css"/>
 </head>
 
 <body>

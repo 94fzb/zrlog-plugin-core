@@ -6,10 +6,6 @@
     <link href="assets/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="assets/css/font-awesome.min.css"/>
 
-    <link rel="stylesheet" href="assets/css/ace.min.css"/>
-    <link rel="stylesheet" href="assets/css/ace-rtl.min.css"/>
-    <link rel="stylesheet" href="assets/css/ace-rtl.min.css"/>
-    <link rel="stylesheet" href="assets/css/ace-skins.min.css"/>
     <link rel="stylesheet" href="assets/css/jquery.gritter.css"/>
     <style>
         .modal-setting {
@@ -19,15 +15,13 @@
 
     <script src="assets/js/jquery-2.0.3.min.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
-    <script src="assets/js/ace.min.js"></script>
-    <script src="assets/js/ace-extra.min.js"></script>
 
     <script src="assets/js/jquery.gritter.min.js"></script>
     <script src="assets/js/eModal.min.js"></script>
     <script src="assets/js/plugin.js"></script>
     <script>
         $(function(){
-            $("#ace-settings-btn").click(function(){
+            $("#settings-btn").click(function(){
                 var options = {
                     "url":"setting",
                     "title":"插件服务配置",
@@ -40,20 +34,13 @@
 </head>
 
 <body>
-<div class="main-container">
     <div class="page-header">
-        <h1>
-            插件
-            <small>
-                <i class="icon-double-angle-right"></i>
-                管理插件 (v${pluginVersion})
-            </small>
-        </h1>
-        <div id="ace-settings-container" class="ace-settings-container">
-            <div id="ace-settings-btn" class="btn btn-app btn-xs btn-warning ace-settings-btn">
+        <h2>管理插件 (v${pluginVersion})
+            <button id="settings-btn" class="btn btn-info" style="float:right">
                 <i class="icon-cog bigger-150"></i>
-            </div>
-        </div>
+                设置
+            </button>
+        </h2>
     </div>
     <!-- /.page-header -->
 
@@ -73,7 +60,7 @@
         <div class="tab-content">
             <div class="tab-pane active" id="all">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover" id="sample-table-1">
+                    <table class="table table-striped table-bordered table-hover">
                         <thead>
                         <tr>
                             <th class="hidden-480">名称</th>
@@ -137,7 +124,7 @@
             </div>
             <div class="tab-pane" id="used">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover" id="sample-table-1">
+                    <table class="table table-striped table-bordered table-hover">
                         <thead>
                         <tr>
                             <th class="hidden-480">名称</th>
@@ -191,7 +178,7 @@
             </div>
             <div class="tab-pane" id="unused">
                 <div class="table-responsive">
-                    <table class="table table-striped table-bordered table-hover" id="sample-table-1">
+                    <table class="table table-striped table-bordered table-hover">
                         <thead>
                         <tr>
                             <th class="hidden-480">名称</th>
@@ -244,7 +231,6 @@
     <a href="center">
         <button class="btn btn-info"><i class="icon-download"></i>下载</button>
     </a>
-</div>
-<input id="gritter-light" checked="" type="checkbox" class="ace ace-switch ace-switch-5"/>
+<input id="gritter-light" checked="" type="checkbox" style="display:none"/>
 </body>
 </html>
