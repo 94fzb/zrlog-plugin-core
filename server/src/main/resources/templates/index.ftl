@@ -33,7 +33,7 @@
     </script>
 </head>
 
-<body>
+<body style="background:#f7f7f7">
     <div class="page-header">
         <h3>管理插件 (v${pluginVersion})
             <button id="settings-btn" class="btn btn-info" style="float:right">

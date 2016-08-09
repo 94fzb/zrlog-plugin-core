@@ -14,8 +14,8 @@ import com.fzb.zrlog.plugin.data.codec.HttpRequestInfo;
 import com.fzb.zrlog.plugin.data.codec.MsgPacket;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.data.codec.convert.FileConvertMsgBody;
-import com.fzb.zrlog.plugin.server.util.HttpMsgUtil;
 import com.fzb.zrlog.plugin.server.config.PluginConfig;
+import com.fzb.zrlog.plugin.server.util.HttpMsgUtil;
 import com.fzb.zrlog.plugin.type.ActionType;
 import com.fzb.zrlog.plugin.type.RunType;
 
@@ -65,8 +65,16 @@ public class PluginInterceptor implements Interceptor {
                 String fileExt = httpRequest.getUri().substring(httpRequest.getUri().lastIndexOf(".") + 1);
                 int id = IdUtil.getInt();
                 session.sendJsonMsg(msgBody, actionType.name(), id, MsgPacketStatus.SEND_REQUEST);
-                session.getAttr().put("accessUrl", httpRequest.getHeader("AccessUrl"));
-                session.getAttr().put("cookie", httpRequest.getHeader("Cookie"));
+                String accessUrl = httpRequest.getHeader("AccessUrl");
+                String cookie = httpRequest.getHeader("Cookie");
+                if (accessUrl == null) {
+                    accessUrl = "";
+                }
+                if (cookie == null) {
+                    cookie = "";
+                }
+                session.getAttr().put("accessUrl", accessUrl);
+                session.getAttr().put("cookie", cookie);
                 MsgPacket responseMsgPacket = session.getResponseMsgPacketByMsgId(id);
                 if (responseMsgPacket.getMethodStr().equals(ActionType.HTTP_ATTACHMENT_FILE.name())) {
                     InputStream in = session.getPipeInByMsgId(id);

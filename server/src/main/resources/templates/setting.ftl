@@ -13,7 +13,7 @@
     <script src="assets/js/set_update.js"></script>
 </head>
 
-<body>
+<body style="background:#f7f7f7">
 <div class="rows" style="padding:30px;">
     <div class="col-xs-12">
         <form role="form" class="form-horizontal" checkBox="autoDownloadLostFile" id="ajaxotherMsg">

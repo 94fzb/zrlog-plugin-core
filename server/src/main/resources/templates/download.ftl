@@ -8,7 +8,7 @@
 
 </head>
 
-<body>
+<body style="background:#f7f7f7">
 <div class="main-container">
     <div class="alert alert-block alert-success">
         <p>
