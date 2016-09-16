@@ -4,7 +4,6 @@ import com.fzb.common.dao.impl.CommentDAO;
 import com.fzb.common.util.RunConstants;
 import com.fzb.common.util.http.HttpUtil;
 import com.fzb.common.util.http.handle.HttpStringHandle;
-import com.fzb.http.kit.LoggerUtil;
 import com.fzb.zrlog.plugin.IMsgPacketCallBack;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.api.IActionHandler;
@@ -20,6 +19,7 @@ import com.fzb.zrlog.plugin.server.type.PluginStatus;
 import com.fzb.zrlog.plugin.server.util.PluginUtil;
 import com.fzb.zrlog.plugin.type.ActionType;
 import com.fzb.zrlog.plugin.type.RunType;
+import com.hibegin.common.util.LoggerUtil;
 import flexjson.JSONDeserializer;
 
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package com.fzb.zrlog.plugin.server.util;
 
-import com.fzb.http.kit.IOUtil;
+import com.fzb.common.util.IOUtil;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;

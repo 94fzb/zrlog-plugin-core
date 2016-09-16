@@ -1,12 +1,13 @@
-package com.fzb.http.server;
+package com.hibegin.http.server.web;
 
 import com.fzb.common.util.RunConstants;
-import com.fzb.http.kit.LoggerUtil;
-import com.fzb.http.kit.PathKit;
-import com.fzb.http.mimetype.MimeTypeUtil;
+import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.type.RunType;
+import com.hibegin.http.server.api.HttpRequest;
+import com.hibegin.http.server.api.HttpResponse;
+import com.hibegin.http.server.api.Interceptor;
+import com.hibegin.http.server.util.MimeTypeUtil;
 
-import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

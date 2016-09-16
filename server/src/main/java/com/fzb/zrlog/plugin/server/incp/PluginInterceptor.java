@@ -2,13 +2,9 @@ package com.fzb.zrlog.plugin.server.incp;
 
 import com.fzb.common.util.IOUtil;
 import com.fzb.common.util.RunConstants;
-import com.fzb.http.kit.LoggerUtil;
-import com.fzb.http.mimetype.MimeTypeUtil;
-import com.fzb.http.server.HttpRequest;
-import com.fzb.http.server.HttpResponse;
-import com.fzb.http.server.Interceptor;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.common.IdUtil;
+import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.data.codec.ContentType;
 import com.fzb.zrlog.plugin.data.codec.HttpRequestInfo;
 import com.fzb.zrlog.plugin.data.codec.MsgPacket;
@@ -18,6 +14,10 @@ import com.fzb.zrlog.plugin.server.config.PluginConfig;
 import com.fzb.zrlog.plugin.server.util.HttpMsgUtil;
 import com.fzb.zrlog.plugin.type.ActionType;
 import com.fzb.zrlog.plugin.type.RunType;
+import com.hibegin.http.server.api.HttpRequest;
+import com.hibegin.http.server.api.HttpResponse;
+import com.hibegin.http.server.api.Interceptor;
+import com.hibegin.http.server.util.MimeTypeUtil;
 
 import java.io.File;
 import java.io.InputStream;

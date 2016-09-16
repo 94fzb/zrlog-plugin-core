@@ -1,18 +1,16 @@
 package com.fzb.zrlog.plugin.server.config;
 
-import com.fzb.http.server.PluginManagerInterceptor;
-import com.fzb.http.server.SimpleServerConfig;
-import com.fzb.http.server.impl.RequestConfig;
-import com.fzb.http.server.impl.ResponseConfig;
-import com.fzb.http.server.impl.ServerConfig;
 import com.fzb.zrlog.plugin.server.controller.PluginController;
-import com.fzb.zrlog.plugin.server.controller.SettingController;
 import com.fzb.zrlog.plugin.server.incp.PluginInterceptor;
+import com.hibegin.http.server.config.AbstractServerConfig;
+import com.hibegin.http.server.config.RequestConfig;
+import com.hibegin.http.server.config.ResponseConfig;
+import com.hibegin.http.server.config.ServerConfig;
+import com.hibegin.http.server.web.PluginManagerInterceptor;
 
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
-public class HttpServerConfig extends SimpleServerConfig {
+public class HttpServerConfig extends AbstractServerConfig {
     @Override
     public ServerConfig getServerConfig() {
         ServerConfig serverConfig = new ServerConfig();
