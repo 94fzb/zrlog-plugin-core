@@ -3,14 +3,10 @@ package com.fzb.zrlog.plugin.data.codec;
 import com.fzb.common.util.HexaConversionUtil;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.logging.Logger;
 
 public class SocketDecode {
@@ -20,7 +16,6 @@ public class SocketDecode {
     private MsgPacket packet;
     private ByteBuffer header = ByteBuffer.allocate(7);
     private ByteBuffer methodAndLengthAndContentType;
-    private static ExecutorService service = new ForkJoinPool();
 
     public SocketDecode() {
         packet = new MsgPacket();
@@ -80,12 +75,12 @@ public class SocketDecode {
             }
             if (flag) {
                 LOGGER.info("recv <<< " + session.getAttr().get("count") + " " + packet);
-                service.execute(new Thread() {
+                new Thread() {
                     @Override
                     public void run() {
                         session.dispose(packet);
                     }
-                });
+                }.start();
             }
         }
         return flag;
