@@ -36,6 +36,10 @@ public class PluginInterceptor implements Interceptor {
         if (httpRequest.getUri().contains("/")) {
             LOGGER.info("request uri " + httpRequest.getUri());
             String pluginName = httpRequest.getUri().substring(1);
+            if (!pluginName.contains("/")) {
+                httpResponse.renderCode(404);
+                return false;
+            }
             String path = pluginName.substring(pluginName.indexOf("/"));
             LOGGER.log(Level.INFO, "request path " + path);
             pluginName = pluginName.substring(0, pluginName.indexOf("/"));
