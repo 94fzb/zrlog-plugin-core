@@ -18,7 +18,7 @@ public class HttpServerConfig extends AbstractServerConfig {
         serverConfig.addInterceptor(PluginManagerInterceptor.class);
         serverConfig.addInterceptor(PluginInterceptor.class);
         serverConfig.getRouter().addMapper("", PluginController.class);
-        serverConfig.setExecutor(Executors.newFixedThreadPool(100));
+        serverConfig.setExecutor(Executors.newCachedThreadPool());
         return serverConfig;
     }
 
