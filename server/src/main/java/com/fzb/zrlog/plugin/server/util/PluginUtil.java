@@ -14,7 +14,10 @@ import com.fzb.zrlog.plugin.type.RunType;
 import org.apache.log4j.Logger;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.UUID;
 
 /**
  * Created by xiaochun on 2016/2/11.
@@ -49,8 +52,8 @@ public class PluginUtil {
                         Process pr = CmdUtil.getProcess("java " + ConfigKit.get("pluginJvmArgs", "") + " -jar " + file.toString() + " " + PluginConfig.getInstance().getMasterPort() + " " + uuid);
                         if (pr != null) {
                             processMap.put(uuid, pr);
-                            printInputStreamWithThread(pr.getInputStream(), pluginName, "PINFO", uuid);
-                            printInputStreamWithThread(pr.getErrorStream(), pluginName, "PERROR", uuid);
+                            printInputStreamWithThread(pr, pr.getInputStream(), pluginName, "PINFO", uuid);
+                            printInputStreamWithThread(pr, pr.getErrorStream(), pluginName, "PERROR", uuid);
                         }
                     }
                 }
@@ -123,7 +126,7 @@ public class PluginUtil {
         idFileMap.remove(sessionId);
     }
 
-    private static void printInputStreamWithThread(final InputStream in, final String pluginName, final String pr, final String uuid) {
+    private static void printInputStreamWithThread(final Process pr, final InputStream in, final String pluginName, final String printLevel, final String uuid) {
         new Thread() {
             @Override
             public void run() {
@@ -131,15 +134,22 @@ public class PluginUtil {
                 String str;
                 try {
                     str = br.readLine();
-                    if ("PERROR".equals(pr) && str.startsWith("Error: Invalid or corrupt jarfile")) {
+                    if ("PERROR".equals(printLevel) && str.startsWith("Error: Invalid or corrupt jarfile")) {
                         processMap.remove(uuid);
                     } else {
                         while ((str = br.readLine()) != null) {
-                            System.out.println("[" + pr + "]" + ": " + pluginName + " - " + str);
+                            System.out.println("[" + printLevel + "]" + ": " + pluginName + " - " + str);
                         }
                     }
                 } catch (IOException e) {
                     LOGGER.error("plugin output error", e);
+                } finally {
+                    try {
+                        in.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    pr.destroy();
                 }
             }
         }.start();
@@ -151,7 +161,7 @@ public class PluginUtil {
             @Override
             public void run() {
                 for (Map.Entry<String, Process> entry : processMap.entrySet()) {
-                    entry.getValue().destroyForcibly();
+                    entry.getValue().destroy();
                     LOGGER.info("close plugin " + " " + entry.getKey());
                 }
             }
