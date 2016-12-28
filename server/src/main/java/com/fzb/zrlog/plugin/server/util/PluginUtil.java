@@ -82,6 +82,8 @@ public class PluginUtil {
         pluginVO.setStatus(pluginStatus);
         pluginVO.setPlugin(session.getPlugin());
         pluginVO.setSessionId(id);
+        //先关闭以前的连接的插件
+        destroy(session.getPlugin().getShortName());
         PluginConfig.getInstance().getPluginInfoMap().put(session.getPlugin().getShortName(), pluginVO);
         PluginConfig.getInstance().getSessionMap().put(id, session);
     }
