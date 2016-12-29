@@ -117,6 +117,10 @@ public class PluginUtil {
     private static void destroy(String pluginName) {
         PluginVO pluginVO = PluginConfig.getInstance().getPluginVOByName(pluginName);
         String sessionId = pluginVO.getSessionId();
+        IOSession session = PluginConfig.getInstance().getSessionMap().get(sessionId);
+        if (session != null) {
+            session.close();
+        }
         //关闭进程
         if (RunConstants.runType != RunType.DEV) {
             Process process = processMap.get(sessionId);
