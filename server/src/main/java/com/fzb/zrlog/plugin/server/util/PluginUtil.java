@@ -120,7 +120,9 @@ public class PluginUtil {
         //关闭进程
         if (RunConstants.runType != RunType.DEV) {
             Process process = processMap.get(sessionId);
-            process.destroy();
+            if (process != null) {
+                process.destroy();
+            }
             processMap.remove(sessionId);
         }
         //移除相关映射
