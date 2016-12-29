@@ -116,22 +116,24 @@ public class PluginUtil {
 
     private static void destroy(String pluginName) {
         PluginVO pluginVO = PluginConfig.getInstance().getPluginVOByName(pluginName);
-        String sessionId = pluginVO.getSessionId();
-        IOSession session = PluginConfig.getInstance().getSessionMap().get(sessionId);
-        if (session != null) {
-            session.close();
-        }
-        //关闭进程
-        if (RunConstants.runType != RunType.DEV) {
-            Process process = processMap.get(sessionId);
-            if (process != null) {
-                process.destroy();
+        if (pluginVO != null) {
+            String sessionId = pluginVO.getSessionId();
+            IOSession session = PluginConfig.getInstance().getSessionMap().get(sessionId);
+            if (session != null) {
+                session.close();
             }
-            processMap.remove(sessionId);
+            //关闭进程
+            if (RunConstants.runType != RunType.DEV) {
+                Process process = processMap.get(sessionId);
+                if (process != null) {
+                    process.destroy();
+                }
+                processMap.remove(sessionId);
+            }
+            //移除相关映射
+            PluginConfig.getInstance().getSessionMap().remove(sessionId);
+            idFileMap.remove(sessionId);
         }
-        //移除相关映射
-        PluginConfig.getInstance().getSessionMap().remove(sessionId);
-        idFileMap.remove(sessionId);
     }
 
     private static void printInputStreamWithThread(final Process pr, final InputStream in, final String pluginName, final String printLevel, final String uuid) {
