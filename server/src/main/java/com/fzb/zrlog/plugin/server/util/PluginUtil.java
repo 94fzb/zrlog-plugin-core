@@ -170,12 +170,14 @@ public class PluginUtil {
         });
     }
 
-    public static void downloadPlugin(String fileName, String downloadUrl) throws IOException {
+    public static File downloadPlugin(String fileName, String downloadUrl) throws IOException {
         LOGGER.info("download plugin " + fileName);
-        HttpFileHandle fileHandle = (HttpFileHandle) HttpUtil.sendGetRequest(downloadUrl, new HttpFileHandle(PluginConfig.getInstance().getPluginBasePath()), new HashMap<String, String>());
-        String target = fileHandle.getT().getParent() + "/" + fileName;
+        String tempFolder = PluginConfig.getInstance().getPluginBasePath() + "/";
+        HttpFileHandle fileHandle = (HttpFileHandle) HttpUtil.sendGetRequest(downloadUrl, new HttpFileHandle(tempFolder), new HashMap<String, String>());
+        String target = PluginConfig.getInstance().getPluginBasePath() + "/" + fileName;
         if (!target.equals(fileHandle.getT().toString())) {
             IOUtil.moveOrCopyFile(fileHandle.getT().toString(), target, true);
         }
+        return new File(target);
     }
 }
