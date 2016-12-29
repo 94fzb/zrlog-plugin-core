@@ -172,7 +172,8 @@ public class PluginUtil {
 
     public static File downloadPlugin(String fileName, String downloadUrl) throws IOException {
         LOGGER.info("download plugin " + fileName);
-        String tempFolder = PluginConfig.getInstance().getPluginBasePath() + "/";
+        String tempFolder = PluginConfig.getInstance().getPluginBasePath() + "/tmp/";
+        new File(tempFolder).mkdirs();
         HttpFileHandle fileHandle = (HttpFileHandle) HttpUtil.sendGetRequest(downloadUrl, new HttpFileHandle(tempFolder), new HashMap<String, String>());
         String target = PluginConfig.getInstance().getPluginBasePath() + "/" + fileName;
         if (!target.equals(fileHandle.getT().toString())) {
