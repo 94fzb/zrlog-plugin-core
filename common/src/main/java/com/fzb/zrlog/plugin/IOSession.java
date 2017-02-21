@@ -1,7 +1,7 @@
 package com.fzb.zrlog.plugin;
 
+import com.fzb.common.util.IOUtil;
 import com.fzb.zrlog.plugin.api.IActionHandler;
-import com.fzb.zrlog.plugin.api.MessageResponseHandler;
 import com.fzb.zrlog.plugin.common.IdUtil;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.data.codec.*;
@@ -119,16 +119,12 @@ public class IOSession {
         if (renderHandler != null) {
             sendMsg(ContentType.HTML, renderHandler.render(templatePath, getPlugin(), dataMap), method, id, MsgPacketStatus.RESPONSE_SUCCESS, callBack);
         } else {
-            LOGGER.warning("not found render");
+            sendMsg(ContentType.HTML, IOUtil.getStringInputStream(IOSession.class.getResourceAsStream(templatePath)), method, id, MsgPacketStatus.RESPONSE_SUCCESS, callBack);
         }
     }
 
     public void responseHtml(String templatePath, Map dataMap, String method, int id) {
-        if (renderHandler != null) {
-            sendMsg(ContentType.HTML, renderHandler.render(templatePath, getPlugin(), dataMap), method, id, MsgPacketStatus.RESPONSE_SUCCESS, null);
-        } else {
-            LOGGER.warning("not found render");
-        }
+        responseHtml(templatePath, dataMap, method, id, null);
     }
 
     public void sendFileMsg(File file, int id, MsgPacketStatus status) {

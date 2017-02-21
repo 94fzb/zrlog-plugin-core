@@ -43,6 +43,7 @@ public class PluginInterceptor implements Interceptor {
             String path = pluginName.substring(pluginName.indexOf("/"));
             LOGGER.log(Level.INFO, "request path " + path);
             pluginName = pluginName.substring(0, pluginName.indexOf("/"));
+            LOGGER.log(Level.INFO, "plugin name" + pluginName);
             boolean isLogin = (boolean) httpRequest.getAttr().get("isLogin");
             final IOSession session = PluginConfig.getInstance().getIOSessionByPluginName(pluginName);
             if (!isLogin && RunConstants.runType != RunType.DEV && (session == null || !session.getPlugin().getPaths().contains(path))) {

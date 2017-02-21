@@ -16,7 +16,6 @@ import com.fzb.zrlog.plugin.server.config.PluginVO;
 import com.fzb.zrlog.plugin.server.type.PluginStatus;
 import com.fzb.zrlog.plugin.server.util.HttpMsgUtil;
 import com.fzb.zrlog.plugin.server.util.PluginUtil;
-import com.fzb.zrlog.plugin.server.util.ServerFreeMarkerReaderHandler;
 import com.fzb.zrlog.plugin.type.ActionType;
 import com.fzb.zrlog.plugin.type.RunType;
 import com.hibegin.http.server.web.Controller;
@@ -66,8 +65,7 @@ public class PluginController extends Controller {
 
     public void start() {
         if (getSession() != null) {
-            request.getAttr().put("message", "插件已经在运行了");
-            response.renderHtmlStr(new ServerFreeMarkerReaderHandler().render("/templates/message.ftl", getRequest()));
+            response.redirect(getBasePath().substring(0, getBasePath().lastIndexOf("/")) + "/static/plugin-is-start.html");
         } else {
             if (RunConstants.runType != RunType.DEV) {
                 String pluginName = getRequest().getParaToStr("name");
@@ -86,6 +84,10 @@ public class PluginController extends Controller {
      * 得到插件列表
      */
     public void index() {
+        response.redirect(getBasePath() + "/static/index.html");
+    }
+
+    public void plugins() {
         List<Plugin> usedPlugins = new ArrayList<>();
         List<Plugin> unusedPlugins = new ArrayList<>();
         List<Plugin> allPlugins = new ArrayList<>();
@@ -102,7 +104,7 @@ public class PluginController extends Controller {
         getRequest().getAttr().put("usedPlugins", usedPlugins);
         getRequest().getAttr().put("unusedPlugins", unusedPlugins);
         getRequest().getAttr().put("pluginVersion", ConfigKit.get("plugin.version", ""));
-        response.renderHtmlStr(new ServerFreeMarkerReaderHandler().render("/templates/index.ftl", getRequest()));
+        response.renderJson(getRequest().getAttr());
     }
 
     /**
@@ -110,12 +112,24 @@ public class PluginController extends Controller {
      */
     public void center() {
         String fullUrl = request.getHeader("Full-Url");
+        String from;
         if (fullUrl == null) {
-            request.getAttr().put("from", request.getScheme() + "://" + request.getHeader("Host"));
+            from = request.getScheme() + "://" + request.getHeader("Host");
         } else {
-            request.getAttr().put("from", fullUrl.substring(0, fullUrl.lastIndexOf("/")));
+            from = fullUrl.substring(0, fullUrl.lastIndexOf("/"));
         }
-        response.renderHtmlStr(new ServerFreeMarkerReaderHandler().render("/templates/center.ftl", getRequest()));
+        response.renderHtmlStr("<iframe src='https://store.zrlog.com/plugin/?from=" + from + "' scrolling='no' style='border: 0px' width='100%' height='1200px'></iframe>");
+    }
+
+    private String getBasePath() {
+        String fullUrl = request.getHeader("Full-Url");
+        String basePath;
+        if (fullUrl == null) {
+            basePath = request.getUrl().substring(0, request.getUrl().lastIndexOf("/"));
+        } else {
+            basePath = fullUrl.substring(0, fullUrl.lastIndexOf("/"));
+        }
+        return basePath;
     }
 
     /**
@@ -137,8 +151,8 @@ public class PluginController extends Controller {
             getRequest().getAttr().put("message", "发生一些错误");
             LOGGER.log(Level.FINER, "download error ", e);
         }
-        request.getAttr().put("pluginName", fileName.substring(0, fileName.indexOf(".")));
-        response.renderHtmlStr(new ServerFreeMarkerReaderHandler().render("/templates/download.ftl", getRequest()));
+        String pluginName = fileName.substring(0, fileName.indexOf("."));
+        response.redirect(getBasePath() + "/static/download.html?message=" + request.getAttr().get("message") + "&pluginName=" + pluginName);
     }
 
     public void uninstall() {
@@ -169,8 +183,7 @@ public class PluginController extends Controller {
     }
 
     public void setting() {
-        getRequest().getAttr().put("setting", PluginConfig.getInstance().getPluginCore().getSetting());
-        response.renderHtmlStr(new ServerFreeMarkerReaderHandler().render("/templates/setting.ftl", getRequest()));
+        response.renderJson(PluginConfig.getInstance().getPluginCore().getSetting());
     }
 
     public void settingUpdate() {

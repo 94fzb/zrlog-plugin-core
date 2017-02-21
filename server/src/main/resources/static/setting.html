@@ -12,12 +12,7 @@
     <script src="assets/js/jquery-2.0.3.min.js"></script>
     <script src="assets/js/jquery.gritter.min.js"></script>
     <script src="assets/js/bootstrap-switch.js"></script>
-    <script src="assets/js/set_update.js"></script>
-    <script>
-        $(function(){
-            $("[name='autoDownloadLostFile']").bootstrapSwitch();
-        })
-    </script>
+    <script src="assets/js/setting.js"></script>
 </head>
 
 <body style="background:#f7f7f7">
@@ -28,11 +23,8 @@
                 <label class="col-sm-3 control-label  no-padding-right">自动获取丢失的的插件</label>
 
                 <div class="col-sm-9">
-                        <input type="hidden" id="autoDownloadLostFile" value="off">
-                        <input type="checkbox"
-                        <#if setting.autoDownloadLostFile == true>checked="checked"</#if>
-                        name="autoDownloadLostFile"
-                        id="gritter-light">
+                        <input type="hidden" id="autoDownloadLostFileVal" name="autoDownloadLostFile" value="off">
+                        <input type="checkbox" id="autoDownloadLostFile">
                 </div>
             </div>
             <hr/>
