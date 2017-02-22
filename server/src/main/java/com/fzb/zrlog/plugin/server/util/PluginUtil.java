@@ -102,15 +102,16 @@ public class PluginUtil {
 
     public static void deletePlugin(String pluginName) {
         PluginVO pluginVO = PluginConfig.getInstance().getPluginVOByName(pluginName);
-        String sessionId = pluginVO.getSessionId();
-        IOSession session = PluginConfig.getInstance().getSessionMap().get(sessionId);
-        if (session != null) {
-            session.close();
-            destroy(pluginName);
-        }
-
-        if (RunConstants.runType != RunType.DEV) {
-            new File(pluginVO.getFile()).delete();
+        if (pluginVO != null) {
+            String sessionId = pluginVO.getSessionId();
+            IOSession session = PluginConfig.getInstance().getSessionMap().get(sessionId);
+            if (session != null) {
+                session.close();
+                destroy(pluginName);
+            }
+            if (RunConstants.runType != RunType.DEV) {
+                new File(pluginVO.getFile()).delete();
+            }
         }
         PluginConfig.getInstance().getPluginInfoMap().remove(pluginName);
     }

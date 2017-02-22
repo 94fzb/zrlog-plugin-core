@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8"/>
     <title> 插件管理 </title>
@@ -105,12 +105,12 @@
                                     </button>
                                 </a>
                                 <a>
-                                    <button class="btn btn-xs btn-danger stop" :name="val(plugin.shortName)">
+                                    <button class="btn btn-xs btn-danger stop" v-on:click="stop(plugin.shortName)">
                                         <i class="icon-stop bigger-120"></i>
                                     </button>
                                 </a>
                                 <a>
-                                    <button class="btn btn-xs btn-danger uninstall" :name="val(plugin.shortName)">
+                                    <button class="btn btn-xs btn-danger uninstall" v-on:click="uninstall(plugin.shortName)">
                                         <i class="icon-trash bigger-120"></i>
                                     </button>
                                 </a>
@@ -157,12 +157,12 @@
                             <td>
                                 <div class="btn-group">
                                     <a>
-                                        <button class="btn btn-xs btn-danger stop" :name="val(plugin.shortName)">
+                                        <button class="btn btn-xs btn-danger stop" v-on:click="stop(plugin.shortName)">
                                             <i class="icon-stop bigger-120"></i>
                                         </button>
                                     </a>
                                     <a>
-                                        <button class="btn btn-xs btn-danger uninstall"  :name="val(plugin.shortName)">
+                                        <button class="btn btn-xs btn-danger uninstall"  v-on:click="uninstall(plugin.shortName)">
                                             <i class="icon-trash bigger-120"></i>
                                         </button>
                                     </a>
@@ -209,7 +209,7 @@
                                         </button>
                                     </a>
                                     <a>
-                                        <button class="btn btn-xs btn-danger uninstall" :name="val(plugin.shortName)">
+                                        <button class="btn btn-xs btn-danger uninstall" v-on:click="uninstall(plugin.shortName)">
                                             <i class="icon-trash bigger-120"></i>
                                         </button>
                                     </a>

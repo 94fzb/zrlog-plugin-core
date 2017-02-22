@@ -17,6 +17,7 @@ public class PluginScanThread extends TimerTask {
 
     @Override
     public void run() {
+        checkLostFile();
         if (RunConstants.runType == RunType.BLOG) {
             File[] files = new File(PluginConfig.getInstance().getPluginBasePath()).listFiles();
             if (files != null && files.length > 0) {
@@ -27,7 +28,6 @@ public class PluginScanThread extends TimerTask {
                 }
             }
         }
-        checkLostFile();
     }
 
     private void tryLoadPlugin(File file) {
@@ -55,7 +55,7 @@ public class PluginScanThread extends TimerTask {
         for (PluginVO pluginVO : PluginConfig.getInstance().getAllPluginVO()) {
             if (pluginVO.getFile() != null) {
                 File file = new File(pluginVO.getFile());
-                if (!file.exists()) {
+                if (!file.exists() && file.length() == 0) {
                     boolean download = PluginConfig.getInstance().getPluginCore().getSetting().isAutoDownloadLostFile();
                     if (download) {
                         try {
