@@ -49,7 +49,8 @@ public class PluginUtil {
                         LOGGER.info("run plugin " + pluginName);
                         String uuid = UUID.randomUUID().toString();
                         idFileMap.put(uuid, file);
-                        Process pr = CmdUtil.getProcess("java " + ConfigKit.get("pluginJvmArgs", "") + " -jar " + file.toString() + " " + PluginConfig.getInstance().getMasterPort() + " " + uuid);
+                        String javaHome = System.getProperty("java.home");
+                        Process pr = CmdUtil.getProcess(javaHome + "/bin/java " + ConfigKit.get("pluginJvmArgs", "") + " -jar " + file.toString() + " " + PluginConfig.getInstance().getMasterPort() + " " + uuid);
                         if (pr != null) {
                             processMap.put(uuid, pr);
                             printInputStreamWithThread(pr, pr.getInputStream(), pluginName, "PINFO", uuid);
