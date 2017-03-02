@@ -15,7 +15,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 public class PluginConfig {
 
@@ -137,8 +140,7 @@ public class PluginConfig {
     }
 
     public Collection<PluginVO> getAllPluginVO() {
-        Collection<PluginVO> pluginVOs = pluginCore.getPluginInfoMap().values();
-        return pluginVOs;
+        return pluginCore.getPluginInfoMap().values();
     }
 
     public Map<String, PluginVO> getPluginInfoMap() {
