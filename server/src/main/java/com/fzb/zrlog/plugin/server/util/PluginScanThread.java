@@ -57,9 +57,10 @@ public class PluginScanThread extends TimerTask {
                 File file = new File(pluginVO.getFile());
                 if (!file.exists() && file.length() == 0) {
                     boolean download = PluginConfig.getInstance().getPluginCore().getSetting().isAutoDownloadLostFile();
+                    String fileName = pluginVO.getPlugin().getShortName() + ".jar";
                     if (download) {
                         try {
-                            pluginVO.setFile(PluginUtil.downloadPlugin(file.getName(), "http://dl.zrlog.com/plugin/" + file.getName()).toString());
+                            pluginVO.setFile(PluginUtil.downloadPlugin(fileName, "http://dl.zrlog.com/plugin/" + fileName).toString());
                         } catch (IOException e) {
                             LOGGER.error("download error" + file.getName(), e);
                         }
