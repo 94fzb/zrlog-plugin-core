@@ -127,6 +127,9 @@ public class PluginController extends Controller {
         if (fullUrl == null) {
             basePath = request.getUrl().substring(0, request.getUrl().lastIndexOf("/"));
         } else {
+            if (fullUrl.contains("?")) {
+                fullUrl = fullUrl.substring(0, fullUrl.indexOf("?"));
+            }
             basePath = fullUrl.substring(0, fullUrl.lastIndexOf("/"));
         }
         return basePath;
