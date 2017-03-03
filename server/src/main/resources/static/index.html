@@ -13,6 +13,7 @@
         }
 
 
+
     </style>
 
     <script src="assets/js/jquery-2.0.3.min.js"></script>
@@ -33,110 +34,113 @@
                 eModal.iframe(options);
             });
         })
+
     </script>
 </head>
 
 <body style="background:#f7f7f7">
-<div class="page-header">
-    <h3>管理插件 <span id="pluginVersion">(v{{message}})</span>
-        <button id="settings-btn" class="btn btn-info" style="float:right">
-            <i class="icon-cog bigger-150"></i>
-            设置
-        </button>
-    </h3>
-</div>
-<!-- /.page-header -->
+<div class="rows"  id="plugin">
+    <div class="page-header">
+        <h3>管理插件 <small>{{version}}</small>
+            <button id="settings-btn" class="btn btn-info" style="float:right">
+                <i class="icon-cog bigger-150"></i>
+                设置
+            </button>
+        </h3>
+    </div>
+    <!-- /.page-header -->
 
-<div class="tabbable">
-    <ul id="plugintab" class="nav nav-tabs padding-12 tab-color-blue background-blue">
-        <li class="active">
-            <a href="#all" data-toggle="tab">所有</a>
-        </li>
-        <li class="">
-            <a href="#used" data-toggle="tab">使用中</a>
-        </li>
-        <li class="">
-            <a href="#unused" data-toggle="tab">未使用</a>
-        </li>
-    </ul>
+    <div class="tabbable">
+        <ul id="plugintab" class="nav nav-tabs padding-12 tab-color-blue background-blue">
+            <li class="active">
+                <a href="#all" data-toggle="tab">所有</a>
+            </li>
+            <li class="">
+                <a href="#used" data-toggle="tab">使用中</a>
+            </li>
+            <li class="">
+                <a href="#unused" data-toggle="tab">未使用</a>
+            </li>
+        </ul>
 
-    <div class="tab-content" id="allPlugins">
-        <div class="tab-pane active" id="all">
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th class="hidden-480">名称</th>
-                        <th>作者</th>
-                        <th>简介</th>
-                        <th>版本</th>
-                        <th>查看</th>
-                        <th>设置/启动|停止/卸载</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="plugin in plugins">
-                        <td>
-                            {{plugin.name}}
-                        </td>
-                        <td class="hidden-480">{{plugin.author}}</td>
-                        <td>{{plugin.desc }}</td>
-                        <td>{{plugin.version }}</td>
-                        <td>
-                            <div class="btn-group">
-                                <a :href="getViewHref(plugin.shortName)">
-                                    <button class="btn btn-xs btn-light">
-                                        <i class="icon-zoom-in bigger-120"></i>
-                                    </button>
-                                </a>
+        <div class="tab-content">
+            <div class="tab-pane active" id="all">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th class="hidden-480">名称</th>
+                            <th>作者</th>
+                            <th>简介</th>
+                            <th>版本</th>
+                            <th>查看</th>
+                            <th>设置/启动|停止/卸载</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="plugin in plugins">
+                            <td>
+                                {{plugin.name}}
+                            </td>
+                            <td class="hidden-480">{{plugin.author}}</td>
+                            <td>{{plugin.desc }}</td>
+                            <td>{{plugin.version }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a :href="getViewHref(plugin.shortName)">
+                                        <button class="btn btn-xs btn-light">
+                                            <i class="icon-zoom-in bigger-120"></i>
+                                        </button>
+                                    </a>
 
-                            </div>
-                        </td>
-                        <td>
-                            <div class="btn-group">
-                                <a :href="getViewHref(plugin.shortName)">
-                                    <button class="btn btn-xs btn-gray">
-                                        <i class="icon-cogs bigger-120"></i>
-                                    </button>
-                                </a>
-                                <a :href="getStartHref(plugin.shortName)">
-                                    <button class="btn btn-xs btn-primary">
-                                        <i class="icon-play bigger-120"></i>
-                                    </button>
-                                </a>
-                                <a>
-                                    <button class="btn btn-xs btn-danger stop" v-on:click="stop(plugin.shortName)">
-                                        <i class="icon-stop bigger-120"></i>
-                                    </button>
-                                </a>
-                                <a>
-                                    <button class="btn btn-xs btn-danger uninstall" v-on:click="uninstall(plugin.shortName)">
-                                        <i class="icon-trash bigger-120"></i>
-                                    </button>
-                                </a>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a :href="getViewHref(plugin.shortName)">
+                                        <button class="btn btn-xs btn-gray">
+                                            <i class="icon-cogs bigger-120"></i>
+                                        </button>
+                                    </a>
+                                    <a :href="getStartHref(plugin.shortName)">
+                                        <button class="btn btn-xs btn-primary">
+                                            <i class="icon-play bigger-120"></i>
+                                        </button>
+                                    </a>
+                                    <a>
+                                        <button class="btn btn-xs btn-danger stop" v-on:click="stop(plugin.shortName)">
+                                            <i class="icon-stop bigger-120"></i>
+                                        </button>
+                                    </a>
+                                    <a>
+                                        <button class="btn btn-xs btn-danger uninstall"
+                                                v-on:click="uninstall(plugin.shortName)">
+                                            <i class="icon-trash bigger-120"></i>
+                                        </button>
+                                    </a>
 
-                            </div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-        <div class="tab-pane" id="used">
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th class="hidden-480">名称</th>
-                        <th>作者</th>
-                        <th>简介</th>
-                        <th>版本</th>
-                        <th>查看</th>
-                        <th>停止/卸载</th>
-                    </tr>
-                    </thead>
+            <div class="tab-pane" id="used">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th class="hidden-480">名称</th>
+                            <th>作者</th>
+                            <th>简介</th>
+                            <th>版本</th>
+                            <th>查看</th>
+                            <th>停止/卸载</th>
+                        </tr>
+                        </thead>
 
-                    <tbody>
+                        <tbody>
                         <tr v-for="plugin in usedPlugins">
                             <td>
                                 {{plugin.name}}
@@ -162,7 +166,8 @@
                                         </button>
                                     </a>
                                     <a>
-                                        <button class="btn btn-xs btn-danger uninstall"  v-on:click="uninstall(plugin.shortName)">
+                                        <button class="btn btn-xs btn-danger uninstall"
+                                                v-on:click="uninstall(plugin.shortName)">
                                             <i class="icon-trash bigger-120"></i>
                                         </button>
                                     </a>
@@ -170,24 +175,24 @@
                                 </div>
                             </td>
                         </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-        <div class="tab-pane" id="unused">
-            <div class="table-responsive">
-                <table class="table table-striped table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th class="hidden-480">名称</th>
-                        <th>作者</th>
-                        <th>简介</th>
-                        <th>版本</th>
-                        <th>设置/启动/卸载</th>
-                    </tr>
-                    </thead>
+            <div class="tab-pane" id="unused">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th class="hidden-480">名称</th>
+                            <th>作者</th>
+                            <th>简介</th>
+                            <th>版本</th>
+                            <th>设置/启动/卸载</th>
+                        </tr>
+                        </thead>
 
-                    <tbody>
+                        <tbody>
                         <tr v-for="plugin in unusedPlugins">
                             <td>
                                 {{plugin.name}}
@@ -209,7 +214,8 @@
                                         </button>
                                     </a>
                                     <a>
-                                        <button class="btn btn-xs btn-danger uninstall" v-on:click="uninstall(plugin.shortName)">
+                                        <button class="btn btn-xs btn-danger uninstall"
+                                                v-on:click="uninstall(plugin.shortName)">
                                             <i class="icon-trash bigger-120"></i>
                                         </button>
                                     </a>
@@ -217,16 +223,17 @@
                                 </div>
                             </td>
                         </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
+    <!-- /.table-responsive -->
+    <a href="../center">
+        <button class="btn btn-info"><i class="icon-download"></i>下载</button>
+    </a>
+    <input id="gritter-light" checked="" type="checkbox" style="display:none"/>
 </div>
-<!-- /.table-responsive -->
-<a href="../center">
-    <button class="btn btn-info"><i class="icon-download"></i>下载</button>
-</a>
-<input id="gritter-light" checked="" type="checkbox" style="display:none"/>
 </body>
 </html>
