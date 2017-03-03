@@ -40,7 +40,13 @@ public class PluginController extends Controller {
         //
         if (session == null) {
             String pluginName = getRequest().getParaToStr("name");
-            PluginUtil.loadPlugin(new File(PluginConfig.getInstance().getPluginFileByName(pluginName)));
+            String fileStr = PluginConfig.getInstance().getPluginFileByName(pluginName);
+            if (fileStr != null) {
+                PluginUtil.loadPlugin(new File(fileStr));
+            } else {
+                response.renderCode(404);
+                return;
+            }
         }
         int id = IdUtil.getInt();
         getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_INSTALL.name()));
@@ -145,7 +151,8 @@ public class PluginController extends Controller {
             File file = new File(path + "/" + fileName);
             if (!file.exists()) {
                 String downloadUrl = getRequest().getParaToStr("host") + "/plugin/download?id=" + getRequest().getParaToInt("id");
-                PluginUtil.downloadPlugin(fileName, downloadUrl);
+                File pluginFile = PluginUtil.downloadPlugin(fileName, downloadUrl);
+                PluginUtil.loadPlugin(pluginFile);
                 getRequest().getAttr().put("message", "下载插件成功");
             } else {
                 getRequest().getAttr().put("message", "插件已经存在了");

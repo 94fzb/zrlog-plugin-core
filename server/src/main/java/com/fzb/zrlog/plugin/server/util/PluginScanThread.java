@@ -21,19 +21,36 @@ public class PluginScanThread extends TimerTask {
     public void run() {
         checkLostFile();
         if (RunConstants.runType == RunType.BLOG) {
-            List<File> fileList = new ArrayList<>();
-            for (PluginVO pluginVO : PluginConfig.getInstance().getAllPluginVO()) {
-                if (pluginVO != null) {
-                    fileList.add(new File(pluginVO.getFile()));
-                }
-            }
-            for (File file : fileList) {
-                if (file.getName().endsWith(".jar")) {
-                    tryLoadPlugin(file);
+            List<String> fileList = new ArrayList<>();
+            fillPluginFileByExistsPlugins(fileList);
+
+            fillPluginFileByBasePath(fileList);
+            for (String file : fileList) {
+                if (new File(file).getName().endsWith(".jar")) {
+                    tryLoadPlugin(new File(file));
                 }
             }
         }
 
+    }
+
+    private void fillPluginFileByExistsPlugins(List<String> fileList) {
+        for (PluginVO pluginVO : PluginConfig.getInstance().getAllPluginVO()) {
+            if (pluginVO != null) {
+                fileList.add(pluginVO.getFile());
+            }
+        }
+    }
+
+    private void fillPluginFileByBasePath(List<String> fileList) {
+        File[] files = new File(PluginConfig.getInstance().getPluginBasePath()).listFiles();
+        if (files != null && files.length > 0) {
+            for (File file : files) {
+                if (!fileList.contains(file.toString())) {
+                    fileList.add(file.toString());
+                }
+            }
+        }
     }
 
     private void tryLoadPlugin(File file) {
