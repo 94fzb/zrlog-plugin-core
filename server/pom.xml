@@ -17,7 +17,7 @@
         <dependency>
             <groupId>com.hibegin</groupId>
             <artifactId>simplewebserver</artifactId>
-            <version>0.1.10</version>
+            <version>0.1.11</version>
         </dependency>
         <dependency>
             <groupId>com.mchange</groupId>
