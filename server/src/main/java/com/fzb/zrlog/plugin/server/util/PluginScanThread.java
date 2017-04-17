@@ -26,8 +26,8 @@ public class PluginScanThread extends TimerTask {
 
             fillPluginFileByBasePath(fileList);
             for (String file : fileList) {
-                if(file!=null){
-                    if (new File(file).exists() && new File(file).getName().endsWith(".jar")) {
+                if (file != null) {
+                    if (new File(file).getName().endsWith(".jar")) {
                         tryLoadPlugin(new File(file));
                     }
                 }
