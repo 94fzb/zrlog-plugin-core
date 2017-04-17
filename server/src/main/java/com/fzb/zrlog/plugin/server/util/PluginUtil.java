@@ -110,7 +110,9 @@ public class PluginUtil {
                 destroy(pluginName);
             }
             if (RunConstants.runType != RunType.DEV) {
-                new File(pluginVO.getFile()).delete();
+                if (pluginVO.getFile() != null) {
+                    new File(pluginVO.getFile()).delete();
+                }
             }
         }
         PluginConfig.getInstance().getPluginInfoMap().remove(pluginName);
@@ -184,13 +186,15 @@ public class PluginUtil {
         LOGGER.info("download plugin " + fileName);
         String tempFolder = PluginConfig.getInstance().getPluginBasePath() + "/tmp/";
         new File(tempFolder).mkdirs();
-        Map<String, String> httpHeaderMap = new HashMap<>();
-        httpHeaderMap.put("Cache-Control", "no-cache");
-        HttpFileHandle fileHandle = (HttpFileHandle) HttpUtil.sendGetRequest(downloadUrl, new HttpFileHandle(tempFolder), httpHeaderMap);
+        HttpFileHandle fileHandle = (HttpFileHandle) HttpUtil.sendGetRequest(downloadUrl + "?_=" + System.currentTimeMillis(), new HttpFileHandle(tempFolder), new HashMap<String, String>());
         String target = PluginConfig.getInstance().getPluginBasePath() + "/" + fileName;
         if (!target.equals(fileHandle.getT().toString())) {
             IOUtil.moveOrCopyFile(fileHandle.getT().toString(), target, true);
         }
         return new File(target);
+    }
+
+    public static void main(String args[]) throws IOException {
+        System.out.println(downloadPlugin("qiniu.jar", "http://dl.zrlog.com/plugin/qiniu.jar"));
     }
 }
