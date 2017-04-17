@@ -184,7 +184,9 @@ public class PluginUtil {
         LOGGER.info("download plugin " + fileName);
         String tempFolder = PluginConfig.getInstance().getPluginBasePath() + "/tmp/";
         new File(tempFolder).mkdirs();
-        HttpFileHandle fileHandle = (HttpFileHandle) HttpUtil.sendGetRequest(downloadUrl + "?t=" + System.currentTimeMillis(), new HttpFileHandle(tempFolder), new HashMap<String, String>());
+        Map<String, String> httpHeaderMap = new HashMap<>();
+        httpHeaderMap.put("Cache-Control", "no-cache");
+        HttpFileHandle fileHandle = (HttpFileHandle) HttpUtil.sendGetRequest(downloadUrl, new HttpFileHandle(tempFolder), httpHeaderMap);
         String target = PluginConfig.getInstance().getPluginBasePath() + "/" + fileName;
         if (!target.equals(fileHandle.getT().toString())) {
             IOUtil.moveOrCopyFile(fileHandle.getT().toString(), target, true);
