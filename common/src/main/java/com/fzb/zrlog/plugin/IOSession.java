@@ -36,6 +36,7 @@ public class IOSession {
     private AtomicInteger msgIds = new AtomicInteger();
     private MsgPacketDispose msgPacketDispose = new MsgPacketDispose();
     private IRenderHandler renderHandler;
+    private ClearIdlMsgPacket clearIdlMsgPacket;
 
     public IOSession(SocketChannel channel, Selector selector, SocketCodec socketCodec, IActionHandler actionHandler, IRenderHandler renderHandler) {
         systemAttr.put("_channel", channel);
@@ -45,15 +46,12 @@ public class IOSession {
         systemAttr.put("_actionHandler", actionHandler);
         this.actionHandler = actionHandler;
         this.renderHandler = renderHandler;
+        this.clearIdlMsgPacket = new ClearIdlMsgPacket(pipeMap);
+        this.clearIdlMsgPacket.start();
     }
 
     public IOSession(SocketChannel channel, Selector selector, SocketCodec socketCodec, IActionHandler actionHandler) {
-        systemAttr.put("_channel", channel);
-        systemAttr.put("_selector", selector);
-        systemAttr.put("_decode", socketCodec.getSocketDecode());
-        systemAttr.put("_encode", socketCodec.getSocketEncode());
-        systemAttr.put("_actionHandler", actionHandler);
-        this.actionHandler = actionHandler;
+        this(channel, selector, socketCodec, actionHandler, null);
     }
 
     public Plugin getPlugin() {
@@ -94,7 +92,7 @@ public class IOSession {
         try {
             PipedInputStream in = new PipedInputStream();
             PipedOutputStream out = new PipedOutputStream(in);
-            Object[] inAndOut = new Object[]{in, out, callBack, msgPacket, null};
+            Object[] inAndOut = new Object[]{in, out, callBack, msgPacket, null, System.currentTimeMillis()};
             pipeMap.put(msgPacket.getMsgId(), inAndOut);
             getAttr().put("count", msgIds.incrementAndGet());
             new SocketEncode().doEncode(this, msgPacket);
@@ -160,17 +158,11 @@ public class IOSession {
             msgPacketDispose.handler(this, msgPacket, actionHandler);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "close outputStream error");
-        } finally {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                LOGGER.log(Level.WARNING, "interrupt error");
-            }
-            pipeMap.remove(msgPacket.getMsgId());
         }
     }
 
     public void close() {
+        clearIdlMsgPacket.interrupt();
         try {
             ((Channel) systemAttr.get("_channel")).close();
         } catch (IOException e) {
@@ -191,8 +183,7 @@ public class IOSession {
     }
 
     public MsgPacket getRequestMsgPacketByMsgId(int msgId) {
-        MsgPacket msgPacket = (MsgPacket) pipeMap.get(msgId)[3];
-        return msgPacket;
+        return (MsgPacket) pipeMap.get(msgId)[3];
     }
 
     public MsgPacket getResponseMsgPacketByMsgId(int msgId) {
