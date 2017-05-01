@@ -21,7 +21,6 @@ import com.hibegin.http.server.util.MimeTypeUtil;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -41,9 +40,9 @@ public class PluginInterceptor implements Interceptor {
                 return false;
             }
             String path = pluginName.substring(pluginName.indexOf("/"));
-            LOGGER.log(Level.INFO, "request path " + path);
+            //LOGGER.log(Level.INFO, "request path " + path);
             pluginName = pluginName.substring(0, pluginName.indexOf("/"));
-            LOGGER.log(Level.INFO, "plugin name" + pluginName);
+            //LOGGER.log(Level.INFO, "plugin name" + pluginName);
             boolean isLogin = (boolean) httpRequest.getAttr().get("isLogin");
             final IOSession session = PluginConfig.getInstance().getIOSessionByPluginName(pluginName);
             if (!isLogin && RunConstants.runType != RunType.DEV && (session == null || !session.getPlugin().getPaths().contains(path))) {

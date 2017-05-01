@@ -15,7 +15,6 @@ public class JsonConvertMsgBody implements ConvertMsgBody {
         byte[] jsonByte = new JSONSerializer().deepSerialize(obj).getBytes();
         ByteBuffer byteBuffer = ByteBuffer.allocate(jsonByte.length);
         byteBuffer.put(jsonByte);
-        System.out.println(new String(jsonByte));
         return byteBuffer;
     }
 
@@ -26,6 +25,6 @@ public class JsonConvertMsgBody implements ConvertMsgBody {
 
     public <T> T toObj(ByteBuffer byteBuffer, Class<T> clazz) {
         String jsonStr = new String(byteBuffer.array());
-        return new JSONDeserializer<T>().deserialize(jsonStr);
+        return new JSONDeserializer<T>().deserialize(jsonStr, clazz);
     }
 }

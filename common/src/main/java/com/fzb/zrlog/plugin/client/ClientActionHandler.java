@@ -30,10 +30,12 @@ public class ClientActionHandler implements IActionHandler {
 
     private static Logger LOGGER = LoggerUtil.getLogger(ClientActionHandler.class);
 
+    private static String ACTION_NOT_FOUND_PAGE = "<html><body><h1>Not Found</h1></body></html>";
+
     @Override
     public void service(IOSession session, MsgPacket msgPacket) {
         List<Class<? extends IPluginService>> pluginServices = (List<Class<? extends IPluginService>>) session.getAttr().get("_pluginServices");
-        System.out.println(pluginServices);
+        //System.out.println(pluginServices);
         if (pluginServices == null || pluginServices.isEmpty()) {
             session.sendJsonMsg(new HashMap<>(), msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_ERROR);
         } else {
@@ -102,6 +104,7 @@ public class ClientActionHandler implements IActionHandler {
                     method.invoke(constructor.newInstance(session, msgPacket, httpRequestInfo));
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                     e.printStackTrace();
+                    session.sendMsg(ContentType.HTML, ACTION_NOT_FOUND_PAGE, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_ERROR, null);
                 }
             }
         }

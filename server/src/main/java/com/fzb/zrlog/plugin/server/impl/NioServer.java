@@ -1,15 +1,16 @@
 package com.fzb.zrlog.plugin.server.impl;
 
+import com.fzb.common.util.RunConstants;
+import com.fzb.net.socket.ISocketServer;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.data.codec.SocketCodec;
 import com.fzb.zrlog.plugin.data.codec.SocketDecode;
 import com.fzb.zrlog.plugin.data.codec.SocketEncode;
-import com.fzb.net.socket.ISocketServer;
 import com.fzb.zrlog.plugin.server.config.PluginConfig;
 import com.fzb.zrlog.plugin.server.util.PluginUtil;
+import com.fzb.zrlog.plugin.type.RunType;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -111,7 +112,9 @@ public class NioServer implements ISocketServer {
             e.printStackTrace();
             LOGGER.log(Level.SEVERE, "dispose error " + e.getMessage());
         } finally {
-            LOGGER.info(System.currentTimeMillis() - start + " ms");
+            if (RunConstants.runType == RunType.DEV) {
+                LOGGER.info(System.currentTimeMillis() - start + " ms");
+            }
         }
     }
 }

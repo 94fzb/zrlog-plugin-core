@@ -5,8 +5,8 @@ import com.fzb.common.util.RunConstants;
 import com.fzb.net.socket.ISocketServer;
 import com.fzb.zrlog.plugin.common.ConfigKit;
 import com.fzb.zrlog.plugin.common.modle.BlogRunTime;
-import com.fzb.zrlog.plugin.server.config.HttpServerConfig;
 import com.fzb.zrlog.plugin.server.config.PluginConfig;
+import com.fzb.zrlog.plugin.server.config.PluginHttpServerConfig;
 import com.fzb.zrlog.plugin.server.impl.NioServer;
 import com.fzb.zrlog.plugin.server.util.DevUtil;
 import com.fzb.zrlog.plugin.server.util.ListenWebServerThread;
@@ -59,7 +59,7 @@ public class Start {
     }
 
     private static void loadHttpServer(Integer serverPort) {
-        HttpServerConfig config = new HttpServerConfig();
+        PluginHttpServerConfig config = new PluginHttpServerConfig();
         ServerConfig serverConfig = config.getServerConfig();
         serverConfig.setPort(serverPort);
         serverConfig.setHost("127.0.0.1");

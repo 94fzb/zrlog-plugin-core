@@ -1,8 +1,10 @@
 package com.fzb.zrlog.plugin.data.codec;
 
 import com.fzb.common.util.HexaConversionUtil;
+import com.fzb.common.util.RunConstants;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
+import com.fzb.zrlog.plugin.type.RunType;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -74,7 +76,9 @@ public class SocketDecode {
                 flag = !packet.getData().hasRemaining();
             }
             if (flag) {
-                LOGGER.info("recv <<< " + session.getAttr().get("count") + " " + packet);
+                if (RunConstants.runType == RunType.DEV) {
+                    LOGGER.info("recv <<< " + session.getAttr().get("count") + " " + packet);
+                }
                 new Thread() {
                     @Override
                     public void run() {

@@ -28,9 +28,9 @@ public class IOSession {
 
     private static final Logger LOGGER = LoggerUtil.getLogger(IOSession.class);
 
-    private Map<String, Object> attr = new ConcurrentHashMap<String, Object>();
-    private Map<Integer, Object[]> pipeMap = new ConcurrentHashMap<Integer, Object[]>();
-    private Map<String, Object> systemAttr = new ConcurrentHashMap<String, Object>();
+    private Map<String, Object> attr = new ConcurrentHashMap<>();
+    private Map<Integer, Object[]> pipeMap = new ConcurrentHashMap<>();
+    private Map<String, Object> systemAttr = new ConcurrentHashMap<>();
     private IActionHandler actionHandler;
     private Plugin plugin;
     private AtomicInteger msgIds = new AtomicInteger();
@@ -144,11 +144,11 @@ public class IOSession {
     }
 
     public void dispose(MsgPacket msgPacket) {
-        if (msgPacket.getStatus() == MsgPacketStatus.RESPONSE_SUCCESS || msgPacket.getStatus() == MsgPacketStatus.RESPONSE_ERROR) {
-            PipedOutputStream outputStream = (PipedOutputStream) pipeMap.get(msgPacket.getMsgId())[1];
-            IMsgPacketCallBack callBack = (IMsgPacketCallBack) pipeMap.get(msgPacket.getMsgId())[2];
-            pipeMap.get(msgPacket.getMsgId())[4] = msgPacket;
-            try {
+        try {
+            if (msgPacket.getStatus() == MsgPacketStatus.RESPONSE_SUCCESS || msgPacket.getStatus() == MsgPacketStatus.RESPONSE_ERROR) {
+                PipedOutputStream outputStream = (PipedOutputStream) pipeMap.get(msgPacket.getMsgId())[1];
+                IMsgPacketCallBack callBack = (IMsgPacketCallBack) pipeMap.get(msgPacket.getMsgId())[2];
+                pipeMap.get(msgPacket.getMsgId())[4] = msgPacket;
                 outputStream.write(msgPacket.getData().array());
                 outputStream.close();
                 if (callBack != null) {
@@ -156,11 +156,18 @@ public class IOSession {
                     // 不进行多次处理
                     return;
                 }
-            } catch (IOException e) {
-                LOGGER.log(Level.WARNING, "close outputStream error");
             }
+            msgPacketDispose.handler(this, msgPacket, actionHandler);
+        } catch (Exception e) {
+            LOGGER.log(Level.WARNING, "close outputStream error");
+        } finally {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                LOGGER.log(Level.WARNING, "interrupt error");
+            }
+            pipeMap.remove(msgPacket.getMsgId());
         }
-        msgPacketDispose.handler(this, msgPacket, actionHandler);
     }
 
     public void close() {
@@ -184,7 +191,8 @@ public class IOSession {
     }
 
     public MsgPacket getRequestMsgPacketByMsgId(int msgId) {
-        return (MsgPacket) pipeMap.get(msgId)[3];
+        MsgPacket msgPacket = (MsgPacket) pipeMap.get(msgId)[3];
+        return msgPacket;
     }
 
     public MsgPacket getResponseMsgPacketByMsgId(int msgId) {

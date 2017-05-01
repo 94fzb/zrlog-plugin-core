@@ -21,6 +21,7 @@ public class PluginManagerInterceptor implements Interceptor {
     }
 
     public boolean doInterceptor(HttpRequest request, HttpResponse response) {
+        response.addHeader("Connection", "close");
         boolean isLogin = Boolean.valueOf(request.getHeader("IsLogin"));
         if (RunConstants.runType == RunType.DEV) {
             isLogin = true;

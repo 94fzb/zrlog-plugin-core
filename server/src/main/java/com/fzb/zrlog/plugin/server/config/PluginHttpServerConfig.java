@@ -10,7 +10,7 @@ import com.hibegin.http.server.web.PluginManagerInterceptor;
 
 import java.util.concurrent.Executors;
 
-public class HttpServerConfig extends AbstractServerConfig {
+public class PluginHttpServerConfig extends AbstractServerConfig {
     @Override
     public ServerConfig getServerConfig() {
         ServerConfig serverConfig = new ServerConfig();
@@ -18,7 +18,7 @@ public class HttpServerConfig extends AbstractServerConfig {
         serverConfig.addInterceptor(PluginManagerInterceptor.class);
         serverConfig.addInterceptor(PluginInterceptor.class);
         serverConfig.getRouter().addMapper("", PluginController.class);
-        serverConfig.setExecutor(Executors.newFixedThreadPool(100));
+        serverConfig.setExecutor(Executors.newFixedThreadPool(10));
         return serverConfig;
     }
 

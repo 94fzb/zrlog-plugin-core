@@ -1,8 +1,10 @@
 package com.fzb.zrlog.plugin.data.codec;
 
 import com.fzb.common.util.HexaConversionUtil;
+import com.fzb.common.util.RunConstants;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
+import com.fzb.zrlog.plugin.type.RunType;
 
 import java.io.EOFException;
 import java.nio.ByteBuffer;
@@ -39,7 +41,9 @@ public class SocketEncode {
                         throw new EOFException();
                     }
                 }
-                LOGGER.info("send >>> " + session.getAttr().get("count") + " " + msgPacket);
+                if (RunConstants.runType == RunType.DEV) {
+                    LOGGER.info("send >>> " + session.getAttr().get("count") + " " + msgPacket);
+                }
                 channel.register(selector, SelectionKey.OP_READ);
             }
         } catch (Exception e) {
