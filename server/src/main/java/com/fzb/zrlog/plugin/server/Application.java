@@ -4,6 +4,7 @@ import com.fzb.common.util.IOUtil;
 import com.fzb.common.util.RunConstants;
 import com.fzb.net.socket.ISocketServer;
 import com.fzb.zrlog.plugin.common.ConfigKit;
+import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.common.modle.BlogRunTime;
 import com.fzb.zrlog.plugin.server.config.PluginConfig;
 import com.fzb.zrlog.plugin.server.config.PluginHttpServerConfig;
@@ -17,13 +18,15 @@ import com.hibegin.http.server.config.ServerConfig;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
-public class Start {
+public class Application {
 
+    private static final Logger LOGGER = LoggerUtil.getLogger(Application.class);
 
     public static void main(String[] args) throws IOException {
         if (args != null && args.length > 0) {
-            System.out.println("args = " + Arrays.toString(args));
+            LOGGER.info("args = " + Arrays.toString(args));
         }
         Integer serverPort = (args != null && args.length > 0) ? Integer.valueOf(args[0]) : 9089;
         int masterPort = (args != null && args.length > 1) ? Integer.valueOf(args[1]) : ConfigKit.getServerPort();
@@ -33,7 +36,7 @@ public class Start {
         if (dbProperties == null) {
             File tmpFile = File.createTempFile("blog-db", ".properties");
             dbProperties = tmpFile.toString();
-            IOUtil.writeBytesToFile(IOUtil.getByteByInputStream(Start.class.getResourceAsStream("/db.properties")), tmpFile);
+            IOUtil.writeBytesToFile(IOUtil.getByteByInputStream(Application.class.getResourceAsStream("/db.properties")), tmpFile);
             blogRunTime.setPath(DevUtil.blogRuntimePath());
             blogRunTime.setVersion("1.5");
         } else {

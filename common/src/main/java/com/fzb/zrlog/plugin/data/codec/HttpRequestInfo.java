@@ -8,7 +8,6 @@ import java.util.Map;
  */
 public class HttpRequestInfo {
     private String uri;
-    private String url;
     private Map header;
     private byte[] requestBody;
     private Map<String, String[]> param;
@@ -16,6 +15,7 @@ public class HttpRequestInfo {
     private Integer userId;
     private String version;
     private String fullUrl;
+    private String accessUrl;
 
     public String getUri() {
         return uri;
@@ -23,14 +23,6 @@ public class HttpRequestInfo {
 
     public void setUri(String uri) {
         this.uri = uri;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public Map getHeader() {
@@ -102,5 +94,13 @@ public class HttpRequestInfo {
 
     public void setFullUrl(String fullUrl) {
         this.fullUrl = fullUrl;
+    }
+
+    public String getAccessUrl() {
+        return accessUrl;
+    }
+
+    public void setAccessUrl(String accessUrl) {
+        this.accessUrl = accessUrl;
     }
 }

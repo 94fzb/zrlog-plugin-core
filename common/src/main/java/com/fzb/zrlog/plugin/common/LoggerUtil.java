@@ -29,7 +29,7 @@ public class LoggerUtil {
             fileHandler.setFormatter(new SimpleFormatter());
             LOGGER = LoggerUtil.getLogger(LoggerUtil.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 

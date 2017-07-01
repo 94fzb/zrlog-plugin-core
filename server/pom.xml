@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <groupId>com.fzb.zrlog.plugin</groupId>
-    <version>1.4.0</version>
+    <version>1.4.8</version>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>server</artifactId>
@@ -11,23 +11,19 @@
 
     <properties>
         <outputDirectory>/home/xiaochun/plugins/</outputDirectory>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.hibegin</groupId>
             <artifactId>simplewebserver</artifactId>
-            <version>0.1.13</version>
-        </dependency>
-        <dependency>
-            <groupId>com.mchange</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>0.9.2.1</version>
+            <version>0.1.20</version>
         </dependency>
         <dependency>
             <groupId>com.fzb.zrlog.plugin</groupId>
             <artifactId>common</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.5</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -81,7 +77,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.fzb.zrlog.plugin.server.Start</mainClass>
+                            <mainClass>com.fzb.zrlog.plugin.server.Application</mainClass>
                         </manifest>
                     </archive>
                     <finalName>plugin-core</finalName>

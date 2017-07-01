@@ -3,8 +3,12 @@ package com.fzb.zrlog.plugin.common;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConfigKit {
+
+    private static final Logger LOGGER =LoggerUtil.getLogger(ConfigKit.class);
 
     private static Properties prop = new Properties();
 
@@ -15,7 +19,7 @@ public class ConfigKit {
                 prop.load(in);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE,"",e);
         }
     }
 

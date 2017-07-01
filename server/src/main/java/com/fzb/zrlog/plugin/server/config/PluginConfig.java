@@ -5,12 +5,10 @@ import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.common.modle.BlogRunTime;
 import com.fzb.zrlog.plugin.server.dao.WebSiteDAO;
 import com.fzb.zrlog.plugin.type.RunType;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
+import com.google.gson.Gson;
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.apache.log4j.Logger;
 
-import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -47,32 +45,26 @@ public class PluginConfig {
         instance.pluginBasePath = pluginBasePath;
         instance.blogRunTime = blogRunTime;
         new File(pluginBasePath).mkdir();
-        ComboPooledDataSource dataSource = new ComboPooledDataSource(false);
+        MysqlDataSource dataSource = new MysqlDataSource();
         try {
             Properties properties = new Properties();
             properties.load(new FileInputStream(_dbPropertiesFile));
-            dataSource.setJdbcUrl(properties.get("jdbcUrl").toString() + "&autoReconnect=true");
-            dataSource.setMaxIdleTime(20);
-            dataSource.setAcquireIncrement(2);
-            dataSource.setInitialPoolSize(10);
-            dataSource.setMaxPoolSize(100);
-            dataSource.setMinPoolSize(10);
+            dataSource.setUrl(properties.get("jdbcUrl").toString() + "&autoReconnect=true");
             dataSource.setPassword(properties.get("password").toString());
-            dataSource.setDriverClass(properties.get("driverClass").toString());
             dataSource.setUser(properties.get("user").toString());
-        } catch (IOException | PropertyVetoException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            LOGGER.error("", e);
         }
         DAO.setDs(dataSource);
         try {
             String text = (String) new WebSiteDAO().set("name", PLUGIN_DB_KEY).queryFirst("value");
             if (text != null && !"".equals(text)) {
-                instance.pluginCore = new JSONDeserializer<PluginCore>().deserialize(text);
+                instance.pluginCore = new Gson().fromJson(text, PluginCore.class);
             } else {
                 instance.pluginCore = new PluginCore();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error("", e);
         }
         saveToJsonFileThread();
     }
@@ -88,7 +80,7 @@ public class PluginConfig {
                     } catch (InterruptedException e) {
                         LOGGER.error("stop", e);
                     }
-                    String jsonStr = new JSONSerializer().deepSerialize(getInstance().pluginCore);
+                    String jsonStr = new Gson().toJson(getInstance().pluginCore);
                     if (!currentPluginText.equals(jsonStr)) {
                         currentPluginText = jsonStr;
                         try {

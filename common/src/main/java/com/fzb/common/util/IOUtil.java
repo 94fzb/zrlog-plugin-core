@@ -1,10 +1,16 @@
 package com.fzb.common.util;
 
+import com.fzb.zrlog.plugin.common.LoggerUtil;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class IOUtil {
+
+    private static final Logger LOGGER = LoggerUtil.getLogger(IOUtil.class);
 
     public static final byte[] getByteByInputStream(InputStream in) {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -15,12 +21,12 @@ public class IOUtil {
                 bout.write(tempByte, 0, length);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "", e);
         } finally {
             try {
                 in.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "", e);
             }
         }
         return bout.toByteArray();
@@ -96,7 +102,7 @@ public class IOUtil {
             out.write(bytes);
             out.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 
@@ -121,10 +127,8 @@ public class IOUtil {
             if (isMove) {
                 f.delete();
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 }

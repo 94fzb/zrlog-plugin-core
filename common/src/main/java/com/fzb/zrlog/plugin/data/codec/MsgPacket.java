@@ -1,7 +1,7 @@
 package com.fzb.zrlog.plugin.data.codec;
 
 import com.fzb.zrlog.plugin.data.codec.convert.*;
-import flexjson.JSONDeserializer;
+import com.google.gson.Gson;
 
 import java.nio.ByteBuffer;
 
@@ -111,7 +111,7 @@ public class MsgPacket {
     }
 
     public <T> T convertToClass(Class<T> clazz) {
-        return new JSONDeserializer<T>().deserialize(getDataStr());
+        return new Gson().fromJson(getDataStr(), clazz);
     }
 
     @Override

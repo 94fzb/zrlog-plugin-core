@@ -70,7 +70,7 @@ public class NioServer implements ISocketServer {
                     iter.remove();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE,"",e);
             }
         }
     }
@@ -93,7 +93,7 @@ public class NioServer implements ISocketServer {
             PluginUtil.loadJarPlugin();
             LOGGER.info("load jar files");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE,"",e);
         }
     }
 
@@ -103,13 +103,12 @@ public class NioServer implements ISocketServer {
         SocketDecode decode = new SocketDecode();
         try {
             while (!decode.doDecode(session)) {
-
+                Thread.sleep(100);
             }
         } catch (Exception e) {
             if (e instanceof IOException) {
                 key.cancel();
             }
-            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "dispose error " + e.getMessage());
         } finally {
             if (RunConstants.runType == RunType.DEV) {

@@ -64,7 +64,7 @@ public class PluginUtil {
             // 等待链接初始化完成
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOGGER.error("",e);
         }
     }
 
@@ -161,7 +161,7 @@ public class PluginUtil {
                     try {
                         in.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        LOGGER.error("",e);
                     }
                     pr.destroy();
                 }

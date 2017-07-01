@@ -1,20 +1,23 @@
 package com.fzb.common.util;
 
+import com.fzb.zrlog.plugin.common.LoggerUtil;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ScanClassUtil {
+
+    private static final Logger LOGGER = LoggerUtil.getLogger(ScanClassUtil.class);
+
     public static <T> void getAllClass(File rootFile, String parentDirectory,
                                        List<Class> list) {
         if (rootFile.isDirectory()) {
@@ -40,27 +43,29 @@ public class ScanClassUtil {
 
     /**
      * 得到一个类的同一个包下面的子类
+     *
      * @param clazz
      * @return
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public static Set<Class<?>> getClassesByParent(Class<?> clazz) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
-        Set<Class<?>> tempSet=getClasses(clazz.getPackage().getName());
-        Set<Class<?>> rSet=new HashSet<Class<?>>();
-        Object pClassObject=Class.forName(clazz.getCanonicalName());
+    public static Set<Class<?>> getClassesByParent(Class<?> clazz) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        Set<Class<?>> tempSet = getClasses(clazz.getPackage().getName());
+        Set<Class<?>> rSet = new HashSet<Class<?>>();
+        Object pClassObject = Class.forName(clazz.getCanonicalName());
         for (Class<?> class1 : tempSet) {
-            if(class1.getCanonicalName()!=null){
-                Object cClassObject=Class.forName(class1.getCanonicalName());
+            if (class1.getCanonicalName() != null) {
+                Object cClassObject = Class.forName(class1.getCanonicalName());
                 cClassObject.getClass().asSubclass(pClassObject.getClass());
-                if(!cClassObject.equals(pClassObject)){
+                if (!cClassObject.equals(pClassObject)) {
                     rSet.add(class1);
                 }
             }
         }
         return rSet;
     }
+
     /**
      * 从包package中获取所有的Class
      *
@@ -140,9 +145,7 @@ public class ScanClassUtil {
                                                     .forName(packageName + '.'
                                                             + className));
                                         } catch (ClassNotFoundException e) {
-                                            // log
-                                            // .error("添加用户自定义视图类错误 找不到此类的.class文件");
-                                            e.printStackTrace();
+                                            LOGGER.log(Level.SEVERE, "", e);
                                         }
                                     }
                                 }
@@ -150,12 +153,12 @@ public class ScanClassUtil {
                         }
                     } catch (IOException e) {
                         // log.error("在扫描用户定义视图时从jar包获取文件出错");
-                        e.printStackTrace();
+                        LOGGER.log(Level.SEVERE, "", e);
                     }
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "", e);
         }
 
         return classes;
@@ -206,7 +209,7 @@ public class ScanClassUtil {
                             .loadClass(packageName + '.' + className));
                 } catch (ClassNotFoundException e) {
                     // log.error("添加用户自定义视图类错误 找不到此类的.class文件");
-                    e.printStackTrace();
+                    LOGGER.log(Level.SEVERE, "", e);
                 }
             }
         }

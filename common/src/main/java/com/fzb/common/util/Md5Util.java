@@ -1,11 +1,18 @@
 package com.fzb.common.util;
 
+import com.fzb.zrlog.plugin.common.LoggerUtil;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Md5Util {
+
+    private static final Logger LOGGER = LoggerUtil.getLogger(Md5Util.class);
+
     public static String MD5(String pwd) {
         return MD5(pwd.getBytes());
     }
@@ -36,7 +43,7 @@ public class Md5Util {
 
                 return new String(str).toLowerCase();
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "", e);
                 return "";
             }
         }

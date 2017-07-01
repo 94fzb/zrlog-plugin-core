@@ -1,12 +1,17 @@
 package com.fzb.zrlog.plugin.server.util;
 
+import com.fzb.zrlog.plugin.common.LoggerUtil;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DevUtil {
 
     private static Properties prop = new Properties();
+    private static final Logger LOGGER = LoggerUtil.getLogger(DevUtil.class);
 
     static {
         try {
@@ -15,7 +20,7 @@ public class DevUtil {
                 prop.load(in);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 
@@ -24,7 +29,7 @@ public class DevUtil {
         if (home != null) {
             return home.toString();
         }
-         throw new RuntimeException("dev.properties setting error");
+        throw new RuntimeException("dev.properties setting error");
     }
 
     public static String blogVersion() {

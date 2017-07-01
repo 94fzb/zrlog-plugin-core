@@ -352,7 +352,7 @@ public class DAO implements IDAO {
 
     @Override
     public Object queryFirstObj(String sql, Object... params) throws SQLException {
-        return queryRunner.query(sql, new ScalarHandler<Object>(1), params);
+        return queryRunner.query(sql, new ScalarHandler<>(1), params);
     }
 
     @Override
@@ -369,7 +369,7 @@ public class DAO implements IDAO {
             }
             return set("id", id).queryFirst(ALL);
         } catch (SQLException e) {
-            e.printStackTrace();
+
         }
         return null;
     }

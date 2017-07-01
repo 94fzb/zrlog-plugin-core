@@ -1,13 +1,19 @@
 package com.fzb.zrlog.plugin;
 
 import com.fzb.zrlog.plugin.api.IActionHandler;
+import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.data.codec.MsgPacket;
 import com.fzb.zrlog.plugin.type.ActionType;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by xiaochun on 2016/2/12.
  */
 public class MsgPacketDispose {
+
+    private static final Logger LOGGER = LoggerUtil.getLogger(MsgPacketDispose.class);
 
     public void handler(final IOSession session, final MsgPacket msgPacket, IActionHandler actionHandler) {
         ActionType action = ActionType.valueOf(msgPacket.getMethodStr());
@@ -40,7 +46,7 @@ public class MsgPacketDispose {
         } else if (action == ActionType.BLOG_RUN_TIME) {
             actionHandler.getBlogRuntimePath(session, msgPacket);
         } else {
-            System.err.println("UnSupport Method " + action);
+            LOGGER.log(Level.WARNING, "UnSupport Method " + action);
         }
     }
 }

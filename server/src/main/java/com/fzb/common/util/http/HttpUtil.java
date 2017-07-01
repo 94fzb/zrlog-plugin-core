@@ -3,7 +3,6 @@ package com.fzb.common.util.http;
 import com.fzb.common.util.http.handle.HttpFileHandle;
 import com.fzb.common.util.http.handle.HttpHandle;
 import com.fzb.common.util.http.handle.HttpStringHandle;
-import com.fzb.zrlog.plugin.server.Start;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -45,14 +44,14 @@ public class HttpUtil {
                 try {
                     nvps.add(new BasicNameValuePair(key, URLDecoder.decode(string, "UTF-8")));
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    LOGGER.error("",e);
                 }
             }
         }
         try {
             httPost.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            LOGGER.error("",e);
         }
         return httPost;
     }

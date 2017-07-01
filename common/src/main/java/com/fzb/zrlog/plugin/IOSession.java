@@ -97,7 +97,7 @@ public class IOSession {
             getAttr().put("count", msgIds.incrementAndGet());
             new SocketEncode().doEncode(this, msgPacket);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 
@@ -157,7 +157,7 @@ public class IOSession {
             }
             msgPacketDispose.handler(this, msgPacket, actionHandler);
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "close outputStream error");
+            LOGGER.log(Level.SEVERE, "handle error", e);
         }
     }
 
@@ -166,7 +166,7 @@ public class IOSession {
         try {
             ((Channel) systemAttr.get("_channel")).close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 
@@ -191,7 +191,7 @@ public class IOSession {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, "", e);
             }
             MsgPacket msgPacket = (MsgPacket) pipeMap.get(msgId)[4];
             if (msgPacket != null) {

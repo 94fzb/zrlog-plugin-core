@@ -1,11 +1,17 @@
 package com.fzb.common.util;
 
+import com.fzb.zrlog.plugin.common.LoggerUtil;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CmdUtil {
+
+    private static final Logger LOGGER = LoggerUtil.getLogger(CmdUtil.class);
 
     public static int findPidByPort(int port) throws IOException, InterruptedException {
         String cmdStr;
@@ -68,7 +74,7 @@ public class CmdUtil {
             }
             System.out.println(System.currentTimeMillis() - start);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 
@@ -102,7 +108,7 @@ public class CmdUtil {
         try {
             return rt.exec(cmd);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "", e);
         }
         return null;
     }

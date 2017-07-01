@@ -26,7 +26,6 @@ public class HeartbeatTimer {
                         //session.sendJsonMsg(map, "UserServiceRequestImpl_heartbeat");
                     } catch (InterruptedException e) {
                         LOGGER.log(Level.SEVERE, "heartTimer error will stop", e);
-                        e.printStackTrace();
                         break;
                     }
                 }

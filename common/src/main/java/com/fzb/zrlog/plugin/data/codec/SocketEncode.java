@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SocketEncode {
@@ -47,7 +48,7 @@ public class SocketEncode {
                 channel.register(selector, SelectionKey.OP_READ);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE,"",e);
         }
     }
 }
