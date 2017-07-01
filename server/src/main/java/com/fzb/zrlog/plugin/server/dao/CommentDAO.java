@@ -1,4 +1,6 @@
-package com.fzb.common.dao.impl;
+package com.fzb.zrlog.plugin.server.dao;
+
+import com.fzb.common.dao.impl.DAO;
 
 public class CommentDAO extends DAO {
 

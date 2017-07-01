@@ -18,6 +18,7 @@ public class HttpMsgUtil {
             msgBody.setUserId(Integer.valueOf(request.getHeader("LoginUserId")));
         }
         msgBody.setVersion(request.getHeader("Blog-Version"));
+        msgBody.setAccessUrl(request.getHeader("AccessUrl"));
         if (RunConstants.runType == RunType.DEV) {
             msgBody.setFullUrl(request.getScheme() + "://" + request.getHeader("Host") + request.getUri());
             msgBody.setUserName("LOC_DEV");

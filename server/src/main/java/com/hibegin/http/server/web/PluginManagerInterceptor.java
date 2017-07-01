@@ -74,7 +74,7 @@ public class PluginManagerInterceptor implements Interceptor {
             } else {
                 if (isLogin) {
                     try {
-                        LOGGER.info("invoke method " + method);
+                        //LOGGER.info("invoke method " + method);
                         Controller e2;
                         try {
                             Constructor e1 = method.getDeclaringClass().getConstructor(HttpRequest.class, HttpResponse.class);

@@ -11,7 +11,7 @@ import com.fzb.zrlog.plugin.data.codec.MsgPacket;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.type.ActionType;
 import com.fzb.zrlog.plugin.type.RunType;
-import flexjson.JSONDeserializer;
+import com.google.gson.Gson;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -30,7 +30,7 @@ public class ClientActionHandler implements IActionHandler {
 
     private static Logger LOGGER = LoggerUtil.getLogger(ClientActionHandler.class);
 
-    private static String ACTION_NOT_FOUND_PAGE = "<html><body><h1>Not Found</h1></body></html>";
+    public static String ACTION_NOT_FOUND_PAGE = "<html><body><h1>Not Found</h1></body></html>";
 
     @Override
     public void service(IOSession session, MsgPacket msgPacket) {
@@ -41,7 +41,7 @@ public class ClientActionHandler implements IActionHandler {
         } else {
             try {
                 if (msgPacket.getContentType() == ContentType.JSON) {
-                    Map<String, Object> map = new JSONDeserializer<Map>().deserialize(msgPacket.getDataStr());
+                    Map<String, Object> map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
                     for (Class<? extends IPluginService> serviceClass : pluginServices) {
                         Service service = serviceClass.getAnnotation(Service.class);
                         if (service != null && service.value().equals(map.get("name"))) {
@@ -62,7 +62,7 @@ public class ClientActionHandler implements IActionHandler {
 
     @Override
     public void initConnect(IOSession session, MsgPacket msgPacket) {
-        Map<String, Object> map = new JSONDeserializer<Map<String, Object>>().deserialize(msgPacket.getDataStr());
+        Map<String, Object> map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
         RunConstants.runType = RunType.valueOf(map.get("runType").toString());
         IConnectHandler connectHandler = (IConnectHandler) session.getAttr().get("_connectHandle");
         if (connectHandler != null) {
@@ -72,7 +72,7 @@ public class ClientActionHandler implements IActionHandler {
 
     @Override
     public void getFile(IOSession session, MsgPacket msgPacket) {
-        HttpRequestInfo httpRequestInfo = new JSONDeserializer<HttpRequestInfo>().deserialize(msgPacket.getDataStr());
+        HttpRequestInfo httpRequestInfo = new Gson().fromJson(msgPacket.getDataStr(), HttpRequestInfo.class);
         InputStream in = ClientActionHandler.class.getResourceAsStream("/templates" + httpRequestInfo.getUri());
         if (in != null) {
             byte tmpBytes[] = IOUtil.getByteByInputStream(in);
@@ -95,7 +95,7 @@ public class ClientActionHandler implements IActionHandler {
     @Override
     public void httpMethod(IOSession session, MsgPacket msgPacket) {
         List<Class> clazzList = (List<Class>) session.getAttr().get("_actionClassList");
-        HttpRequestInfo httpRequestInfo = new JSONDeserializer<HttpRequestInfo>().deserialize(msgPacket.getDataStr());
+        HttpRequestInfo httpRequestInfo = new Gson().fromJson(msgPacket.getDataStr(), HttpRequestInfo.class);
         if (clazzList != null && !clazzList.isEmpty()) {
             for (Class clazz : clazzList) {
                 try {
@@ -131,7 +131,7 @@ public class ClientActionHandler implements IActionHandler {
         }
         if (pluginAction != null) {
             if (action == ActionType.PLUGIN_INSTALL) {
-                HttpRequestInfo httpRequestInfo = new JSONDeserializer<HttpRequestInfo>().deserialize(msgPacket.getDataStr());
+                HttpRequestInfo httpRequestInfo = new Gson().fromJson(msgPacket.getDataStr(), HttpRequestInfo.class);
                 pluginAction.install(session, msgPacket, httpRequestInfo);
             } else if (action == ActionType.PLUGIN_START) {
                 pluginAction.start(session, msgPacket);

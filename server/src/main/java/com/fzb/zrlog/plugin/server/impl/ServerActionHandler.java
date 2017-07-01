@@ -1,6 +1,6 @@
 package com.fzb.zrlog.plugin.server.impl;
 
-import com.fzb.common.dao.impl.CommentDAO;
+import com.fzb.zrlog.plugin.server.dao.CommentDAO;
 import com.fzb.common.util.RunConstants;
 import com.fzb.common.util.http.HttpUtil;
 import com.fzb.common.util.http.handle.HttpStringHandle;
@@ -19,8 +19,8 @@ import com.fzb.zrlog.plugin.server.type.PluginStatus;
 import com.fzb.zrlog.plugin.server.util.PluginUtil;
 import com.fzb.zrlog.plugin.type.ActionType;
 import com.fzb.zrlog.plugin.type.RunType;
+import com.google.gson.Gson;
 import com.hibegin.common.util.LoggerUtil;
-import flexjson.JSONDeserializer;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -37,7 +37,7 @@ public class ServerActionHandler implements IActionHandler {
     @Override
     public void service(final IOSession session, final MsgPacket msgPacket) {
         if (msgPacket.getStatus() == MsgPacketStatus.SEND_REQUEST) {
-            Map<String, Object> map = new JSONDeserializer<Map>().deserialize(msgPacket.getDataStr());
+            Map<String, Object> map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
             String name = map.get("name").toString();
             final IOSession serviceSession = PluginConfig.getInstance().getIOSessionByService(name);
             if (serviceSession != null) {
@@ -70,7 +70,7 @@ public class ServerActionHandler implements IActionHandler {
 
     @Override
     public void initConnect(IOSession session, MsgPacket msgPacket) {
-        Plugin plugin = new JSONDeserializer<Plugin>().deserialize(msgPacket.getDataStr());
+        Plugin plugin = new Gson().fromJson(msgPacket.getDataStr(), Plugin.class);
         session.setPlugin(plugin);
         Map<String, Object> map = new HashMap<>();
         map.put("runType", RunConstants.runType);
@@ -85,10 +85,10 @@ public class ServerActionHandler implements IActionHandler {
 
     @Override
     public void loadWebSite(IOSession session, MsgPacket msgPacket) {
-        Map map = new JSONDeserializer<Map>().deserialize(msgPacket.getDataStr());
+        Map map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
         String[] keys = ((String) map.get("key")).split(",");
         try {
-            Map<String, String> response = new HashMap();
+            Map<String, String> response = new HashMap<>();
             for (String key : keys) {
                 String str = (String) new WebSiteDAO().set("name", session.getPlugin().getShortName() + "_" + key).queryFirst("value");
                 response.put(key, str);
@@ -101,7 +101,7 @@ public class ServerActionHandler implements IActionHandler {
 
     @Override
     public void setWebSite(IOSession session, MsgPacket msgPacket) {
-        Map<String, Object> map = new JSONDeserializer<Map>().deserialize(msgPacket.getDataStr());
+        Map<String, Object> map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
 
         Map<String, Object> resultMap = new HashMap<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -146,7 +146,7 @@ public class ServerActionHandler implements IActionHandler {
     @Override
     public void httpMethod(final IOSession session, final MsgPacket msgPacket) {
         if (msgPacket.getStatus() == MsgPacketStatus.SEND_REQUEST) {
-            Map<String, Object> map = new JSONDeserializer<Map<String, Object>>().deserialize(msgPacket.getDataStr());
+            Map<String, Object> map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
             String name = map.get("name").toString();
             final IOSession serviceSession = PluginConfig.getInstance().getIOSessionByService(name);
             if (serviceSession != null) {
@@ -169,7 +169,7 @@ public class ServerActionHandler implements IActionHandler {
 
     @Override
     public void deleteComment(IOSession session, MsgPacket msgPacket) {
-        Comment comment = new JSONDeserializer<Comment>().deserialize(msgPacket.getDataStr());
+        Comment comment = new Gson().fromJson(msgPacket.getDataStr(), Comment.class);
         Map<String, Boolean> map = new HashMap<>();
         if (comment.getPostId() != null) {
             try {
@@ -186,7 +186,7 @@ public class ServerActionHandler implements IActionHandler {
 
     @Override
     public void addComment(IOSession session, MsgPacket msgPacket) {
-        Comment comment = new JSONDeserializer<Comment>().deserialize(msgPacket.getDataStr());
+        Comment comment = new Gson().fromJson(msgPacket.getDataStr(), Comment.class);
         Map<String, Boolean> map = new HashMap<>();
         try {
             boolean result = new CommentDAO()

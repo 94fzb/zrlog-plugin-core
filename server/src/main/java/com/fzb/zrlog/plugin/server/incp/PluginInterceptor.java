@@ -21,6 +21,8 @@ import com.hibegin.http.server.util.MimeTypeUtil;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -39,13 +41,13 @@ public class PluginInterceptor implements Interceptor {
                 httpResponse.renderCode(404);
                 return false;
             }
-            String path = pluginName.substring(pluginName.indexOf("/"));
             //LOGGER.log(Level.INFO, "request path " + path);
             pluginName = pluginName.substring(0, pluginName.indexOf("/"));
             //LOGGER.log(Level.INFO, "plugin name" + pluginName);
             boolean isLogin = (boolean) httpRequest.getAttr().get("isLogin");
             final IOSession session = PluginConfig.getInstance().getIOSessionByPluginName(pluginName);
-            if (!isLogin && RunConstants.runType != RunType.DEV && (session == null || !session.getPlugin().getPaths().contains(path))) {
+            if (!isLogin && RunConstants.runType != RunType.DEV && (session == null ||
+                    !includePath(session.getPlugin().getPaths(), httpRequest.getUri().replace("/" + session.getPlugin().getShortName(), "")))) {
                 httpResponse.renderCode(403);
                 return false;
             }
@@ -63,7 +65,10 @@ public class PluginInterceptor implements Interceptor {
                 if (msgBody.getUri().endsWith(".action")) {
                     actionType = ActionType.HTTP_METHOD;
                     msgBody.setHeader(httpRequest.getHeaderMap());
-                    msgBody.setRequestBody(httpRequest.getContentByte());
+                    if (httpRequest.getRequestBodyByteBuffer() != null) {
+                        httpRequest.getRequestBodyByteBuffer().flip();
+                        msgBody.setRequestBody(httpRequest.getRequestBodyByteBuffer().array());
+                    }
                     msgBody.setParam(httpRequest.decodeParamMap());
                 }
                 String fileExt = httpRequest.getUri().substring(httpRequest.getUri().lastIndexOf(".") + 1);
@@ -97,6 +102,19 @@ public class PluginInterceptor implements Interceptor {
                 }
             } else {
                 httpResponse.renderCode(404);
+            }
+        }
+        return false;
+    }
+
+    private boolean includePath(Set<String> paths, String uri) {
+        for (String path : paths) {
+            LOGGER.log(Level.INFO, "path " + path + " uri " + uri);
+            String tPath = path.trim();
+            if (tPath.length() > 0) {
+                if (uri.startsWith(path)) {
+                    return true;
+                }
             }
         }
         return false;

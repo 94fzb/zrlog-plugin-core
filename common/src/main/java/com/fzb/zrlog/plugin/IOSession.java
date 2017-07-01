@@ -157,7 +157,7 @@ public class IOSession {
             }
             msgPacketDispose.handler(this, msgPacket, actionHandler);
         } catch (Exception e) {
-            LOGGER.log(Level.WARNING, "close outputStream error");
+            LOGGER.log(Level.SEVERE, "handle error", e);
         }
     }
 

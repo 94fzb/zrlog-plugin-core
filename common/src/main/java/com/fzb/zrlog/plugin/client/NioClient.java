@@ -1,10 +1,7 @@
 package com.fzb.zrlog.plugin.client;
 
 import com.fzb.zrlog.plugin.IOSession;
-import com.fzb.zrlog.plugin.api.IConnectHandler;
-import com.fzb.zrlog.plugin.api.IPluginAction;
-import com.fzb.zrlog.plugin.api.IPluginService;
-import com.fzb.zrlog.plugin.api.Service;
+import com.fzb.zrlog.plugin.api.*;
 import com.fzb.zrlog.plugin.common.ConfigKit;
 import com.fzb.zrlog.plugin.common.IdUtil;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
@@ -27,8 +24,14 @@ public class NioClient {
 
     private IConnectHandler connectHandler;
     private IRenderHandler renderHandler;
+    private IActionHandler actionHandler;
 
     public NioClient() {
+
+    }
+
+    public NioClient(IActionHandler actionHandler) {
+        this.actionHandler = actionHandler;
     }
 
     public NioClient(IConnectHandler connectHandler, IRenderHandler renderHandler) {
@@ -96,6 +99,9 @@ public class NioClient {
 
     private void connectServer(InetSocketAddress serverAddress, List<Class> classList, Plugin plugin, Class<? extends IPluginAction> pluginAction,
                                List<Class<? extends IPluginService>> serviceList) {
+        if (actionHandler == null) {
+            actionHandler = new ClientActionHandler();
+        }
         try {
             SocketChannel socketChannel = SocketChannel.open();
             socketChannel.configureBlocking(false);
@@ -116,7 +122,7 @@ public class NioClient {
                         if (channel.isConnectionPending()) {
                             channel.finishConnect();
                         }
-                        session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode()), new ClientActionHandler(), renderHandler);
+                        session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode()), actionHandler, renderHandler);
                         session.setPlugin(plugin);
                         session.getAttr().put("_actionClassList", classList);
                         session.getAttr().put("_pluginClass", pluginAction);

@@ -5,9 +5,8 @@ import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.common.modle.BlogRunTime;
 import com.fzb.zrlog.plugin.server.dao.WebSiteDAO;
 import com.fzb.zrlog.plugin.type.RunType;
+import com.google.gson.Gson;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
 import org.apache.log4j.Logger;
 
 import java.beans.PropertyVetoException;
@@ -67,7 +66,7 @@ public class PluginConfig {
         try {
             String text = (String) new WebSiteDAO().set("name", PLUGIN_DB_KEY).queryFirst("value");
             if (text != null && !"".equals(text)) {
-                instance.pluginCore = new JSONDeserializer<PluginCore>().deserialize(text);
+                instance.pluginCore = new Gson().fromJson(text, PluginCore.class);
             } else {
                 instance.pluginCore = new PluginCore();
             }
@@ -88,7 +87,7 @@ public class PluginConfig {
                     } catch (InterruptedException e) {
                         LOGGER.error("stop", e);
                     }
-                    String jsonStr = new JSONSerializer().deepSerialize(getInstance().pluginCore);
+                    String jsonStr = new Gson().toJson(getInstance().pluginCore);
                     if (!currentPluginText.equals(jsonStr)) {
                         currentPluginText = jsonStr;
                         try {

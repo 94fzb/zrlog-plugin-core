@@ -1,7 +1,6 @@
 package com.fzb.zrlog.plugin.data.codec.convert;
 
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
+import com.google.gson.Gson;
 
 import java.nio.ByteBuffer;
 
@@ -12,7 +11,7 @@ public class JsonConvertMsgBody implements ConvertMsgBody {
 
     @Override
     public ByteBuffer toByteBuffer(Object obj) {
-        byte[] jsonByte = new JSONSerializer().deepSerialize(obj).getBytes();
+        byte[] jsonByte = new Gson().toJson(obj).getBytes();
         ByteBuffer byteBuffer = ByteBuffer.allocate(jsonByte.length);
         byteBuffer.put(jsonByte);
         return byteBuffer;
@@ -25,6 +24,6 @@ public class JsonConvertMsgBody implements ConvertMsgBody {
 
     public <T> T toObj(ByteBuffer byteBuffer, Class<T> clazz) {
         String jsonStr = new String(byteBuffer.array());
-        return new JSONDeserializer<T>().deserialize(jsonStr, clazz);
+        return new Gson().fromJson(jsonStr, clazz);
     }
 }
