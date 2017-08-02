@@ -2,14 +2,13 @@ package com.fzb.zrlog.plugin.server.config;
 
 import com.fzb.common.dao.impl.DAO;
 import com.fzb.zrlog.plugin.IOSession;
+import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.common.modle.BlogRunTime;
 import com.fzb.zrlog.plugin.server.dao.WebSiteDAO;
 import com.fzb.zrlog.plugin.type.RunType;
 import com.google.gson.Gson;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import org.apache.log4j.Logger;
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
-import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,11 +17,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PluginConfig {
 
     private static final String PLUGIN_DB_KEY = "plugin_core_db_key";
-    private static final Logger LOGGER = Logger.getLogger(PluginConfig.class);
+    private static final Logger LOGGER = LoggerUtil.getLogger(PluginConfig.class);
     private static PluginConfig instance = new PluginConfig();
     private File dbPropertiesFile;
     private RunType runType;
@@ -46,21 +47,15 @@ public class PluginConfig {
         instance.pluginBasePath = pluginBasePath;
         instance.blogRunTime = blogRunTime;
         new File(pluginBasePath).mkdir();
-        ComboPooledDataSource dataSource = new ComboPooledDataSource(false);
+        MysqlDataSource dataSource = new MysqlDataSource();
         try {
             Properties properties = new Properties();
             properties.load(new FileInputStream(_dbPropertiesFile));
-            dataSource.setJdbcUrl(properties.get("jdbcUrl").toString() + "&autoReconnect=true");
-            dataSource.setMaxIdleTime(20);
-            dataSource.setAcquireIncrement(2);
-            dataSource.setInitialPoolSize(10);
-            dataSource.setMaxPoolSize(100);
-            dataSource.setMinPoolSize(10);
+            dataSource.setUrl(properties.get("jdbcUrl").toString() + "&autoReconnect=true");
             dataSource.setPassword(properties.get("password").toString());
-            dataSource.setDriverClass(properties.get("driverClass").toString());
             dataSource.setUser(properties.get("user").toString());
-        } catch (IOException | PropertyVetoException e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "", e);
         }
         DAO.setDs(dataSource);
         try {
@@ -71,7 +66,7 @@ public class PluginConfig {
                 instance.pluginCore = new PluginCore();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "", e);
         }
         saveToJsonFileThread();
     }
@@ -85,7 +80,7 @@ public class PluginConfig {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
-                        LOGGER.error("stop", e);
+                        LOGGER.log(Level.SEVERE, "stop", e);
                     }
                     String jsonStr = new Gson().toJson(getInstance().pluginCore);
                     if (!currentPluginText.equals(jsonStr)) {
@@ -93,7 +88,7 @@ public class PluginConfig {
                         try {
                             new WebSiteDAO().saveOrUpdate(PLUGIN_DB_KEY, currentPluginText);
                         } catch (SQLException e) {
-                            LOGGER.error(e);
+                            LOGGER.log(Level.SEVERE, "", e);
                         }
                     }
                 }

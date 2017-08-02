@@ -3,6 +3,7 @@ package com.fzb.common.util.http;
 import com.fzb.common.util.http.handle.HttpFileHandle;
 import com.fzb.common.util.http.handle.HttpHandle;
 import com.fzb.common.util.http.handle.HttpStringHandle;
+import com.fzb.zrlog.plugin.common.LoggerUtil;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -13,7 +14,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -22,9 +22,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HttpUtil {
-    private static Logger LOGGER = Logger.getLogger(HttpUtil.class);
+    private static Logger LOGGER = LoggerUtil.getLogger(HttpUtil.class);
     private static CloseableHttpClient httpClient;
 
     static {
@@ -44,14 +46,14 @@ public class HttpUtil {
                 try {
                     nvps.add(new BasicNameValuePair(key, URLDecoder.decode(string, "UTF-8")));
                 } catch (UnsupportedEncodingException e) {
-                    LOGGER.error("",e);
+                    LOGGER.log(Level.SEVERE,"",e);
                 }
             }
         }
         try {
             httPost.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            LOGGER.error("",e);
+            LOGGER.log(Level.SEVERE,"",e);
         }
         return httPost;
     }

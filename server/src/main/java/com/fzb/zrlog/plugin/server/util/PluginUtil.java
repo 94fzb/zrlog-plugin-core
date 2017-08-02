@@ -7,24 +7,26 @@ import com.fzb.common.util.http.HttpUtil;
 import com.fzb.common.util.http.handle.HttpFileHandle;
 import com.fzb.zrlog.plugin.IOSession;
 import com.fzb.zrlog.plugin.common.ConfigKit;
+import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.server.config.PluginConfig;
 import com.fzb.zrlog.plugin.server.config.PluginVO;
 import com.fzb.zrlog.plugin.server.type.PluginStatus;
 import com.fzb.zrlog.plugin.type.RunType;
-import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by xiaochun on 2016/2/11.
  */
 public class PluginUtil {
 
-    private static Logger LOGGER = Logger.getLogger(PluginUtil.class);
+    private static Logger LOGGER = LoggerUtil.getLogger(PluginUtil.class);
     protected static Map<String, Process> processMap = new HashMap<>();
     private static Map<String, File> idFileMap = new HashMap<>();
 
@@ -34,7 +36,7 @@ public class PluginUtil {
             Timer timer = new Timer();
             timer.schedule(new PluginScanThread(), 0, 5000);
         } catch (Exception e) {
-            LOGGER.warn("start plugin exception ", e);
+            LOGGER.log(Level.WARNING, "start plugin exception ", e);
         }
 
     }
@@ -64,7 +66,7 @@ public class PluginUtil {
             // 等待链接初始化完成
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            LOGGER.error("",e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 
@@ -156,12 +158,12 @@ public class PluginUtil {
                         }
                     }
                 } catch (IOException e) {
-                    LOGGER.error("plugin output error", e);
+                    LOGGER.log(Level.SEVERE, "plugin output error", e);
                 } finally {
                     try {
                         in.close();
                     } catch (IOException e) {
-                        LOGGER.error("",e);
+                        LOGGER.log(Level.SEVERE, "", e);
                     }
                     pr.destroy();
                 }
@@ -192,9 +194,5 @@ public class PluginUtil {
             IOUtil.moveOrCopyFile(fileHandle.getT().toString(), target, true);
         }
         return new File(target);
-    }
-
-    public static void main(String args[]) throws IOException {
-        System.out.println(downloadPlugin("qiniu.jar", "http://dl.zrlog.com/plugin/qiniu.jar"));
     }
 }

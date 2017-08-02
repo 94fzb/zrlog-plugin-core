@@ -1,21 +1,23 @@
 package com.fzb.zrlog.plugin.server.util;
 
 import com.fzb.common.util.RunConstants;
+import com.fzb.zrlog.plugin.common.LoggerUtil;
 import com.fzb.zrlog.plugin.server.config.PluginConfig;
 import com.fzb.zrlog.plugin.server.config.PluginVO;
 import com.fzb.zrlog.plugin.server.type.PluginStatus;
 import com.fzb.zrlog.plugin.type.RunType;
-import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PluginScanThread extends TimerTask {
 
-    private static Logger LOGGER = Logger.getLogger(PluginUtil.class);
+    private static Logger LOGGER = LoggerUtil.getLogger(PluginUtil.class);
 
     @Override
     public void run() {
@@ -87,7 +89,7 @@ public class PluginScanThread extends TimerTask {
                         try {
                             pluginVO.setFile(PluginUtil.downloadPlugin(fileName, "http://dl.zrlog.com/plugin/" + fileName).toString());
                         } catch (IOException e) {
-                            LOGGER.error("download error" + fileName, e);
+                            LOGGER.log(Level.SEVERE, "download error", e);
                         }
                     }
                 }

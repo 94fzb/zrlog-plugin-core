@@ -1,17 +1,19 @@
 package com.fzb.zrlog.plugin.server.util;
 
 import com.fzb.common.util.IOUtil;
-import org.apache.log4j.Logger;
+import com.fzb.zrlog.plugin.common.LoggerUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ListenWebServerThread extends Thread {
 
-    private static Logger LOGGER = Logger.getLogger(ListenWebServerThread.class);
+    private static Logger LOGGER = LoggerUtil.getLogger(ListenWebServerThread.class);
 
     private int port;
 
@@ -32,7 +34,7 @@ public class ListenWebServerThread extends Thread {
             serverSocket.close();
             System.exit(0);
         } catch (IOException e) {
-            LOGGER.error(e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 }

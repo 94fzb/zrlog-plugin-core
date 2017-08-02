@@ -1,11 +1,11 @@
 package com.fzb.common.dao.impl;
 
 import com.fzb.common.dao.api.IDAO;
+import com.fzb.zrlog.plugin.common.LoggerUtil;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
-import org.apache.log4j.Logger;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -13,11 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DAO implements IDAO {
 
     public static final String[] ALL = "*".split(" ");
-    public static Logger log = Logger.getLogger(DAO.class);
+    public static Logger log = LoggerUtil.getLogger(DAO.class);
     private static DataSource dataSource;
     protected String tableName;
     protected String pk;
@@ -26,12 +28,6 @@ public class DAO implements IDAO {
 
     public DAO() {
         queryRunner = new QueryRunner(dataSource, true);
-    }
-
-    public static void main(String[] args) throws SQLException {
-        DAO dao = new DAO();
-        log.info(dao.queryFirstObj("select count(1) from SYS_USER where name!=?", "null"));
-        log.info(dao.queryList("id,name"));
     }
 
     public static void setDs(DataSource ds) {
@@ -164,7 +160,7 @@ public class DAO implements IDAO {
         sb.append(") values(");
         sb.append(appendParams());
         sb.append(")");
-        log.debug(sb.toString());
+        log.log(Level.FINER, sb.toString());
         return queryRunner.update(sb.toString(), getMapValus(attrs)) > 0;
     }
 
@@ -180,7 +176,7 @@ public class DAO implements IDAO {
         sb.append(attrsMap2Str(attrs));
         sb.append(" where ");
         sb.append(condsMap2Str(conditions));
-        log.debug(sb.toString());
+        log.log(Level.FINER, sb.toString());
         return queryRunner.update(sb.toString(), getAttsValus(attrs, conditions)) > 0;
     }
 
@@ -194,7 +190,7 @@ public class DAO implements IDAO {
         sb.append(tableName);
         sb.append(" where ");
         sb.append(condsMap2Str(attrs));
-        log.debug(sb.toString());
+        log.log(Level.FINER, sb.toString());
         return queryRunner.update(sb.toString(), getMapValus(attrs)) > 0;
     }
 
@@ -207,7 +203,7 @@ public class DAO implements IDAO {
         sb.append("delete from ");
         sb.append(tableName);
         sb.append(" where id=?");
-        log.debug(sb.toString());
+        log.log(Level.FINER, sb.toString());
         return queryRunner.update(sb.toString(), id) > 0;
     }
 
@@ -232,7 +228,7 @@ public class DAO implements IDAO {
         } else {
             map = queryRunner.query(sb.toString(), new MapHandler());
         }
-        log.debug(sb.toString());
+        log.log(Level.FINER, sb.toString());
         return map;
     }
 
@@ -251,7 +247,7 @@ public class DAO implements IDAO {
         } else {
             map = queryRunner.query(sb.toString() + " order by " + column, new MapHandler());
         }
-        log.debug(sb.toString());
+        log.log(Level.FINER, sb.toString());
         if (map != null) {
             return map.get(column);
         }
@@ -279,7 +275,7 @@ public class DAO implements IDAO {
         } else {
             lmap = queryRunner.query(sb.toString(), new MapListHandler());
         }
-        log.debug(sb.toString());
+        log.log(Level.FINER, sb.toString());
         return lmap;
     }
 
@@ -307,7 +303,7 @@ public class DAO implements IDAO {
         } else {
             lmap = queryRunner.query(sb.toString(), new MapListHandler());
         }
-        log.debug(sb.toString());
+        log.log(Level.FINER, sb.toString());
         return lmap;
     }
 
@@ -330,7 +326,7 @@ public class DAO implements IDAO {
         } else {
             lmap = queryRunner.query(sb.toString(), new MapListHandler());
         }
-        log.debug(sb.toString());
+        log.log(Level.FINER, sb.toString());
         return lmap;
     }
 
