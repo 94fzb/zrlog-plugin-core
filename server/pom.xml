@@ -11,7 +11,6 @@
 
     <properties>
         <outputDirectory>/home/xiaochun/plugins/</outputDirectory>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
@@ -19,6 +18,11 @@
             <groupId>com.hibegin</groupId>
             <artifactId>simplewebserver</artifactId>
             <version>0.1.20</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.2.1</version>
         </dependency>
         <dependency>
             <groupId>com.fzb.zrlog.plugin</groupId>
@@ -77,7 +81,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.fzb.zrlog.plugin.server.Application</mainClass>
+                            <mainClass>com.fzb.zrlog.plugin.server.Start</mainClass>
                         </manifest>
                     </archive>
                     <finalName>plugin-core</finalName>

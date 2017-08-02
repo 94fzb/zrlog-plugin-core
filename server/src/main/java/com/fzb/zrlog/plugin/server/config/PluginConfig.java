@@ -6,9 +6,10 @@ import com.fzb.zrlog.plugin.common.modle.BlogRunTime;
 import com.fzb.zrlog.plugin.server.dao.WebSiteDAO;
 import com.fzb.zrlog.plugin.type.RunType;
 import com.google.gson.Gson;
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.apache.log4j.Logger;
 
+import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -45,15 +46,21 @@ public class PluginConfig {
         instance.pluginBasePath = pluginBasePath;
         instance.blogRunTime = blogRunTime;
         new File(pluginBasePath).mkdir();
-        MysqlDataSource dataSource = new MysqlDataSource();
+        ComboPooledDataSource dataSource = new ComboPooledDataSource(false);
         try {
             Properties properties = new Properties();
             properties.load(new FileInputStream(_dbPropertiesFile));
-            dataSource.setUrl(properties.get("jdbcUrl").toString() + "&autoReconnect=true");
+            dataSource.setJdbcUrl(properties.get("jdbcUrl").toString() + "&autoReconnect=true");
+            dataSource.setMaxIdleTime(20);
+            dataSource.setAcquireIncrement(2);
+            dataSource.setInitialPoolSize(10);
+            dataSource.setMaxPoolSize(100);
+            dataSource.setMinPoolSize(10);
             dataSource.setPassword(properties.get("password").toString());
+            dataSource.setDriverClass(properties.get("driverClass").toString());
             dataSource.setUser(properties.get("user").toString());
-        } catch (IOException e) {
-            LOGGER.error("", e);
+        } catch (IOException | PropertyVetoException e) {
+            e.printStackTrace();
         }
         DAO.setDs(dataSource);
         try {
@@ -64,7 +71,7 @@ public class PluginConfig {
                 instance.pluginCore = new PluginCore();
             }
         } catch (SQLException e) {
-            LOGGER.error("", e);
+            e.printStackTrace();
         }
         saveToJsonFileThread();
     }
