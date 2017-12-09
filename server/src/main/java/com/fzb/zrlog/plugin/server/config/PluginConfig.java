@@ -13,10 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -65,10 +62,10 @@ public class PluginConfig {
             } else {
                 instance.pluginCore = new PluginCore();
             }
+            saveToJsonFileThread();
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "", e);
         }
-        saveToJsonFileThread();
     }
 
     private static void saveToJsonFileThread() {
@@ -82,13 +79,15 @@ public class PluginConfig {
                     } catch (InterruptedException e) {
                         LOGGER.log(Level.SEVERE, "stop", e);
                     }
-                    String jsonStr = new Gson().toJson(getInstance().pluginCore);
-                    if (!currentPluginText.equals(jsonStr)) {
-                        currentPluginText = jsonStr;
-                        try {
-                            new WebSiteDAO().saveOrUpdate(PLUGIN_DB_KEY, currentPluginText);
-                        } catch (SQLException e) {
-                            LOGGER.log(Level.SEVERE, "", e);
+                    if (getInstance().pluginCore != null) {
+                        String jsonStr = new Gson().toJson(getInstance().pluginCore);
+                        if (!currentPluginText.equals(jsonStr)) {
+                            currentPluginText = jsonStr;
+                            try {
+                                new WebSiteDAO().saveOrUpdate(PLUGIN_DB_KEY, currentPluginText);
+                            } catch (SQLException e) {
+                                LOGGER.log(Level.SEVERE, "", e);
+                            }
                         }
                     }
                 }
@@ -134,7 +133,10 @@ public class PluginConfig {
     }
 
     public Collection<PluginVO> getAllPluginVO() {
-        return pluginCore.getPluginInfoMap().values();
+        if (pluginCore.getPluginInfoMap() != null) {
+            return pluginCore.getPluginInfoMap().values();
+        }
+        return new ArrayList<>();
     }
 
     public Map<String, PluginVO> getPluginInfoMap() {
