@@ -3,8 +3,6 @@ package com.fzb.zrlog.plugin.server.config;
 import com.fzb.zrlog.plugin.message.Plugin;
 import com.fzb.zrlog.plugin.server.type.PluginStatus;
 
-import java.io.File;
-
 public class PluginVO {
 
     private Plugin plugin;

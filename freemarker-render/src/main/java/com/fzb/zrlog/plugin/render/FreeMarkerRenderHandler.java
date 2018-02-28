@@ -9,7 +9,6 @@ import com.fzb.zrlog.plugin.type.RunType;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
-import java.io.*;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;

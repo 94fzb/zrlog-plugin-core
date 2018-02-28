@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class ConfigKit {
 
-    private static final Logger LOGGER =LoggerUtil.getLogger(ConfigKit.class);
+    private static final Logger LOGGER = LoggerUtil.getLogger(ConfigKit.class);
 
     private static Properties prop = new Properties();
 
@@ -19,7 +19,7 @@ public class ConfigKit {
                 prop.load(in);
             }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE,"",e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 

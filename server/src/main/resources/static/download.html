@@ -9,21 +9,21 @@
     <script src="assets/js/vue.js"></script>
     <script src="assets/js/jquery-2.0.3.min.js"></script>
     <script>
-        $(function(){
+        $(function () {
             function getParameterByName(name) {
                 var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
                 return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
             }
 
             var download = new Vue({
-                el : '#download',
-                data : {
-                    message:getParameterByName('message'),
-                    pluginName:getParameterByName('pluginName')
+                el: '#download',
+                data: {
+                    message: getParameterByName('message'),
+                    pluginName: getParameterByName('pluginName')
                 },
-                methods : {
-                    pluginInstallHref : function(val){
-                        return "../"+val+"/install";
+                methods: {
+                    pluginInstallHref: function (val) {
+                        return "../" + val + "/install";
                     }
                 }
             })

@@ -70,7 +70,7 @@ public class NioServer implements ISocketServer {
                     iter.remove();
                 }
             } catch (Exception e) {
-                LOGGER.log(Level.SEVERE,"",e);
+                LOGGER.log(Level.SEVERE, "", e);
             }
         }
     }
@@ -93,7 +93,7 @@ public class NioServer implements ISocketServer {
             PluginUtil.loadJarPlugin();
             LOGGER.info("load jar files");
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE,"",e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.fzb.zrlog.plugin.message;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Created by xiaochun on 2016/2/12.

@@ -103,7 +103,7 @@ public class ClientActionHandler implements IActionHandler {
                     Constructor constructor = clazz.getConstructor(IOSession.class, MsgPacket.class, HttpRequestInfo.class);
                     method.invoke(constructor.newInstance(session, msgPacket, httpRequestInfo));
                 } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                    LOGGER.log(Level.SEVERE,"",e);
+                    LOGGER.log(Level.SEVERE, "", e);
                     session.sendMsg(ContentType.HTML, ACTION_NOT_FOUND_PAGE, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_ERROR, null);
                 }
             }
@@ -127,7 +127,7 @@ public class ClientActionHandler implements IActionHandler {
         try {
             pluginAction = ((Class<IPluginAction>) session.getAttr().get("_pluginClass")).newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            LOGGER.log(Level.SEVERE,"",e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
         if (pluginAction != null) {
             if (action == ActionType.PLUGIN_INSTALL) {

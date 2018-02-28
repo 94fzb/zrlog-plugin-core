@@ -48,7 +48,7 @@ public class SocketEncode {
                 channel.register(selector, SelectionKey.OP_READ);
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE,"",e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 }

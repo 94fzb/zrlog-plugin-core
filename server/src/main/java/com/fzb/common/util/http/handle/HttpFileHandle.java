@@ -2,7 +2,6 @@ package com.fzb.common.util.http.handle;
 
 import com.fzb.common.util.IOUtil;
 import com.fzb.zrlog.plugin.common.LoggerUtil;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 
@@ -38,7 +37,7 @@ public class HttpFileHandle extends HttpHandle<File> {
                     try {
                         setT(new File(filePath + new String(tArr[1].split("=")[1].getBytes("ISO-8859-1"), "UTF-8")));
                     } catch (UnsupportedEncodingException e) {
-                        LOGGER.log(Level.SEVERE,"",e);
+                        LOGGER.log(Level.SEVERE, "", e);
                     }
                 }
             }
@@ -58,7 +57,7 @@ public class HttpFileHandle extends HttpHandle<File> {
                 fin.close();
             }
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE,"",e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
         return false;
     }

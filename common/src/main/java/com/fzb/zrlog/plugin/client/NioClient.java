@@ -145,7 +145,7 @@ public class NioClient {
                 //selectionKeys.clear();
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE,"",e);
+            LOGGER.log(Level.SEVERE, "", e);
             System.exit(1);
         }
     }

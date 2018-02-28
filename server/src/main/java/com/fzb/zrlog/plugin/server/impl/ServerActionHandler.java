@@ -1,6 +1,5 @@
 package com.fzb.zrlog.plugin.server.impl;
 
-import com.fzb.zrlog.plugin.server.dao.CommentDAO;
 import com.fzb.common.util.RunConstants;
 import com.fzb.common.util.http.HttpUtil;
 import com.fzb.common.util.http.handle.HttpStringHandle;
@@ -14,6 +13,7 @@ import com.fzb.zrlog.plugin.data.codec.MsgPacket;
 import com.fzb.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.fzb.zrlog.plugin.message.Plugin;
 import com.fzb.zrlog.plugin.server.config.PluginConfig;
+import com.fzb.zrlog.plugin.server.dao.CommentDAO;
 import com.fzb.zrlog.plugin.server.dao.WebSiteDAO;
 import com.fzb.zrlog.plugin.server.type.PluginStatus;
 import com.fzb.zrlog.plugin.server.util.PluginUtil;
@@ -36,6 +36,10 @@ public class ServerActionHandler implements IActionHandler {
 
     @Override
     public void service(final IOSession session, final MsgPacket msgPacket) {
+        handleMassagePackage(session, msgPacket);
+    }
+
+    private void handleMassagePackage(final IOSession session, final MsgPacket msgPacket) {
         if (msgPacket.getStatus() == MsgPacketStatus.SEND_REQUEST) {
             Map<String, Object> map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
             String name = map.get("name").toString();
@@ -64,7 +68,7 @@ public class ServerActionHandler implements IActionHandler {
         try {
             HttpUtil.sendGetRequest(url, new HttpStringHandle(), requestHeaders);
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE,"",e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 
@@ -95,7 +99,7 @@ public class ServerActionHandler implements IActionHandler {
             }
             session.sendJsonMsg(response, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE,"",e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 
@@ -110,7 +114,7 @@ public class ServerActionHandler implements IActionHandler {
             try {
                 result.put("result", new WebSiteDAO().saveOrUpdate(key, entry.getValue()));
             } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE,"",e);
+                LOGGER.log(Level.SEVERE, "", e);
             }
             resultMap.put(entry.getKey(), result);
         }
@@ -125,14 +129,14 @@ public class ServerActionHandler implements IActionHandler {
                     try {
                         new WebSiteDAO().saveOrUpdate("staticResourceHost", accessHost);
                     } catch (SQLException e) {
-                        LOGGER.log(Level.SEVERE,"",e);
+                        LOGGER.log(Level.SEVERE, "", e);
                     }
                 }
             } else {
                 try {
                     new WebSiteDAO().saveOrUpdate("staticResourceHost", "");
                 } catch (SQLException e) {
-                    LOGGER.log(Level.SEVERE,"",e);
+                    LOGGER.log(Level.SEVERE, "", e);
                 }
             }
         }
@@ -145,26 +149,7 @@ public class ServerActionHandler implements IActionHandler {
 
     @Override
     public void httpMethod(final IOSession session, final MsgPacket msgPacket) {
-        if (msgPacket.getStatus() == MsgPacketStatus.SEND_REQUEST) {
-            Map<String, Object> map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
-            String name = map.get("name").toString();
-            final IOSession serviceSession = PluginConfig.getInstance().getIOSessionByService(name);
-            if (serviceSession != null) {
-                // 消息中转
-                serviceSession.requestService(name, map, new IMsgPacketCallBack() {
-                    @Override
-                    public void handler(MsgPacket responseMsgPacket) {
-                        responseMsgPacket.setMsgId(msgPacket.getMsgId());
-                        session.sendMsg(responseMsgPacket);
-                    }
-                });
-            } else {
-                // not found service response error
-                Map<String, Object> response = new HashMap<>();
-                response.put("status", 500);
-                session.sendJsonMsg(response, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_ERROR);
-            }
-        }
+        handleMassagePackage(session, msgPacket);
     }
 
     @Override
@@ -244,7 +229,7 @@ public class ServerActionHandler implements IActionHandler {
             publicInfo.setSecondTitle(response.get("second_title"));
             session.sendJsonMsg(publicInfo, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE,"",e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 
@@ -256,7 +241,7 @@ public class ServerActionHandler implements IActionHandler {
             template.setValue(templatePath);
             session.sendJsonMsg(template, ActionType.CURRENT_TEMPLATE.name(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE,"",e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
     }
 

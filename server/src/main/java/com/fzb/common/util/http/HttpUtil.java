@@ -46,14 +46,14 @@ public class HttpUtil {
                 try {
                     nvps.add(new BasicNameValuePair(key, URLDecoder.decode(string, "UTF-8")));
                 } catch (UnsupportedEncodingException e) {
-                    LOGGER.log(Level.SEVERE,"",e);
+                    LOGGER.log(Level.SEVERE, "", e);
                 }
             }
         }
         try {
             httPost.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
-            LOGGER.log(Level.SEVERE,"",e);
+            LOGGER.log(Level.SEVERE, "", e);
         }
         return httPost;
     }
