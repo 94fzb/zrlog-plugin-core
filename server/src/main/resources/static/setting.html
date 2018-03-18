@@ -16,20 +16,20 @@
 </head>
 
 <body style="background:#f7f7f7">
-<div class="rows" style="padding:30px;">
+<div class="rows" style="padding-top:30px;">
     <div class="col-xs-12">
-        <form role="form" class="form-horizontal" checkBox="autoDownloadLostFile" id="ajaxotherMsg">
+        <form role="form" class="form-horizontal" checkBox="disableAutoDownloadLostFile" id="ajaxotherMsg">
             <div class="form-group">
-                <label class="col-sm-3 control-label  no-padding-right">自动获取丢失的的插件</label>
+                <label class="col-sm-4 control-label  no-padding-right">禁止自动获取丢失的的插件</label>
 
-                <div class="col-sm-9">
-                    <input type="hidden" id="autoDownloadLostFileVal" name="autoDownloadLostFile" value="off">
-                    <input type="checkbox" id="autoDownloadLostFile">
+                <div class="col-sm-8">
+                    <input type="hidden" id="disableAutoDownloadLostFileVal" name="disableAutoDownloadLostFile" value="off">
+                    <input type="checkbox" id="disableAutoDownloadLostFile">
                 </div>
             </div>
             <hr/>
             <div class="clearfix form-actions">
-                <div class="col-md-offset-3">
+                <div class="col-sm-offset-2">
                     <button id="otherMsg" type="button" class="btn btn-info">
                         <i class="icon-ok bigger-110"></i> 提交
                     </button>

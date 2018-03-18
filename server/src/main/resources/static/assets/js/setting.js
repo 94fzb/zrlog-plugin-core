@@ -1,11 +1,11 @@
 $(function(){
     $.get("../setting",function(e){
-        $("#autoDownloadLostFile").bootstrapSwitch('state',e.autoDownloadLostFile);
-        $("#autoDownloadLostFile").attr("value",e.autoDownloadLostFile);
-    })
+        $("#disableAutoDownloadLostFile").bootstrapSwitch('state',e.disableAutoDownloadLostFile);
+        $("#disableAutoDownloadLostFile").attr("value",e.disableAutoDownloadLostFile);
+    });
 
-    $('#autoDownloadLostFile').on('switchChange.bootstrapSwitch', function (event, state) {
-        $("#autoDownloadLostFileVal").attr("value",state?"on":"off");
+    $('#disableAutoDownloadLostFile').on('switchChange.bootstrapSwitch', function (event, state) {
+        $("#disableAutoDownloadLostFileVal").attr("value",state?"on":"off");
     });
     $(".btn-info").click(function(){
 

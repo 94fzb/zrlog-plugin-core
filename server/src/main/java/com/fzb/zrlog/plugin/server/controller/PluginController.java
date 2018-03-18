@@ -198,7 +198,7 @@ public class PluginController extends Controller {
 
     public void settingUpdate() {
         Map<String, Object> map = new HashMap<>();
-        PluginConfig.getInstance().getPluginCore().getSetting().setAutoDownloadLostFile(request.getParaToBool("autoDownloadLostFile"));
+        PluginConfig.getInstance().getPluginCore().getSetting().setDisableAutoDownloadLostFile(request.getParaToBool("disableAutoDownloadLostFile"));
         map.put("code", 0);
         map.put("message", "成功");
         getResponse().renderJson(map);

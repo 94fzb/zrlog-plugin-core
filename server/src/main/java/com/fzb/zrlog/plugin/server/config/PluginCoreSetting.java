@@ -2,13 +2,13 @@ package com.fzb.zrlog.plugin.server.config;
 
 public class PluginCoreSetting {
 
-    private boolean autoDownloadLostFile;
+    private boolean disableAutoDownloadLostFile;
 
-    public boolean isAutoDownloadLostFile() {
-        return autoDownloadLostFile;
+    public boolean isDisableAutoDownloadLostFile() {
+        return disableAutoDownloadLostFile;
     }
 
-    public void setAutoDownloadLostFile(boolean autoDownloadLostFile) {
-        this.autoDownloadLostFile = autoDownloadLostFile;
+    public void setDisableAutoDownloadLostFile(boolean disableAutoDownloadLostFile) {
+        this.disableAutoDownloadLostFile = disableAutoDownloadLostFile;
     }
 }

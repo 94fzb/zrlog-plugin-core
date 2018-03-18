@@ -83,7 +83,7 @@ public class PluginScanThread extends TimerTask {
             if (pluginVO.getFile() != null) {
                 File file = new File(pluginVO.getFile());
                 if (!file.exists() || file.length() == 0) {
-                    boolean download = PluginConfig.getInstance().getPluginCore().getSetting().isAutoDownloadLostFile();
+                    boolean download = !PluginConfig.getInstance().getPluginCore().getSetting().isDisableAutoDownloadLostFile();
                     String fileName = pluginVO.getPlugin().getShortName() + ".jar";
                     if (download && RunConstants.runType == RunType.BLOG) {
                         try {
