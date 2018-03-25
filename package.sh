@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-cd common
+cd plugin-common
 mvn clean install
-cd ../server
+cd ../plugin-core
 mvn clean compile assembly:single

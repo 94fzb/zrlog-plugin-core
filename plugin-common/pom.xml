@@ -2,27 +2,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <groupId>com.fzb.zrlog.plugin</groupId>
+
+    <groupId>com.zrlog</groupId>
+    <version>1.2.6</version>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>jtwig-render</artifactId>
-    <version>1.0</version>
+    <artifactId>plugin-common</artifactId>
     <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.lyncode</groupId>
-            <artifactId>jtwig-core</artifactId>
-            <version>3.1.1</version>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.1</version>
         </dependency>
         <dependency>
-            <groupId>com.lyncode</groupId>
-            <artifactId>jtwig-functions</artifactId>
-            <version>3.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fzb.zrlog.plugin</groupId>
-            <artifactId>common</artifactId>
-            <version>1.2.5</version>
+            <groupId>com.hibegin</groupId>
+            <artifactId>common-util</artifactId>
+            <version>0.0.4</version>
         </dependency>
     </dependencies>
 
