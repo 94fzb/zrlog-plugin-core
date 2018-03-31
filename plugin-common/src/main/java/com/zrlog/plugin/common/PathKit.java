@@ -16,7 +16,7 @@ public class PathKit {
     public static String getRootPath() {
         String path;
         if (PathKit.class.getResource("/") != null) {
-            path = new File(PathKit.class.getClass().getResource("/").getPath()).getParentFile().getParentFile().toString();
+            path = new File(PathKit.class.getResource("/").getPath()).getParentFile().getParentFile().toString();
 
         } else {
             String thisPath = PathKit.class.getProtectionDomain().getCodeSource().getLocation().getPath().replace("\\", "/");

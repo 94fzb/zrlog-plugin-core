@@ -123,6 +123,14 @@ public class IOSession {
         }
     }
 
+    public void responseHtmlStr(String htmlString, String method, int id) {
+        sendMsg(ContentType.HTML, htmlString, method, id, MsgPacketStatus.RESPONSE_SUCCESS, null);
+    }
+
+    public void responseHtmlStr(String htmlString, String method, int id, IMsgPacketCallBack callBack) {
+        sendMsg(ContentType.HTML, htmlString, method, id, MsgPacketStatus.RESPONSE_SUCCESS, callBack);
+    }
+
     public void responseHtml(String templatePath, Map dataMap, String method, int id) {
         responseHtml(templatePath, dataMap, method, id, null);
     }
