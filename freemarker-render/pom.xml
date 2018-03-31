@@ -5,7 +5,7 @@
     <groupId>com.fzb.zrlog.plugin</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>freemarker-render</artifactId>
-    <version>1.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -19,9 +19,9 @@
             <version>2.3.23</version>
         </dependency>
         <dependency>
-            <groupId>com.fzb.zrlog.plugin</groupId>
-            <artifactId>common</artifactId>
-            <version>1.2.5</version>
+            <groupId>com.zrlog</groupId>
+            <artifactId>plugin-common</artifactId>
+            <version>1.2.6</version>
         </dependency>
     </dependencies>
 
