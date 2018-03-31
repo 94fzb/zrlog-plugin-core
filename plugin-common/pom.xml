@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.hibegin</groupId>
             <artifactId>common-util</artifactId>
-            <version>0.0.4</version>
+            <version>0.0.6</version>
         </dependency>
     </dependencies>
 

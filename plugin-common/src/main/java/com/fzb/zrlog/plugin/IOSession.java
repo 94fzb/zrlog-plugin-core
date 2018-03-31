@@ -36,6 +36,7 @@ public class IOSession {
     private AtomicInteger msgIds = new AtomicInteger();
     private MsgPacketDispose msgPacketDispose = new MsgPacketDispose();
     private IRenderHandler renderHandler;
+    private SocketEncode socketEncode;
     private ClearIdlMsgPacket clearIdlMsgPacket;
 
     public IOSession(SocketChannel channel, Selector selector, SocketCodec socketCodec, IActionHandler actionHandler, IRenderHandler renderHandler) {
@@ -44,6 +45,7 @@ public class IOSession {
         systemAttr.put("_decode", socketCodec.getSocketDecode());
         systemAttr.put("_encode", socketCodec.getSocketEncode());
         systemAttr.put("_actionHandler", actionHandler);
+        this.socketEncode = socketCodec.getSocketEncode();
         this.actionHandler = actionHandler;
         this.renderHandler = renderHandler;
         this.clearIdlMsgPacket = new ClearIdlMsgPacket(pipeMap);
@@ -95,7 +97,7 @@ public class IOSession {
             Object[] inAndOut = new Object[]{in, out, callBack, msgPacket, null, System.currentTimeMillis()};
             pipeMap.put(msgPacket.getMsgId(), inAndOut);
             getAttr().put("count", msgIds.incrementAndGet());
-            new SocketEncode().doEncode(this, msgPacket);
+            socketEncode.doEncode(this, msgPacket);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "", e);
         }
