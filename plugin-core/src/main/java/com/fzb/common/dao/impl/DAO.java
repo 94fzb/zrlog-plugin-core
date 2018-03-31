@@ -1,7 +1,7 @@
 package com.fzb.common.dao.impl;
 
 import com.fzb.common.dao.api.IDAO;
-import com.fzb.zrlog.plugin.common.LoggerUtil;
+import com.zrlog.plugin.common.LoggerUtil;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;

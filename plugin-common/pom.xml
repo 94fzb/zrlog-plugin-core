@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <groupId>com.zrlog</groupId>
-    <version>1.2.6</version>
+    <version>1.2.7</version>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>plugin-common</artifactId>
     <packaging>jar</packaging>
@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.hibegin</groupId>
             <artifactId>common-util</artifactId>
-            <version>0.0.6</version>
+            <version>0.0.8</version>
         </dependency>
     </dependencies>
 

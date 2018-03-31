@@ -1,6 +1,6 @@
 package com.zrlog.plugincore.server.util;
 
-import com.fzb.zrlog.plugin.common.LoggerUtil;
+import com.zrlog.plugin.common.LoggerUtil;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,6 +1,6 @@
 package com.zrlog.plugincore.server.config;
 
-import com.fzb.zrlog.plugin.message.Plugin;
+import com.zrlog.plugin.message.Plugin;
 import com.zrlog.plugincore.server.type.PluginStatus;
 
 public class PluginVO {

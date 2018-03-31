@@ -1,7 +1,7 @@
 package com.fzb.net.socket;
 
 
-import com.fzb.zrlog.plugin.IOSession;
+import com.zrlog.plugin.IOSession;
 
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
