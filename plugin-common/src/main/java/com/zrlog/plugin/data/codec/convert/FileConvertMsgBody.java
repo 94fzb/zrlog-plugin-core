@@ -20,13 +20,8 @@ public class FileConvertMsgBody implements ConvertMsgBody {
 
     private static ByteBuffer toByteArr(FileInfo fileInfo) {
         byte[] fileDescBytes = new Gson().toJson(fileInfo.getFileDesc()).getBytes();
-        ByteBuffer byteBuffer = ByteBuffer.allocate(4 + fileDescBytes.length + 32 + 4 + fileInfo.getFileBytes().length);
-        byteBuffer.put(HexaConversionUtil.intToByteArrayH(fileDescBytes.length));
-        byteBuffer.put(fileDescBytes);
-        byteBuffer.put(fileInfo.getMd5sum().getBytes());
-        byteBuffer.put(HexaConversionUtil.intToByteArrayH(fileInfo.getFileBytes().length));
-        byteBuffer.put(fileInfo.getFileBytes());
-        return byteBuffer;
+        return ByteBuffer.wrap(HexaConversionUtil.mergeBytes(HexaConversionUtil.intToByteArrayH(fileDescBytes.length), fileDescBytes,
+                fileInfo.getMd5sum().getBytes(), HexaConversionUtil.intToByteArrayH(fileInfo.getFileBytes().length), fileInfo.getFileBytes()));
     }
 
     private static FileInfo toFileInfo(byte[] data) {

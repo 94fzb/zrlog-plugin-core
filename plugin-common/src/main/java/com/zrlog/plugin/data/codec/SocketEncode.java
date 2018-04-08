@@ -1,8 +1,8 @@
 package com.zrlog.plugin.data.codec;
 
-import com.zrlog.plugin.common.HexaConversionUtil;
-import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.IOSession;
+import com.zrlog.plugin.RunConstants;
+import com.zrlog.plugin.common.HexaConversionUtil;
 import com.zrlog.plugin.common.LoggerUtil;
 import com.zrlog.plugin.type.RunType;
 
@@ -24,17 +24,9 @@ public class SocketEncode {
     public void doEncode(IOSession session, MsgPacket msgPacket) throws Exception {
         reentrantLock.lock();
         try {
-            ByteBuffer sendBuffer = ByteBuffer.allocate(msgPacket.getDataLength() + msgPacket.getMethodLength() + 12);
-            sendBuffer.put(msgPacket.getdStart());
-            sendBuffer.put(msgPacket.getStatus().getType());
-            sendBuffer.put(HexaConversionUtil.intToByteArray(msgPacket.getMsgId()));
-            sendBuffer.put(msgPacket.getMethodLength());
-            sendBuffer.put(msgPacket.getMethodStr().getBytes());
-            sendBuffer.put(HexaConversionUtil.intToByteArray(msgPacket.getDataLength()));
-            sendBuffer.put(msgPacket.getContentType().getType());
-            msgPacket.getData().flip();
-            sendBuffer.put(msgPacket.getData().array());
-            sendBuffer.flip();
+            ByteBuffer sendBuffer = ByteBuffer.wrap(HexaConversionUtil.mergeBytes(new byte[]{msgPacket.getdStart()}, new byte[]{msgPacket.getStatus().getType()},
+                    HexaConversionUtil.intToByteArray(msgPacket.getMsgId()), new byte[]{msgPacket.getMethodLength()}, msgPacket.getMethodStr().getBytes(),
+                    HexaConversionUtil.intToByteArray(msgPacket.getDataLength()), new byte[]{msgPacket.getContentType().getType()}, msgPacket.getData().array()));
             SocketChannel channel = (SocketChannel) session.getSystemAttr().get("_channel");
             Selector selector = (Selector) session.getSystemAttr().get("_selector");
             //channel.register(selector, SelectionKey.OP_WRITE);

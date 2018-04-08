@@ -122,27 +122,32 @@ public class NioClient {
                 selectionKeys = selector.selectedKeys();
                 iterator = selectionKeys.iterator();
                 while (iterator.hasNext()) {
-                    SelectionKey selectionKey = (SelectionKey) iterator.next();
-                    SocketChannel channel = (SocketChannel) selectionKey.channel();
-                    if (selectionKey.isConnectable()) {
-                        if (channel.isConnectionPending()) {
-                            channel.finishConnect();
+                    try {
+                        SelectionKey selectionKey = (SelectionKey) iterator.next();
+                        SocketChannel channel = (SocketChannel) selectionKey.channel();
+                        if (selectionKey.isConnectable()) {
+                            if (channel.isConnectionPending()) {
+                                channel.finishConnect();
+                            }
+                            session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode()), actionHandler, renderHandler);
+                            session.setPlugin(plugin);
+                            session.getAttr().put("_actionClassList", classList);
+                            session.getAttr().put("_pluginClass", pluginAction);
+                            session.getAttr().put("_pluginServices", serviceList);
+                            if (connectHandler != null) {
+                                session.getAttr().put("_connectHandle", connectHandler);
+                            }
+                            session.sendJsonMsg(plugin, ActionType.INIT_CONNECT.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST);
+                        } else if (selectionKey.isReadable()) {
+                            SocketDecode decode = new SocketDecode();
+                            while (!decode.doDecode(session)) ;
                         }
-                        session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode()), actionHandler, renderHandler);
-                        session.setPlugin(plugin);
-                        session.getAttr().put("_actionClassList", classList);
-                        session.getAttr().put("_pluginClass", pluginAction);
-                        session.getAttr().put("_pluginServices", serviceList);
-                        if (connectHandler != null) {
-                            session.getAttr().put("_connectHandle", connectHandler);
-                        }
-                        session.sendJsonMsg(plugin, ActionType.INIT_CONNECT.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST);
-                    } else if (selectionKey.isReadable()) {
-                        SocketDecode decode = new SocketDecode();
-                        while (!decode.doDecode(session)) ;
+                    } catch (Exception e) {
+                        LOGGER.log(Level.SEVERE, "", e);
+                    } finally {
+                        iterator.remove();
                     }
                 }
-                iterator.remove();
                 //selectionKeys.clear();
             }
         } catch (Exception e) {

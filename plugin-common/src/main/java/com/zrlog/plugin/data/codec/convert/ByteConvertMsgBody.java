@@ -12,9 +12,7 @@ public class ByteConvertMsgBody implements ConvertMsgBody {
         if (obj instanceof ByteBuffer) {
             return (ByteBuffer) obj;
         } else if (obj instanceof byte[]) {
-            ByteBuffer data = ByteBuffer.allocate(((byte[]) obj).length);
-            data.put(((byte[]) obj));
-            return data;
+            return ByteBuffer.wrap((byte[]) obj);
         }
         return null;
     }

@@ -6,9 +6,7 @@ public class StringConvertMsgBody implements ConvertMsgBody {
     @Override
     public ByteBuffer toByteBuffer(Object obj) {
         byte[] bytes = obj.toString().getBytes();
-        ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length);
-        byteBuffer.put(bytes);
-        return byteBuffer;
+        return ByteBuffer.wrap(bytes);
     }
 
     @Override

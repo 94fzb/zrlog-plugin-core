@@ -66,7 +66,6 @@ public class PluginInterceptor implements Interceptor {
                     actionType = ActionType.HTTP_METHOD;
                     msgBody.setHeader(httpRequest.getHeaderMap());
                     if (httpRequest.getRequestBodyByteBuffer() != null) {
-                        httpRequest.getRequestBodyByteBuffer().flip();
                         msgBody.setRequestBody(httpRequest.getRequestBodyByteBuffer().array());
                     }
                     msgBody.setParam(httpRequest.decodeParamMap());

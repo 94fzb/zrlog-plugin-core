@@ -12,9 +12,7 @@ public class JsonConvertMsgBody implements ConvertMsgBody {
     @Override
     public ByteBuffer toByteBuffer(Object obj) {
         byte[] jsonByte = new Gson().toJson(obj).getBytes();
-        ByteBuffer byteBuffer = ByteBuffer.allocate(jsonByte.length);
-        byteBuffer.put(jsonByte);
-        return byteBuffer;
+        return ByteBuffer.wrap(jsonByte);
     }
 
     @Override
