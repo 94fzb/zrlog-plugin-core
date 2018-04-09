@@ -37,15 +37,20 @@ public class LoggerUtil {
     }
 
     public static Logger getLogger(Class clazz) {
+        return getLogger(clazz, Level.INFO);
+    }
+
+    public static Logger getLogger(Class clazz, Level level) {
         Logger logger = Logger.getLogger(clazz.getName());
         try {
             logger.addHandler(fileHandler);
-            logger.setLevel(Level.ALL);
+            logger.setLevel(level);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, recordStackTraceMsg(e));
         }
         return logger;
     }
+
 
     private synchronized static String getLogFilePath() {
         StringBuilder logFilePath = new StringBuilder();
