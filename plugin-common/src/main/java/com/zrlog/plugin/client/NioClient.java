@@ -143,7 +143,7 @@ public class NioClient {
                             while (!decode.doDecode(session)) ;
                         }
                     } catch (Exception e) {
-                        LOGGER.log(Level.SEVERE, "", e);
+                        exitPlugin(e);
                     } finally {
                         iterator.remove();
                     }
@@ -151,8 +151,12 @@ public class NioClient {
                 //selectionKeys.clear();
             }
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "", e);
-            System.exit(1);
+            exitPlugin(e);
         }
+    }
+
+    private void exitPlugin(Exception e) {
+        LOGGER.log(Level.SEVERE, "", e);
+        System.exit(1);
     }
 }
