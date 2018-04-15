@@ -1,14 +1,12 @@
 package com.zrlog.plugincore.server.config;
 
-import com.zrlog.plugincore.server.controller.PluginController;
-import com.zrlog.plugincore.server.incp.PluginInterceptor;
 import com.hibegin.http.server.config.AbstractServerConfig;
 import com.hibegin.http.server.config.RequestConfig;
 import com.hibegin.http.server.config.ResponseConfig;
 import com.hibegin.http.server.config.ServerConfig;
 import com.hibegin.http.server.web.PluginManagerInterceptor;
-
-import java.util.concurrent.Executors;
+import com.zrlog.plugincore.server.controller.PluginController;
+import com.zrlog.plugincore.server.incp.PluginInterceptor;
 
 public class PluginHttpServerConfig extends AbstractServerConfig {
     @Override

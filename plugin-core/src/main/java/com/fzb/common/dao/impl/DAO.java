@@ -1,7 +1,6 @@
 package com.fzb.common.dao.impl;
 
 import com.fzb.common.dao.api.IDAO;
-import com.zrlog.plugin.common.LoggerUtil;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
@@ -13,13 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DAO implements IDAO {
 
     public static final String[] ALL = "*".split(" ");
-    public static Logger log = LoggerUtil.getLogger(DAO.class);
     private static DataSource dataSource;
     protected String tableName;
     protected String pk;
@@ -160,7 +156,6 @@ public class DAO implements IDAO {
         sb.append(") values(");
         sb.append(appendParams());
         sb.append(")");
-        log.log(Level.FINER, sb.toString());
         return queryRunner.update(sb.toString(), getMapValus(attrs)) > 0;
     }
 
@@ -176,7 +171,6 @@ public class DAO implements IDAO {
         sb.append(attrsMap2Str(attrs));
         sb.append(" where ");
         sb.append(condsMap2Str(conditions));
-        log.log(Level.FINER, sb.toString());
         return queryRunner.update(sb.toString(), getAttsValus(attrs, conditions)) > 0;
     }
 
@@ -190,7 +184,6 @@ public class DAO implements IDAO {
         sb.append(tableName);
         sb.append(" where ");
         sb.append(condsMap2Str(attrs));
-        log.log(Level.FINER, sb.toString());
         return queryRunner.update(sb.toString(), getMapValus(attrs)) > 0;
     }
 
@@ -203,7 +196,6 @@ public class DAO implements IDAO {
         sb.append("delete from ");
         sb.append(tableName);
         sb.append(" where id=?");
-        log.log(Level.FINER, sb.toString());
         return queryRunner.update(sb.toString(), id) > 0;
     }
 
@@ -228,14 +220,13 @@ public class DAO implements IDAO {
         } else {
             map = queryRunner.query(sb.toString(), new MapHandler());
         }
-        log.log(Level.FINER, sb.toString());
         return map;
     }
 
     public Object queryFirst(String column) throws SQLException {
         StringBuilder sb = new StringBuilder();
         sb.append("select ");
-        sb.append(column + ",");
+        sb.append(column).append(",");
         sb.deleteCharAt(sb.length() - 1);
         sb.append(" from ");
         sb.append(tableName);
@@ -247,7 +238,6 @@ public class DAO implements IDAO {
         } else {
             map = queryRunner.query(sb.toString() + " order by " + column, new MapHandler());
         }
-        log.log(Level.FINER, sb.toString());
         if (map != null) {
             return map.get(column);
         }
@@ -267,16 +257,7 @@ public class DAO implements IDAO {
         sb.deleteCharAt(sb.length() - 1);
         sb.append(" from ");
         sb.append(tableName);
-        List<Map<String, Object>> lmap = null;
-        if (!attrs.isEmpty()) {
-            sb.append(" where ");
-            sb.append(condsMap2Str(attrs));
-            lmap = queryRunner.query(sb.toString(), new MapListHandler(), getMapValus(attrs));
-        } else {
-            lmap = queryRunner.query(sb.toString(), new MapListHandler());
-        }
-        log.log(Level.FINER, sb.toString());
-        return lmap;
+        return execution(sb);
     }
 
     @Override
@@ -284,7 +265,7 @@ public class DAO implements IDAO {
         StringBuilder sb = new StringBuilder();
         sb.append("select ");
         for (String str : columns) {
-            sb.append(str + ",");
+            sb.append(str).append(",");
         }
         sb.deleteCharAt(sb.length() - 1);
         sb.append(" from ");
@@ -293,8 +274,12 @@ public class DAO implements IDAO {
         if (page < 1) {
             page = 1;
         }
-        sb.append(((page - 1) * rows) + ",");
+        sb.append((page - 1) * rows).append(",");
         sb.append(rows);
+        return execution(sb);
+    }
+
+    private List<Map<String, Object>> execution(StringBuilder sb) throws SQLException {
         List<Map<String, Object>> lmap = null;
         if (!attrs.isEmpty()) {
             sb.append(" where ");
@@ -303,7 +288,6 @@ public class DAO implements IDAO {
         } else {
             lmap = queryRunner.query(sb.toString(), new MapListHandler());
         }
-        log.log(Level.FINER, sb.toString());
         return lmap;
     }
 
@@ -316,18 +300,9 @@ public class DAO implements IDAO {
         if (page < 1) {
             page = 1;
         }
-        sb.append(((page - 1) * rows) + ",");
+        sb.append((page - 1) * rows).append(",");
         sb.append(rows);
-        List<Map<String, Object>> lmap = null;
-        if (!attrs.isEmpty()) {
-            sb.append(" where ");
-            sb.append(condsMap2Str(attrs));
-            lmap = queryRunner.query(sb.toString(), new MapListHandler(), getMapValus(attrs));
-        } else {
-            lmap = queryRunner.query(sb.toString(), new MapListHandler());
-        }
-        log.log(Level.FINER, sb.toString());
-        return lmap;
+        return execution(sb);
     }
 
     @Override

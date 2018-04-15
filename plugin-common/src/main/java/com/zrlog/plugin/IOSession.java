@@ -1,5 +1,6 @@
 package com.zrlog.plugin;
 
+import com.hibegin.common.util.IOUtil;
 import com.zrlog.plugin.api.IActionHandler;
 import com.zrlog.plugin.common.IdUtil;
 import com.zrlog.plugin.common.LoggerUtil;
@@ -8,7 +9,6 @@ import com.zrlog.plugin.data.codec.convert.JsonConvertMsgBody;
 import com.zrlog.plugin.message.Plugin;
 import com.zrlog.plugin.render.IRenderHandler;
 import com.zrlog.plugin.type.ActionType;
-import com.hibegin.common.util.IOUtil;
 
 import java.io.File;
 import java.io.IOException;

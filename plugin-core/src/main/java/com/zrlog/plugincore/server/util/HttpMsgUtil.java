@@ -1,9 +1,9 @@
 package com.zrlog.plugincore.server.util;
 
+import com.hibegin.http.server.api.HttpRequest;
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.data.codec.HttpRequestInfo;
 import com.zrlog.plugin.type.RunType;
-import com.hibegin.http.server.api.HttpRequest;
 
 public class HttpMsgUtil {
 

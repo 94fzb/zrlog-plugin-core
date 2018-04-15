@@ -2,10 +2,10 @@ package com.zrlog.plugincore.server.util;
 
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.common.LoggerUtil;
+import com.zrlog.plugin.type.RunType;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.config.PluginVO;
 import com.zrlog.plugincore.server.type.PluginStatus;
-import com.zrlog.plugin.type.RunType;
 
 import java.io.File;
 import java.io.IOException;
