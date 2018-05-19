@@ -4,6 +4,8 @@
     <meta charset="utf-8"/>
     <title> 插件管理 </title>
     <link href="assets/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="assets/css/custom.min.css" rel="stylesheet"/>
+    <link href="assets/css/custom.colorful.css" rel="stylesheet"/>
     <link rel="stylesheet" href="assets/css/font-awesome.min.css"/>
 
     <link rel="stylesheet" href="assets/css/jquery.gritter.css"/>
@@ -12,10 +14,17 @@
             width: 800px;
         }
 
+        .page-header {
+            margin: 0 0 20px;
+        }
+
+        [v-cloak] {
+            display: none;
+        }
 
     </style>
 
-    <script src="assets/js/jquery-2.0.3.min.js"></script>
+    <script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/vue.js"></script>
     <script src="assets/js/bootstrap.min.js"></script>
 
@@ -29,7 +38,7 @@
                     "url": "setting.html",
                     "title": "插件服务配置",
                     "size": "setting"
-                }
+                };
                 eModal.iframe(options);
             });
         })
@@ -40,9 +49,9 @@
 <body style="background:#f7f7f7">
 <div class="rows" id="plugin">
     <div class="page-header">
-        <h3>管理插件
-            <small>{{version}}</small>
-            <button id="settings-btn" class="btn btn-info" style="float:right">
+        <h3 style="border-left: 3px solid #1890ff;padding-left: 5px;margin-bottom: 30px;margin-top: 10px;">管理插件
+            <small v-cloak>{{version}}</small>
+            <button id="settings-btn" class="btn btn-outline-primary" style="float:right">
                 <i class="icon-cog bigger-150"></i>
                 设置
             </button>
@@ -52,14 +61,14 @@
 
     <div class="tabbable">
         <ul id="plugintab" class="nav nav-tabs padding-12 tab-color-blue background-blue">
-            <li class="active">
-                <a href="#all" data-toggle="tab">所有</a>
+            <li class="nav-item">
+                <a class="nav-link active" href="#all" data-toggle="tab">所有</a>
             </li>
-            <li class="">
-                <a href="#used" data-toggle="tab">使用中</a>
+            <li class="nav-item">
+                <a class="nav-link" href="#used" data-toggle="tab">使用中</a>
             </li>
-            <li class="">
-                <a href="#unused" data-toggle="tab">未使用</a>
+            <li class="nav-item">
+                <a class="nav-link" href="#unused" data-toggle="tab">未使用</a>
             </li>
         </ul>
 
@@ -79,16 +88,16 @@
                         </thead>
                         <tbody>
                         <tr v-for="plugin in plugins">
-                            <td>
+                            <td v-cloak>
                                 {{plugin.name}}
                             </td>
-                            <td class="hidden-480">{{plugin.author}}</td>
-                            <td>{{plugin.desc }}</td>
-                            <td>{{plugin.version }}</td>
-                            <td>
+                            <td class="hidden-480" v-cloak>{{plugin.author}}</td>
+                            <td v-cloak>{{plugin.desc }}</td>
+                            <td v-cloak>{{plugin.version }}</td>
+                            <td v-cloak>
                                 <div class="btn-group">
                                     <a :href="getViewHref(plugin.shortName)">
-                                        <button class="btn btn-xs btn-light">
+                                        <button class="btn btn-sm btn-light">
                                             <i class="icon-zoom-in bigger-120"></i>
                                         </button>
                                     </a>
@@ -98,22 +107,22 @@
                             <td>
                                 <div class="btn-group">
                                     <a :href="getViewHref(plugin.shortName)">
-                                        <button class="btn btn-xs btn-gray">
+                                        <button class="btn btn-sm btn-gray">
                                             <i class="icon-cogs bigger-120"></i>
                                         </button>
                                     </a>
                                     <a :href="getStartHref(plugin.shortName)">
-                                        <button class="btn btn-xs btn-primary">
+                                        <button class="btn btn-sm btn-primary">
                                             <i class="icon-play bigger-120"></i>
                                         </button>
                                     </a>
                                     <a>
-                                        <button class="btn btn-xs btn-danger stop" v-on:click="stop(plugin.shortName)">
+                                        <button class="btn btn-sm btn-danger stop" v-on:click="stop(plugin.shortName)">
                                             <i class="icon-stop bigger-120"></i>
                                         </button>
                                     </a>
                                     <a>
-                                        <button class="btn btn-xs btn-danger uninstall"
+                                        <button class="btn btn-sm btn-danger uninstall"
                                                 v-on:click="uninstall(plugin.shortName)">
                                             <i class="icon-trash bigger-120"></i>
                                         </button>
@@ -142,16 +151,16 @@
 
                         <tbody>
                         <tr v-for="plugin in usedPlugins">
-                            <td>
+                            <td v-cloak>
                                 {{plugin.name}}
                             </td>
-                            <td class="hidden-480">{{plugin.author }}</td>
-                            <td>{{plugin.desc }}</td>
-                            <td>{{plugin.version }}</td>
+                            <td class="hidden-480" v-cloak>{{plugin.author }}</td>
+                            <td v-cloak>{{plugin.desc }}</td>
+                            <td v-cloak>{{plugin.version }}</td>
                             <td>
                                 <div class="btn-group">
                                     <a :href="getStartHref(plugin.shortName)">
-                                        <button class="btn btn-xs btn-light">
+                                        <button class="btn btn-sm btn-light">
                                             <i class="icon-zoom-in bigger-120"></i>
                                         </button>
                                     </a>
@@ -161,12 +170,12 @@
                             <td>
                                 <div class="btn-group">
                                     <a>
-                                        <button class="btn btn-xs btn-danger stop" v-on:click="stop(plugin.shortName)">
+                                        <button class="btn btn-sm btn-danger stop" v-on:click="stop(plugin.shortName)">
                                             <i class="icon-stop bigger-120"></i>
                                         </button>
                                     </a>
                                     <a>
-                                        <button class="btn btn-xs btn-danger uninstall"
+                                        <button class="btn btn-sm btn-danger uninstall"
                                                 v-on:click="uninstall(plugin.shortName)">
                                             <i class="icon-trash bigger-120"></i>
                                         </button>
@@ -194,27 +203,27 @@
 
                         <tbody>
                         <tr v-for="plugin in unusedPlugins">
-                            <td>
+                            <td v-cloak>
                                 {{plugin.name}}
                             </td>
-                            <td class="hidden-480">{{plugin.author}}</td>
-                            <td>{{plugin.desc}}</td>
-                            <td>{{plugin.version}}</td>
+                            <td v-cloak class="hidden-480">{{plugin.author}}</td>
+                            <td v-cloak>{{plugin.desc}}</td>
+                            <td v-cloak>{{plugin.version}}</td>
 
                             <td>
                                 <div class="btn-group">
                                     <a :href="getStartHref(plugin.shortName)">
-                                        <button class="btn btn-xs btn-gray">
+                                        <button class="btn btn-sm btn-gray">
                                             <i class="icon-cogs bigger-120"></i>
                                         </button>
                                     </a>
                                     <a :href="getStartHref(plugin.shortName)">
-                                        <button class="btn btn-xs btn-primary">
+                                        <button class="btn btn-sm btn-primary">
                                             <i class="icon-play bigger-120"></i>
                                         </button>
                                     </a>
                                     <a>
-                                        <button class="btn btn-xs btn-danger uninstall"
+                                        <button class="btn btn-sm btn-danger uninstall"
                                                 v-on:click="uninstall(plugin.shortName)">
                                             <i class="icon-trash bigger-120"></i>
                                         </button>
@@ -231,7 +240,7 @@
     </div>
     <!-- /.table-responsive -->
     <a href="../center">
-        <button class="btn btn-info"><i class="icon-download"></i>下载</button>
+        <button class="btn btn-dark"><i class="icon-download"></i>下载</button>
     </a>
     <input id="gritter-light" checked="" type="checkbox" style="display:none"/>
 </div>

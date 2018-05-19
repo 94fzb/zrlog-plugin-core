@@ -86,9 +86,8 @@ public class PluginManagerInterceptor implements Interceptor {
                         }
 
                         method.invoke(e2);
-                    } catch (Exception var8) {
-                        var8.printStackTrace();
-                        LOGGER.log(Level.SEVERE, var8.getMessage());
+                    } catch (Exception e) {
+                        LOGGER.log(Level.SEVERE, "", e);
                     }
                 } else {
                     response.renderCode(403);

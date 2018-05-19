@@ -14,20 +14,19 @@ import java.util.logging.SimpleFormatter;
 public class LoggerUtil {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-    private static final String LOG_FOLDER_NAME = "logs";
-
+    private static final String LOG_FOLDER_NAME = "log";
     private static final String LOG_FILE_SUFFIX = ".log";
-
     private static FileHandler fileHandler;
-
-    private static Logger LOGGER;
+    private static final Logger LOGGER = LoggerUtil.getLogger(LoggerUtil.class);
 
     static {
         try {
-            fileHandler = new FileHandler(getLogFilePath(), true);
+            File fileName = new File(getLogFilePath());
+            if (!fileName.exists()) {
+                fileName.getParentFile().mkdirs();
+            }
+            fileHandler = new FileHandler(fileName.toString(), true);
             fileHandler.setFormatter(new SimpleFormatter());
-            LOGGER = LoggerUtil.getLogger(LoggerUtil.class);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "", e);
         }
@@ -37,20 +36,17 @@ public class LoggerUtil {
     }
 
     public static Logger getLogger(Class clazz) {
-        return getLogger(clazz, Level.INFO);
-    }
-
-    public static Logger getLogger(Class clazz, Level level) {
         Logger logger = Logger.getLogger(clazz.getName());
         try {
-            logger.addHandler(fileHandler);
-            logger.setLevel(level);
+            if (fileHandler != null) {
+                logger.addHandler(fileHandler);
+            }
+            logger.setLevel(Level.ALL);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, recordStackTraceMsg(e));
         }
         return logger;
     }
-
 
     private synchronized static String getLogFilePath() {
         StringBuilder logFilePath = new StringBuilder();
@@ -59,19 +55,21 @@ public class LoggerUtil {
         logFilePath.append(LOG_FOLDER_NAME);
 
         File file = new File(logFilePath.toString());
-        if (!file.exists())
+        if (!file.exists()) {
             file.mkdir();
+        }
 
         logFilePath.append(File.separatorChar);
         logFilePath.append(sdf.format(new Date()));
         logFilePath.append(LOG_FILE_SUFFIX);
-        return logFilePath.toString().replace("\\", "/");
+
+        return logFilePath.toString();
     }
 
     /**
      * 记录完善的异常日志信息(包括堆栈信息)
      *
-     * @param e
+     * @param e Exception
      */
     public static String recordStackTraceMsg(Exception e) {
         StringWriter stringWriter = new StringWriter();
