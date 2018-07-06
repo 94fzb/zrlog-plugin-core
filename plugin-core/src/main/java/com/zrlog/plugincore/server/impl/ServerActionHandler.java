@@ -1,5 +1,6 @@
 package com.zrlog.plugincore.server.impl;
 
+import com.fzb.common.dao.impl.DAO;
 import com.google.gson.Gson;
 import com.hibegin.common.util.LoggerUtil;
 import com.hibegin.common.util.http.HttpUtil;
@@ -9,6 +10,7 @@ import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.api.IActionHandler;
 import com.zrlog.plugin.common.modle.Comment;
+import com.zrlog.plugin.common.modle.CreateArticleRequest;
 import com.zrlog.plugin.common.modle.PublicInfo;
 import com.zrlog.plugin.common.modle.TemplatePath;
 import com.zrlog.plugin.data.codec.MsgPacket;
@@ -17,13 +19,17 @@ import com.zrlog.plugin.message.Plugin;
 import com.zrlog.plugin.type.ActionType;
 import com.zrlog.plugin.type.RunType;
 import com.zrlog.plugincore.server.config.PluginConfig;
+import com.zrlog.plugincore.server.dao.ArticleDAO;
 import com.zrlog.plugincore.server.dao.CommentDAO;
+import com.zrlog.plugincore.server.dao.TypeDAO;
 import com.zrlog.plugincore.server.dao.WebSiteDAO;
 import com.zrlog.plugincore.server.type.PluginStatus;
 import com.zrlog.plugincore.server.util.PluginUtil;
+import org.jsoup.Jsoup;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,13 +68,15 @@ public class ServerActionHandler implements IActionHandler {
         }
     }
 
-    private void refreshCache(String url, String cookie) {
-        Map<String, String> requestHeaders = new HashMap<>();
-        requestHeaders.put("Cookie", cookie);
-        try {
-            HttpUtil.getInstance().sendGetRequest(url, new HttpStringHandle(), requestHeaders);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "", e);
+    private static void refreshCache(IOSession session) {
+        if (RunConstants.runType == RunType.BLOG) {
+            Map<String, String> requestHeaders = new HashMap<>();
+            requestHeaders.put("Cookie", session.getAttr().get("cookie").toString());
+            try {
+                HttpUtil.getInstance().sendGetRequest(session.getAttr().get("accessUrl") + "/api/admin/refreshCache", new HttpStringHandle(), requestHeaders);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "", e);
+            }
         }
     }
 
@@ -141,10 +149,7 @@ public class ServerActionHandler implements IActionHandler {
             }
         }
         session.sendJsonMsg(resultMap, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
-        if (RunConstants.runType == RunType.BLOG) {
-            refreshCache(session.getAttr().get("accessUrl") + "/admin/cleanCache", session.getAttr().get("cookie").toString());
-
-        }
+        refreshCache(session);
     }
 
     @Override
@@ -248,5 +253,90 @@ public class ServerActionHandler implements IActionHandler {
     @Override
     public void getBlogRuntimePath(IOSession session, MsgPacket msgPacket) {
         session.sendJsonMsg(PluginConfig.getInstance().getBlogRunTime(), ActionType.BLOG_RUN_TIME.name(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
+    }
+
+    public String getPlainSearchTxt(String content) {
+        return Jsoup.parse(content).body().text();
+    }
+
+    @Override
+    public void createArticle(IOSession session, MsgPacket msgPacket) {
+        CreateArticleRequest createArticleRequest = new Gson().fromJson(msgPacket.getDataStr(), CreateArticleRequest.class);
+        Integer typeId = 0;
+        if (createArticleRequest.getTypeId() > 0) {
+            typeId = createArticleRequest.getTypeId();
+        } else {
+            try {
+                typeId = (Integer) new TypeDAO().findByName(createArticleRequest.getType());
+                if (typeId == null) {
+                    new TypeDAO().set("typeName", createArticleRequest.getType()).set("alias", createArticleRequest.getType()).save();
+                    //query again;
+                    typeId = (Integer) new TypeDAO().findByName(createArticleRequest.getType());
+
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        String alias = createArticleRequest.getAlias();
+
+        if (alias == null) {
+            try {
+                alias = new ArticleDAO().queryFirstObj("select max(logId) from log") + "";
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        Map<String, Boolean> map = new HashMap<>();
+        try {
+            Integer logId = (Integer) new ArticleDAO().queryFirstObj("select logId from log where alias = ?", alias);
+            DAO articleDAO = new ArticleDAO()
+                    .set("releaseTime", new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(createArticleRequest.getReleaseDate()))
+                    .set("last_update_date", new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(createArticleRequest.getReleaseDate()))
+                    .set("content", createArticleRequest.getContent())
+                    .set("title", createArticleRequest.getTitle())
+                    .set("markdown", createArticleRequest.getMarkdown())
+                    .set("digest", createArticleRequest.getDigest())
+                    .set("typeId", typeId)
+                    .set("private", createArticleRequest.is_private())
+                    .set("rubbish", createArticleRequest.isRubbish())
+                    .set("alias", alias)
+                    .set("plain_content", getPlainSearchTxt(createArticleRequest.getContent()))
+                    .set("thumbnail", createArticleRequest.getThumbnail())
+                    .set("canComment", createArticleRequest.isCanComment())
+                    .set("recommended", createArticleRequest.isRecommended())
+                    .set("keywords", createArticleRequest.getKeywords())
+                    .set("editor_type", createArticleRequest.getEditorType())
+                    .set("userId", createArticleRequest.getUserId());
+            if (logId == null) {
+                try {
+                    boolean result = articleDAO.save();
+                    refreshCache(session);
+                    map.put("result", result);
+                    session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
+                } catch (SQLException e) {
+                    map.put("result", false);
+                    LOGGER.log(Level.SEVERE, "save comment error", e);
+                    session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_ERROR);
+                }
+            } else {
+                try {
+                    Map<String, Object> cond = new HashMap<>();
+                    cond.put("logId", logId);
+                    boolean result = articleDAO.update(cond);
+                    refreshCache(session);
+                    map.put("result", result);
+                    session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
+                } catch (SQLException e) {
+                    map.put("result", false);
+                    LOGGER.log(Level.SEVERE, "save comment error", e);
+                    session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_ERROR);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
     }
 }

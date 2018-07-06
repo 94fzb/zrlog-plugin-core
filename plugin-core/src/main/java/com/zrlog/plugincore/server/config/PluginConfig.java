@@ -133,7 +133,7 @@ public class PluginConfig {
     }
 
     public Collection<PluginVO> getAllPluginVO() {
-        if (pluginCore.getPluginInfoMap() != null) {
+        if (pluginCore != null && pluginCore.getPluginInfoMap() != null) {
             return pluginCore.getPluginInfoMap().values();
         }
         return new ArrayList<>();

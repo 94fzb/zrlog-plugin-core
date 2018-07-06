@@ -1,6 +1,8 @@
 package com.zrlog.plugincore.server.controller;
 
 
+import com.hibegin.common.util.FileUtils;
+import com.hibegin.http.server.util.PathUtil;
 import com.hibegin.http.server.web.Controller;
 import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.RunConstants;
@@ -206,5 +208,14 @@ public class PluginController extends Controller {
 
     private HttpRequestInfo genInfo() {
         return HttpMsgUtil.genInfo(getRequest());
+    }
+
+    public void upload() {
+        Map<String, Object> map = new HashMap<>();
+        File file = getRequest().getFile("file");
+        String finalFile = PathUtil.getStaticPath() + file.getName() + "." + getRequest().getParaToStr("ext");
+        FileUtils.moveOrCopyFile(file.toString(), finalFile, true);
+        map.put("url", getBasePath() + "/" + new File(finalFile).getName());
+        response.renderJson(map);
     }
 }

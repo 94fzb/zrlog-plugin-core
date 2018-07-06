@@ -12,7 +12,7 @@ public enum ActionType {
     ADD_COMMENT(1, "添加文章评论"), DELETE_COMMENT(1, "删除文章评论"),
     GET_DB_PROPERTIES(1, "读取程序数据库配置文件"),
     HTTP_ATTACHMENT_FILE(0, "响应HTTP附件"), LOAD_PUBLIC_INFO(0, "读取程序公开信息"),
-    CURRENT_TEMPLATE(1, ""), BLOG_RUN_TIME(1, "");
+    CURRENT_TEMPLATE(1, ""), BLOG_RUN_TIME(1, ""), CREATE_ARTICLE(1, "创建文章");
 
     private int level;
     private String desc;

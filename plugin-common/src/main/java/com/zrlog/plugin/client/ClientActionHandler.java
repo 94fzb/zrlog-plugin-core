@@ -169,4 +169,9 @@ public class ClientActionHandler implements IActionHandler {
     public void getBlogRuntimePath(IOSession session, MsgPacket msgPacket) {
 
     }
+
+    @Override
+    public void createArticle(IOSession session, MsgPacket msgPacket) {
+
+    }
 }

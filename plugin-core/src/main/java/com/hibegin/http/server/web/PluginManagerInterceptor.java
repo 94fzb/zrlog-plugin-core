@@ -4,10 +4,15 @@ import com.hibegin.http.server.api.HttpRequest;
 import com.hibegin.http.server.api.HttpResponse;
 import com.hibegin.http.server.api.Interceptor;
 import com.hibegin.http.server.util.MimeTypeUtil;
+import com.hibegin.http.server.util.PathUtil;
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.common.LoggerUtil;
+import com.zrlog.plugin.common.PathKit;
 import com.zrlog.plugin.type.RunType;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -30,6 +35,16 @@ public class PluginManagerInterceptor implements Interceptor {
         boolean next;
         if (request.getUri().contains(".")) {
             InputStream in = PluginManagerInterceptor.class.getResourceAsStream(request.getUri());
+            if (in == null) {
+                File tFile = new File(PathUtil.getStaticPath() + request.getUri().substring(1));
+                if (tFile.exists()) {
+                    try {
+                        in = new FileInputStream(tFile.toString());
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             if (in == null) {
                 next = true;
             } else {

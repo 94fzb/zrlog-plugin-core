@@ -51,8 +51,10 @@ public class PluginUtil {
                         LOGGER.info("run plugin " + pluginName);
                         String uuid = UUID.randomUUID().toString();
                         idFileMap.put(uuid, file);
+                        String dir = System.getProperty("user.dir") + "/jars/" + pluginName + "-workspace/";
+                        new File(dir).mkdirs();
                         String javaHome = System.getProperty("java.home");
-                        Process pr = CmdUtil.getProcess(javaHome + "/bin/java " + ConfigKit.get("pluginJvmArgs", "") + " -jar " + file.toString() + " " + PluginConfig.getInstance().getMasterPort() + " " + uuid);
+                        Process pr = CmdUtil.getProcess(javaHome + "/bin/java " + " -Duser.dir=" + dir + " " + ConfigKit.get("pluginJvmArgs", "") + " -jar " + file.toString() + " " + PluginConfig.getInstance().getMasterPort() + " " + uuid);
                         if (pr != null) {
                             processMap.put(uuid, pr);
                             printInputStreamWithThread(pr, pr.getInputStream(), pluginName, "PINFO", uuid);

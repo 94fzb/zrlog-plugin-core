@@ -14,19 +14,7 @@ public class PathKit {
     }
 
     public static String getRootPath() {
-        String path;
-        if (PathKit.class.getResource("/") != null) {
-            path = new File(PathKit.class.getResource("/").getPath()).getParentFile().getParentFile().toString();
-
-        } else {
-            String thisPath = PathKit.class.getProtectionDomain().getCodeSource().getLocation().getPath().replace("\\", "/");
-            if ("/".equals(File.separator)) {
-                path = thisPath.substring(0, thisPath.lastIndexOf('/'));
-            } else {
-                path = thisPath.substring(1, thisPath.lastIndexOf('/'));
-            }
-        }
-        return path;
+        return System.getProperty("user.dir");
     }
 
     public static String getConfFile(String file) {
@@ -35,5 +23,11 @@ public class PathKit {
 
     public static String getStaticPath() {
         return getRootPath() + "/static/";
+    }
+
+    public static String getTmpPath() {
+        File file = new File(getRootPath() + "/tmp/");
+        file.mkdirs();
+        return file.toString();
     }
 }
