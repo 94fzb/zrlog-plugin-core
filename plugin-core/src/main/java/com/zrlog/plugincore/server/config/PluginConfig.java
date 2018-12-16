@@ -112,9 +112,11 @@ public class PluginConfig {
     }
 
     public IOSession getIOSessionByPluginName(String pluginName) {
-        PluginVO pluginVO = pluginCore.getPluginInfoMap().get(pluginName);
-        if (pluginVO != null) {
-            return sessionMap.get(pluginVO.getSessionId());
+        if(pluginCore!= null) {
+            PluginVO pluginVO = pluginCore.getPluginInfoMap().get(pluginName);
+            if (pluginVO != null) {
+                return sessionMap.get(pluginVO.getSessionId());
+            }
         }
         return null;
     }

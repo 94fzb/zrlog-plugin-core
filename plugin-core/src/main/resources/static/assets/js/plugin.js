@@ -66,6 +66,8 @@ $(function () {
             allPlugins.$set(allPlugins, 'plugins', e.plugins);
             allPlugins.$set(allPlugins, 'usedPlugins', e.usedPlugins);
             allPlugins.$set(allPlugins, 'unusedPlugins', e.unusedPlugins);
+            document.getElementById('loading').remove();
+            document.getElementById('contents').style.display = "inline";
         })
     };
 })
