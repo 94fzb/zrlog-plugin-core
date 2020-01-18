@@ -20,3 +20,4 @@ server/plugin.json
 server/plugin.txt
 .attach_pid*
 *.lck
+!.mvn/wrapper/maven-wrapper.jar

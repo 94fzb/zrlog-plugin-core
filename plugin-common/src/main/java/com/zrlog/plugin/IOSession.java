@@ -11,13 +11,13 @@ import com.zrlog.plugin.render.IRenderHandler;
 import com.zrlog.plugin.type.ActionType;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.nio.channels.Channel;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Map;
+import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -29,7 +29,7 @@ public class IOSession {
     private static final Logger LOGGER = LoggerUtil.getLogger(IOSession.class);
 
     private Map<String, Object> attr = new ConcurrentHashMap<>();
-    private Map<Integer, Object[]> pipeMap = new ConcurrentHashMap<>();
+    private Map<Integer, PipeInfo> pipeMap = new ConcurrentHashMap<>();
     private Map<String, Object> systemAttr = new ConcurrentHashMap<>();
     private IActionHandler actionHandler;
     private Plugin plugin;
@@ -37,7 +37,7 @@ public class IOSession {
     private MsgPacketDispose msgPacketDispose = new MsgPacketDispose();
     private IRenderHandler renderHandler;
     private SocketEncode socketEncode;
-    private ClearIdlMsgPacket clearIdlMsgPacket;
+    private Timer timer;
 
     public IOSession(SocketChannel channel, Selector selector, SocketCodec socketCodec, IActionHandler actionHandler, IRenderHandler renderHandler) {
         systemAttr.put("_channel", channel);
@@ -48,8 +48,9 @@ public class IOSession {
         this.socketEncode = socketCodec.getSocketEncode();
         this.actionHandler = actionHandler;
         this.renderHandler = renderHandler;
-        this.clearIdlMsgPacket = new ClearIdlMsgPacket(pipeMap);
-        this.clearIdlMsgPacket.start();
+        this.timer = new Timer();
+        this.timer.scheduleAtFixedRate(new ClearIdlMsgPacketTimerTask(pipeMap), 0, 1000);
+
     }
 
     public IOSession(SocketChannel channel, Selector selector, SocketCodec socketCodec, IActionHandler actionHandler) {
@@ -94,8 +95,7 @@ public class IOSession {
         try {
             PipedInputStream in = new PipedInputStream();
             PipedOutputStream out = new PipedOutputStream(in);
-            Object[] inAndOut = new Object[]{in, out, callBack, msgPacket, null, System.currentTimeMillis()};
-            pipeMap.put(msgPacket.getMsgId(), inAndOut);
+            pipeMap.put(msgPacket.getMsgId(), new PipeInfo(msgPacket, null, in, out, callBack, System.currentTimeMillis()));
             getAttr().put("count", msgIds.incrementAndGet());
             socketEncode.doEncode(this, msgPacket);
         } catch (Exception e) {
@@ -154,15 +154,18 @@ public class IOSession {
     public void dispose(MsgPacket msgPacket) {
         try {
             if (msgPacket.getStatus() == MsgPacketStatus.RESPONSE_SUCCESS || msgPacket.getStatus() == MsgPacketStatus.RESPONSE_ERROR) {
-                PipedOutputStream outputStream = (PipedOutputStream) pipeMap.get(msgPacket.getMsgId())[1];
-                IMsgPacketCallBack callBack = (IMsgPacketCallBack) pipeMap.get(msgPacket.getMsgId())[2];
-                pipeMap.get(msgPacket.getMsgId())[4] = msgPacket;
-                outputStream.write(msgPacket.getData().array());
-                outputStream.close();
-                if (callBack != null) {
-                    callBack.handler(msgPacket);
-                    // 不进行多次处理
-                    return;
+                PipeInfo pipeInfo = pipeMap.get(msgPacket.getMsgId());
+                if (pipeInfo != null) {
+                    PipedOutputStream outputStream = pipeInfo.getPipedOut();
+                    IMsgPacketCallBack callBack = pipeMap.get(msgPacket.getMsgId()).getiMsgPacketCallBack();
+                    pipeInfo.setResponseMsgPacket(msgPacket);
+                    outputStream.write(msgPacket.getData().array());
+                    outputStream.close();
+                    if (callBack != null) {
+                        callBack.handler(msgPacket);
+                        // 不进行多次处理
+                        return;
+                    }
                 }
             }
             msgPacketDispose.handler(this, msgPacket, actionHandler);
@@ -172,10 +175,10 @@ public class IOSession {
     }
 
     public void close() {
-        clearIdlMsgPacket.interrupt();
         try {
             ((Channel) systemAttr.get("_channel")).close();
-        } catch (IOException e) {
+            timer.cancel();
+        } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "", e);
         }
     }
@@ -189,11 +192,11 @@ public class IOSession {
     }
 
     public PipedInputStream getPipeInByMsgId(int msgId) {
-        return (PipedInputStream) pipeMap.get(msgId)[0];
+        return pipeMap.get(msgId).getPipedIn();
     }
 
     public MsgPacket getRequestMsgPacketByMsgId(int msgId) {
-        return (MsgPacket) pipeMap.get(msgId)[3];
+        return pipeMap.get(msgId).getRequestMsgPackage();
     }
 
     public MsgPacket getResponseMsgPacketByMsgId(int msgId) {
@@ -203,7 +206,7 @@ public class IOSession {
             } catch (InterruptedException e) {
                 LOGGER.log(Level.SEVERE, "", e);
             }
-            MsgPacket msgPacket = (MsgPacket) pipeMap.get(msgId)[4];
+            MsgPacket msgPacket = pipeMap.get(msgId).getResponseMsgPacket();
             if (msgPacket != null) {
                 return msgPacket;
             }
