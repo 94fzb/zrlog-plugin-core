@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <groupId>com.zrlog</groupId>
-    <version>1.7.2</version>
+    <version>1.7.3</version>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>plugin-core</artifactId>
@@ -17,7 +17,7 @@
         <dependency>
             <groupId>com.hibegin</groupId>
             <artifactId>simplewebserver</artifactId>
-            <version>0.2.41</version>
+            <version>0.2.44</version>
         </dependency>
         <dependency>
             <groupId>com.zrlog</groupId>
