@@ -1,6 +1,5 @@
 package com.zrlog.plugincore.server.controller;
 
-
 import com.hibegin.common.util.FileUtils;
 import com.hibegin.http.server.util.PathUtil;
 import com.hibegin.http.server.web.Controller;
@@ -31,7 +30,7 @@ import java.util.logging.Level;
 
 public class PluginController extends Controller {
 
-    private java.util.logging.Logger LOGGER = LoggerUtil.getLogger(PluginController.class);
+    private final java.util.logging.Logger LOGGER = LoggerUtil.getLogger(PluginController.class);
 
     private IOSession getSession() {
         return PluginConfig.getInstance().getIOSessionByPluginName(getRequest().getParaToStr("name"));
@@ -51,7 +50,8 @@ public class PluginController extends Controller {
             }
         }
         int id = IdUtil.getInt();
-        getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_INSTALL.name()));
+        getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id,
+                ActionType.PLUGIN_INSTALL.name()));
         getResponse().addHeader("Content-Type", "text/html");
         getResponse().write(getSession().getPipeInByMsgId(id));
     }
@@ -73,13 +73,14 @@ public class PluginController extends Controller {
 
     public void start() {
         if (getSession() != null) {
-            response.redirect(getBasePath().substring(0, getBasePath().lastIndexOf("/")) + "/static/plugin-is-start.html");
+            response.redirect(getBasePath().substring(0, getBasePath().lastIndexOf("/")) + "/static/plugin-is-start" + ".html");
         } else {
             if (RunConstants.runType != RunType.DEV) {
                 String pluginName = getRequest().getParaToStr("name");
                 PluginUtil.loadPlugin(new File(PluginConfig.getInstance().getPluginFileByName(pluginName)));
                 int id = IdUtil.getInt();
-                getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id, ActionType.PLUGIN_START.name()));
+                getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id,
+                        ActionType.PLUGIN_START.name()));
                 getResponse().addHeader("Content-Type", "text/html");
                 getResponse().write(getSession().getPipeInByMsgId(id), 200);
             } else {
@@ -126,7 +127,8 @@ public class PluginController extends Controller {
         } else {
             from = fullUrl.substring(0, fullUrl.lastIndexOf("/"));
         }
-        response.renderHtmlStr("<iframe src='https://store.zrlog.com/plugin/?from=" + from + "' scrolling='no' style='border: 0px' width='100%' height='1200px'></iframe>");
+        response.renderHtmlStr("<iframe src='https://store.zrlog.com/plugin/?from=" + from + "' scrolling='no' " +
+                "style='border: 0px' width='100%' height='1200px'></iframe>");
     }
 
     private String getBasePath() {
@@ -152,7 +154,8 @@ public class PluginController extends Controller {
             File path = new File(PluginConfig.getInstance().getPluginBasePath());
             File file = new File(path + "/" + fileName);
             if (!file.exists()) {
-                String downloadUrl = getRequest().getParaToStr("host") + "/plugin/download?id=" + getRequest().getParaToInt("id");
+                String downloadUrl =
+                        getRequest().getParaToStr("host") + "/plugin/download?id=" + getRequest().getParaToInt("id");
                 File pluginFile = PluginUtil.downloadPlugin(fileName, downloadUrl);
                 PluginUtil.loadPlugin(pluginFile);
                 getRequest().getAttr().put("message", "下载插件成功");
@@ -164,14 +167,16 @@ public class PluginController extends Controller {
             LOGGER.log(Level.FINER, "download error ", e);
         }
         String pluginName = fileName.substring(0, fileName.indexOf("."));
-        response.redirect(getBasePath() + "/static/download.html?message=" + request.getAttr().get("message") + "&pluginName=" + pluginName);
+        response.redirect(getBasePath() + "/static/download.html?message=" + request.getAttr().get("message") +
+                "&pluginName=" + pluginName);
     }
 
     public void uninstall() {
         IOSession session = getSession();
         String pluginName = getRequest().getParaToStr("name");
         if (session != null) {
-            session.sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, IdUtil.getInt(), ActionType.PLUGIN_UNINSTALL.name()));
+            session.sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, IdUtil.getInt(),
+                    ActionType.PLUGIN_UNINSTALL.name()));
         }
         PluginUtil.deletePlugin(pluginName);
         Map<String, Object> map = new HashMap<>();
@@ -200,7 +205,8 @@ public class PluginController extends Controller {
 
     public void settingUpdate() {
         Map<String, Object> map = new HashMap<>();
-        PluginConfig.getInstance().getPluginCore().getSetting().setDisableAutoDownloadLostFile(request.getParaToBool("disableAutoDownloadLostFile"));
+        PluginConfig.getInstance().getPluginCore().getSetting().setDisableAutoDownloadLostFile(request.getParaToBool(
+                "disableAutoDownloadLostFile"));
         map.put("code", 0);
         map.put("message", "成功");
         getResponse().renderJson(map);

@@ -28,7 +28,7 @@ public class Application {
         if (args != null && args.length > 0) {
             LOGGER.info("args = " + Arrays.toString(args));
         }
-        Integer serverPort = (args != null && args.length > 0) ? Integer.valueOf(args[0]) : 9089;
+        Integer serverPort = (args != null && args.length > 0) ? Integer.parseInt(args[0]) : 9089;
         int masterPort = (args != null && args.length > 1) ? Integer.valueOf(args[1]) : ConfigKit.getServerPort();
         String dbProperties = (args != null && args.length > 2) ? args[2] : null;
         String pluginPath = (args != null && args.length > 3) ? args[3] : DevUtil.pluginHome();
@@ -41,7 +41,7 @@ public class Application {
             blogRunTime.setVersion("1.5");
         } else {
             RunConstants.runType = RunType.BLOG;
-            int port = (args.length > 4) ? Integer.valueOf(args[4]) : -1;
+            int port = (args.length > 4) ? Integer.parseInt(args[4]) : -1;
             blogRunTime.setPath((args.length > 5) ? args[5] : DevUtil.blogRuntimePath());
             blogRunTime.setVersion((args.length > 5) ? args[5] : DevUtil.blogVersion());
             if (port > 0) {

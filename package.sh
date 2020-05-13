@@ -1,5 +1,3 @@
 #!/usr/bin/env bash
-cd plugin-common
-mvn clean install
-cd ../plugin-core
-mvn clean compile assembly:single
+./mvnw clean install -pl '!plugin-core,!plugin-freemarker-render'
+./mvnw clean compile assembly:single -f 'plugin-core/pom.xml'

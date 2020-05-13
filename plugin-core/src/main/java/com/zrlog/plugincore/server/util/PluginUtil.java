@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.UUID;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,15 +27,18 @@ import java.util.logging.Logger;
  */
 public class PluginUtil {
 
-    private static Logger LOGGER = LoggerUtil.getLogger(PluginUtil.class);
-    protected static Map<String, Process> processMap = new HashMap<>();
-    private static Map<String, File> idFileMap = new HashMap<>();
+    private static final Logger LOGGER = LoggerUtil.getLogger(PluginUtil.class);
+
+    private static final Map<String, File> idFileMap = new HashMap<>();
+
+    private static final ReentrantLock reentrantLock = new ReentrantLock();
+
+    private static final Map<String, Process> processMap = new HashMap<>();
 
     public static void loadJarPlugin() {
         try {
-            registerHook(processMap);
-            Timer timer = new Timer();
-            timer.schedule(new PluginScanThread(), 0, 5000);
+            registerHook();
+            new Timer().scheduleAtFixedRate(new PluginScanThread(), 0, 1000 * 120);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "start plugin exception ", e);
         }
@@ -42,33 +46,32 @@ public class PluginUtil {
     }
 
     public static void loadPlugin(final File file) {
-        new Thread() {
-            @Override
-            public void run() {
-                if (file != null && file.exists()) {
-                    String pluginName = file.getName().replace(".jar", "");
-                    if (!processMap.containsKey(pluginName)) {
-                        LOGGER.info("run plugin " + pluginName);
-                        String uuid = UUID.randomUUID().toString();
-                        idFileMap.put(uuid, file);
-                        String dir = System.getProperty("user.dir") + "/jars/" + pluginName + "-workspace/";
-                        new File(dir).mkdirs();
-                        String javaHome = System.getProperty("java.home");
-                        Process pr = CmdUtil.getProcess(javaHome + "/bin/java " + " -Duser.dir=" + dir + " " + ConfigKit.get("pluginJvmArgs", "") + " -jar " + file.toString() + " " + PluginConfig.getInstance().getMasterPort() + " " + uuid);
-                        if (pr != null) {
-                            processMap.put(uuid, pr);
-                            printInputStreamWithThread(pr, pr.getInputStream(), pluginName, "PINFO", uuid);
-                            printInputStreamWithThread(pr, pr.getErrorStream(), pluginName, "PERROR", uuid);
-                        }
-                    }
-                }
-            }
-        }.start();
+        if (file == null || !file.exists()) {
+            return;
+        }
+        String pluginName = file.getName().replace(".jar", "");
+        if (processMap.containsKey(pluginName)) {
+            return;
+        }
+        LOGGER.info("run plugin " + pluginName);
+        reentrantLock.lock();
         try {
-            // 等待链接初始化完成
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            LOGGER.log(Level.SEVERE, "", e);
+            String uuid = UUID.randomUUID().toString();
+            idFileMap.put(uuid, file);
+            String userDir = PluginConfig.getInstance().getPluginBasePath() + "/" + pluginName + "/usr/";
+            String tmpDir = PluginConfig.getInstance().getPluginBasePath() + "/" + pluginName + "/tmp/";
+            new File(userDir).mkdirs();
+            new File(tmpDir).mkdirs();
+            Process pr = CmdUtil.getProcess(System.getProperty("java.home") + "/bin/java",
+                    "-Djava.io.tmpdir=" + tmpDir, "-Duser.dir=" + userDir, ConfigKit.get("pluginJvmArgs", ""), "-jar "
+                            + file.toString() + " " + PluginConfig.getInstance().getMasterPort() + " " + uuid);
+            if (pr != null) {
+                processMap.put(uuid, pr);
+                printInputStreamWithThread(pr, pr.getInputStream(), pluginName, "PINFO", uuid);
+                printInputStreamWithThread(pr, pr.getErrorStream(), pluginName, "PERROR", uuid);
+            }
+        } finally {
+            reentrantLock.unlock();
         }
     }
 
@@ -144,7 +147,8 @@ public class PluginUtil {
         }
     }
 
-    private static void printInputStreamWithThread(final Process pr, final InputStream in, final String pluginName, final String printLevel, final String uuid) {
+    private static void printInputStreamWithThread(final Process pr, final InputStream in, final String pluginName,
+                                                   final String printLevel, final String uuid) {
         new Thread() {
             @Override
             public void run() {
@@ -173,28 +177,34 @@ public class PluginUtil {
         }.start();
     }
 
-    private static void registerHook(final Map<String, Process> processMap) {
+    private static void registerHook() {
         Runtime rt = Runtime.getRuntime();
-        rt.addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                for (Map.Entry<String, Process> entry : processMap.entrySet()) {
-                    entry.getValue().destroy();
-                    LOGGER.info("close plugin " + " " + entry.getKey());
-                }
+        rt.addShutdownHook(new Thread(() -> {
+            for (Map.Entry<String, Process> entry : PluginUtil.processMap.entrySet()) {
+                entry.getValue().destroy();
+                LOGGER.info("close plugin " + " " + entry.getKey());
             }
-        });
+        }));
     }
 
     public static File downloadPlugin(String fileName, String downloadUrl) throws IOException {
         LOGGER.info("download plugin " + fileName);
         String tempFolder = PluginConfig.getInstance().getPluginBasePath() + "/tmp/";
         new File(tempFolder).mkdirs();
-        HttpFileHandle fileHandle = (HttpFileHandle) HttpUtil.getInstance().sendGetRequest(downloadUrl, new HttpFileHandle(tempFolder), new HashMap<String, String>());
-        String target = PluginConfig.getInstance().getPluginBasePath() + "/" + fileName;
-        if (!target.equals(fileHandle.getT().toString())) {
-            FileUtils.moveOrCopyFile(fileHandle.getT().toString(), target, true);
+        HttpFileHandle fileHandle = (HttpFileHandle) HttpUtil.getInstance().sendGetRequest(downloadUrl,
+                new HttpFileHandle(tempFolder), new HashMap<>());
+        String fileNameTarget = PluginConfig.getInstance().getPluginBasePath() + "/" + fileName;
+        if (!fileNameTarget.equals(fileHandle.getT().toString())) {
+            FileUtils.moveOrCopyFile(fileHandle.getT().toString(), fileNameTarget, true);
         }
-        return new File(target);
+        File downloadFile = new File(fileNameTarget);
+        if (downloadFile.length() == 0) {
+            return null;
+        }
+        return downloadFile;
+    }
+
+    public static boolean isRunningBySessionId(String sessionId) {
+        return processMap.containsKey(sessionId);
     }
 }

@@ -9,90 +9,76 @@ import com.zrlog.plugincore.server.type.PluginStatus;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class PluginScanThread extends TimerTask {
 
-    private static Logger LOGGER = LoggerUtil.getLogger(PluginUtil.class);
+    private static final Logger LOGGER = LoggerUtil.getLogger(PluginUtil.class);
 
     @Override
     public void run() {
+        if (RunConstants.runType != RunType.BLOG) {
+            return;
+        }
         checkLostFile();
-        if (RunConstants.runType == RunType.BLOG) {
-            List<String> fileList = new ArrayList<>();
-            fillPluginFileByExistsPlugins(fileList);
-
-            fillPluginFileByBasePath(fileList);
-            for (String file : fileList) {
-                if (file != null) {
-                    if (new File(file).getName().endsWith(".jar")) {
-                        tryLoadPlugin(new File(file));
-                    }
-                }
-            }
-        }
-
-    }
-
-    private void fillPluginFileByExistsPlugins(List<String> fileList) {
-        for (PluginVO pluginVO : PluginConfig.getInstance().getAllPluginVO()) {
-            if (pluginVO != null) {
-                fileList.add(pluginVO.getFile());
-            }
-        }
-    }
-
-    private void fillPluginFileByBasePath(List<String> fileList) {
+        Set<String> fileSet =
+                PluginConfig.getInstance().getAllPluginVO().stream().map(PluginVO::getFile).collect(Collectors.toSet());
         File[] files = new File(PluginConfig.getInstance().getPluginBasePath()).listFiles();
         if (files != null && files.length > 0) {
             for (File file : files) {
-                if (!fileList.contains(file.toString())) {
-                    fileList.add(file.toString());
-                }
+                fileSet.add(file.toString());
             }
         }
-    }
-
-    private void tryLoadPlugin(File file) {
-        boolean include = false;
-        for (PluginVO pluginVO : PluginConfig.getInstance().getAllPluginVO()) {
-            if (pluginVO.getFile() != null) {
-                File tFile = new File(pluginVO.getFile());
-                if (tFile.exists()) {
-                    if (pluginVO.getFile().equals(file.toString())) {
-                        include = true;
-                        if (pluginVO.getSessionId() != null && !PluginUtil.processMap.containsKey(pluginVO.getSessionId()) && pluginVO.getStatus() == PluginStatus.START) {
-                            PluginUtil.loadPlugin(file);
-                            break;
-                        }
-                    }
-                }
+        for (String filePath : fileSet) {
+            if (filePath == null) {
+                continue;
             }
-        }
-        if (!include) {
-            PluginUtil.loadPlugin(file);
+            File file = new File(filePath);
+            if (!file.getName().endsWith(".jar")) {
+                continue;
+            }
+            Optional<PluginVO> first =
+                    PluginConfig.getInstance().getAllPluginVO().stream().filter(x -> Objects.equals(x.getFile(),
+                            file.toString())).findFirst();
+            if (!first.isPresent()) {
+                return;
+            }
+            PluginVO pluginVO = first.get();
+            //插件为开启状态，且还没有启动的情况
+            if (pluginVO.getSessionId() != null && pluginVO.getStatus() == PluginStatus.START && !PluginUtil.isRunningBySessionId(pluginVO.getSessionId())) {
+                PluginUtil.loadPlugin(file);
+            }
         }
     }
 
     private void checkLostFile() {
+        boolean download = !PluginConfig.getInstance().getPluginCore().getSetting().isDisableAutoDownloadLostFile();
+        if (!download) {
+            return;
+        }
         for (PluginVO pluginVO : PluginConfig.getInstance().getAllPluginVO()) {
-            if (pluginVO.getFile() != null) {
-                File file = new File(pluginVO.getFile());
-                if (!file.exists() || file.length() == 0) {
-                    boolean download = !PluginConfig.getInstance().getPluginCore().getSetting().isDisableAutoDownloadLostFile();
-                    String fileName = pluginVO.getPlugin().getShortName() + ".jar";
-                    if (download && RunConstants.runType == RunType.BLOG) {
-                        try {
-                            pluginVO.setFile(PluginUtil.downloadPlugin(fileName, "http://dl.zrlog.com/plugin/" + fileName).toString());
-                        } catch (IOException e) {
-                            LOGGER.log(Level.SEVERE, "download error", e);
-                        }
-                    }
+            if (pluginVO.getFile() == null) {
+                continue;
+            }
+            File file = new File(pluginVO.getFile());
+            if (file.exists() && file.length() > 0) {
+                continue;
+            }
+            try {
+                String fileName = pluginVO.getPlugin().getShortName() + ".jar";
+                File downloadFile = PluginUtil.downloadPlugin( fileName,
+                        "http" + "://dl.zrlog.com/plugin/" + fileName);
+                if (downloadFile != null) {
+                    pluginVO.setFile(downloadFile.toString());
                 }
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "download error", e);
             }
         }
     }

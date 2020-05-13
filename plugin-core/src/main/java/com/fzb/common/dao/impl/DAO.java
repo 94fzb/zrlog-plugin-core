@@ -39,11 +39,6 @@ public class DAO implements IDAO {
         return this;
     }
 
-    /**
-     * 在插入数据时取的Map中key
-     *
-     * @return
-     */
     protected String getAttrsKey() {
         StringBuilder sb = new StringBuilder();
         for (String lable : attrs.keySet()) {
@@ -54,11 +49,6 @@ public class DAO implements IDAO {
         return sb.toString();
     }
 
-    /**
-     * 插入数据时使用
-     *
-     * @return
-     */
     protected String appendParams() {
         StringBuilder sb = new StringBuilder();
         int length = attrs.size();
@@ -69,12 +59,7 @@ public class DAO implements IDAO {
         return sb.toString();
     }
 
-    /**
-     * 用于插入(删除，查询)数据中使用
-     *
-     * @param map
-     * @return
-     */
+
     protected Object[] getMapValus(Map<String, Object> map) {
 
         Object obj[] = new Object[map.size()];
@@ -85,13 +70,6 @@ public class DAO implements IDAO {
         return obj;
     }
 
-    /**
-     * 用于更新中使用
-     *
-     * @param attrs 更新后的数据
-     * @param cond  更新的条件
-     * @return
-     */
     protected Object[] getAttsValus(Map<String, Object> attrs, Map<String, Object> cond) {
         Object obj[] = new Object[attrs.size() + cond.size()];
         int i = 0;
@@ -104,27 +82,16 @@ public class DAO implements IDAO {
         return obj;
     }
 
-    /**
-     * 查询更新时使用
-     *
-     * @param map
-     * @return
-     */
+
     protected String condsMap2Str(Map<String, Object> map) {
         StringBuilder sb = new StringBuilder();
         sb.append("1=1");
         for (Entry<String, Object> m : map.entrySet()) {
-            sb.append(" and " + m.getKey() + "=?");
+            sb.append(" and ").append(m.getKey()).append("=?");
         }
         return sb.toString();
     }
 
-    /**
-     * 更新
-     *
-     * @param map
-     * @return
-     */
     protected String attrsMap2Str(Map<String, Object> map) {
         StringBuilder sb = new StringBuilder();
         for (Entry<String, Object> m : map.entrySet()) {
@@ -139,9 +106,6 @@ public class DAO implements IDAO {
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see com.mir.server.dao.IDAO#save()
-     */
     @Override
     public boolean save() throws SQLException {
         if (attrs.isEmpty()) {
@@ -159,9 +123,7 @@ public class DAO implements IDAO {
         return queryRunner.update(sb.toString(), getMapValus(attrs)) > 0;
     }
 
-    /* (non-Javadoc)
-     * @see com.mir.server.dao.IDAO#update(java.com.fzb.common.util.Map)
-     */
+
     @Override
     public boolean update(Map<String, Object> conditions) throws SQLException {
         StringBuilder sb = new StringBuilder();
@@ -174,9 +136,7 @@ public class DAO implements IDAO {
         return queryRunner.update(sb.toString(), getAttsValus(attrs, conditions)) > 0;
     }
 
-    /* (non-Javadoc)
-     * @see com.mir.server.dao.IDAO#delete()
-     */
+
     @Override
     public boolean delete() throws SQLException {
         StringBuilder sb = new StringBuilder();
@@ -187,9 +147,7 @@ public class DAO implements IDAO {
         return queryRunner.update(sb.toString(), getMapValus(attrs)) > 0;
     }
 
-    /* (non-Javadoc)
-     * @see com.mir.server.dao.IDAO#deleteById(int)
-     */
+
     @Override
     public boolean deleteById(int id) throws SQLException {
         StringBuilder sb = new StringBuilder();
@@ -199,9 +157,7 @@ public class DAO implements IDAO {
         return queryRunner.update(sb.toString(), id) > 0;
     }
 
-    /* (non-Javadoc)
-     * @see com.mir.server.dao.IDAO#queryFrist(java.lang.String)
-     */
+
     @Override
     public Map<String, Object> queryFirst(String... columns) throws SQLException {
         StringBuilder sb = new StringBuilder();
@@ -223,6 +179,7 @@ public class DAO implements IDAO {
         return map;
     }
 
+    @Override
     public Object queryFirst(String column) throws SQLException {
         StringBuilder sb = new StringBuilder();
         sb.append("select ");
@@ -244,15 +201,12 @@ public class DAO implements IDAO {
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see com.mir.server.dao.IDAO#queryList()
-     */
     @Override
     public List<Map<String, Object>> queryList(String... columns) throws SQLException {
         StringBuilder sb = new StringBuilder();
         sb.append("select ");
         for (String str : columns) {
-            sb.append(str + ",");
+            sb.append(str).append(",");
         }
         sb.deleteCharAt(sb.length() - 1);
         sb.append(" from ");

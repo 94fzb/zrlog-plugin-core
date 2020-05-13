@@ -1,7 +1,5 @@
 package com.zrlog.plugin.common;
 
-import java.io.IOException;
-
 /**
  * 字节，字节数组(合并)，二，十，十六进制的相互
  *
@@ -11,8 +9,8 @@ public class HexaConversionUtil {
 
     public static String bytesToHexString(byte[] b) {
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < b.length; i++) {
-            String hex = Integer.toHexString(b[i] & 0xFF);
+        for (byte value : b) {
+            String hex = Integer.toHexString(value & 0xFF);
             if (hex.length() == 1) {
                 hex = '0' + hex;
             }
@@ -25,17 +23,17 @@ public class HexaConversionUtil {
         String bytesStr = Long.toBinaryString(Long.valueOf(bytesToHexString(b), 16));
         int length = bytesStr.length();
         int need = 32 - length;
-        String str = "";
+        StringBuilder str = new StringBuilder();
         while (need > 0) {
-            str += "0";
+            str.append("0");
             need--;
         }
-        str += bytesStr;
-        String ipStr = "";
+        str.append(bytesStr);
+        StringBuilder ipStr = new StringBuilder();
         for (int i = 0; i < 4; i++) {
             String temp = str.substring(i * 8, (i + 1) * 8);
             int in = Integer.valueOf(temp, 2);
-            ipStr += in + ".";
+            ipStr.append(in).append(".");
         }
         return ipStr.substring(0, ipStr.length() - 1);
     }
@@ -64,18 +62,17 @@ public class HexaConversionUtil {
     }
 
     private static int parse(char c) {
-        if (c >= 'a')
+        if (c >= 'a') {
             return (c - 'a' + 10) & 0x0F;
-        if (c >= 'A')
+        }
+        if (c >= 'A') {
             return (c - 'A' + 10) & 0x0F;
+        }
         return (c - '0') & 0x0F;
     }
 
     /**
      * int到byte[]
-     *
-     * @param i
-     * @return
      */
     public static byte[] intToByteArray(int number) {
         byte[] targets = new byte[4];
@@ -106,9 +103,6 @@ public class HexaConversionUtil {
 
     /**
      * byte[]转int
-     *
-     * @param bytes
-     * @return
      */
     public static int byteArrayToInt(byte[] b) {
         int res = 0;
@@ -124,15 +118,12 @@ public class HexaConversionUtil {
 
     /**
      * short到字节数组的转换！
-     *
-     * @param s
-     * @return
      */
     public static byte[] shortToByte(short number) {
         int temp = number;
         byte[] b = new byte[2];
         for (int i = 0; i < b.length; i++) {
-            b[i] = new Integer(temp & 0xFF).byteValue();// 将最低位保存在最低位
+            b[i] = Integer.valueOf(temp & 0xFF).byteValue();// 将最低位保存在最低位
             temp = temp >> 8; // 向右移8位
         }
         return b;
@@ -154,7 +145,7 @@ public class HexaConversionUtil {
         for (byte[] bs : bytes) {
             nbytesSize += bs.length;
         }
-        byte nBytes[] = new byte[nbytesSize];
+        byte[] nBytes = new byte[nbytesSize];
         int size = 0;
         for (byte[] bs : bytes) {
             System.arraycopy(bs, 0, nBytes, size, bs.length);
@@ -164,7 +155,7 @@ public class HexaConversionUtil {
     }
 
     public static byte[] subByts(byte[] b, int start, int length) {
-        byte rbytes[] = new byte[length];
+        byte[] rbytes = new byte[length];
         System.arraycopy(b, start, rbytes, 0, length);
         return rbytes;
     }
@@ -174,11 +165,11 @@ public class HexaConversionUtil {
                 + (byte) ((b >> 7) & 0x1) + (byte) ((b >> 6) & 0x1)
                 + (byte) ((b >> 5) & 0x1) + (byte) ((b >> 4) & 0x1)
                 + (byte) ((b >> 3) & 0x1) + (byte) ((b >> 2) & 0x1)
-                + (byte) ((b >> 1) & 0x1) + (byte) ((b >> 0) & 0x1);
+                + (byte) ((b >> 1) & 0x1) + (byte) ((b) & 0x1);
     }
 
-    public static void main(String[] args) throws IOException {
-        byte bs[] = intToByteArray(23);
+    public static void main(String[] args) {
+        byte[] bs = intToByteArray(23);
         int i = byteArrayToInt(bs);
         System.out.println("" + bs[0] + "" + bs[1] + "" + bs[2] + "" + bs[3]);
         System.out.println(i);

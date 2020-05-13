@@ -1,0 +1,1 @@
+./mvnw release:clean && ./mvnw  release:prepare && ./mvnw -pl '!plugin-core' release:perform
