@@ -170,7 +170,7 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <useReleaseProfile>false</useReleaseProfile>
                     <releaseProfiles>nexus</releaseProfiles>
-                    <goals>deploy nexus-staging:release</goals>
+                    <goals>deploy -pl '!plugin-core' nexus-staging:release</goals>
                 </configuration>
             </plugin>
         </plugins>
