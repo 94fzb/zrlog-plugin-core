@@ -21,3 +21,4 @@ server/plugin.txt
 !.mvn/wrapper/maven-wrapper.jar
 release.properties
 pom.xml.releaseBackup
+**/.DS_Store
