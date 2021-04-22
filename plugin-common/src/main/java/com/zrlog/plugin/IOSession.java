@@ -1,5 +1,6 @@
 package com.zrlog.plugin;
 
+import com.google.gson.Gson;
 import com.hibegin.common.util.IOUtil;
 import com.zrlog.plugin.api.IActionHandler;
 import com.zrlog.plugin.common.IdUtil;
@@ -149,6 +150,11 @@ public class IOSession {
 
     public int requestService(String name, Map map) {
         return requestService(name, map, null);
+    }
+
+    public <T> T callService(String name, Map map, Class<T> clazz) {
+        int messageId = requestService(name, map);
+        return new Gson().fromJson(IOUtil.getStringInputStream(getPipeInByMsgId(messageId)), clazz);
     }
 
     public void dispose(MsgPacket msgPacket) {
