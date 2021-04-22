@@ -4,7 +4,7 @@
     <groupId>com.hibegin</groupId>
     <artifactId>zrlog-plugin-parent</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>2.0.16-SNAPSHOT</version>
+    <version>2.0.16</version>
     <packaging>pom</packaging>
     <description>ZrLog plugin core</description>
     <name>ZrLog plugin core</name>
@@ -32,7 +32,7 @@
         <connection>scm:git:https://gitee.com/94fzb/zrlog-plugin-core</connection>
         <developerConnection>scm:git:https://gitee.com/94fzb/zrlog-plugin-core</developerConnection>
         <url>https://gitee.com/94fzb/zrlog-plugin-core</url>
-        <tag>zrlog-plugin-parent-2.0.10-SNAPSHOT</tag>
+        <tag>zrlog-plugin-parent-2.0.16</tag>
     </scm>
     <issueManagement>
         <system>Github Issue</system>
@@ -201,12 +201,12 @@
             <dependency>
                 <groupId>com.hibegin</groupId>
                 <artifactId>zrlog-plugin-common</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.16</version>
             </dependency>
             <dependency>
                 <groupId>com.hibegin</groupId>
                 <artifactId>zrlog-plugin-freemarker-render</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.16</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
