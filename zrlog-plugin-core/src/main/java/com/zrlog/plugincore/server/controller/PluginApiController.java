@@ -15,7 +15,6 @@ import com.zrlog.plugin.type.ActionType;
 import com.zrlog.plugin.type.RunType;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.config.PluginVO;
-import com.zrlog.plugincore.server.type.PluginStatus;
 import com.zrlog.plugincore.server.util.HttpMsgUtil;
 import com.zrlog.plugincore.server.util.PluginUtil;
 
@@ -33,25 +32,14 @@ public class PluginApiController extends Controller {
     }
 
     public void plugins() {
-        List<Plugin> usedPlugins = new ArrayList<>();
-        List<Plugin> unusedPlugins = new ArrayList<>();
         List<Plugin> allPlugins = new ArrayList<>();
         for (PluginVO pluginEntry : PluginConfig.getInstance().getAllPluginVO()) {
-            PluginStatus pluginStatus = pluginEntry.getStatus();
-            if (pluginStatus != PluginStatus.START) {
-                unusedPlugins.add(pluginEntry.getPlugin());
-            } else {
-                usedPlugins.add(pluginEntry.getPlugin());
-            }
-            if (StringUtils.isEmpty(
-                    pluginEntry.getPlugin().getPreviewImageBase64())) {
+            if (StringUtils.isEmpty(pluginEntry.getPlugin().getPreviewImageBase64())) {
                 pluginEntry.getPlugin().setPreviewImageBase64("");
             }
             allPlugins.add(pluginEntry.getPlugin());
         }
         getRequest().getAttr().put("plugins", allPlugins);
-        getRequest().getAttr().put("usedPlugins", usedPlugins);
-        getRequest().getAttr().put("unusedPlugins", unusedPlugins);
         getRequest().getAttr().put("pluginVersion", ConfigKit.get("plugin.version", ""));
         String from = request.getHeader("Referer");
         if (from == null) {
