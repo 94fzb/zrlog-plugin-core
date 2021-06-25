@@ -1,0 +1,116 @@
+package com.zrlog.plugincore.server.controller;
+
+import com.hibegin.common.util.StringUtils;
+import com.hibegin.http.server.web.Controller;
+import com.zrlog.plugin.IOSession;
+import com.zrlog.plugin.RunConstants;
+import com.zrlog.plugin.common.ConfigKit;
+import com.zrlog.plugin.common.IdUtil;
+import com.zrlog.plugin.data.codec.ContentType;
+import com.zrlog.plugin.data.codec.HttpRequestInfo;
+import com.zrlog.plugin.data.codec.MsgPacket;
+import com.zrlog.plugin.data.codec.MsgPacketStatus;
+import com.zrlog.plugin.message.Plugin;
+import com.zrlog.plugin.type.ActionType;
+import com.zrlog.plugin.type.RunType;
+import com.zrlog.plugincore.server.config.PluginConfig;
+import com.zrlog.plugincore.server.config.PluginVO;
+import com.zrlog.plugincore.server.type.PluginStatus;
+import com.zrlog.plugincore.server.util.HttpMsgUtil;
+import com.zrlog.plugincore.server.util.PluginUtil;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class PluginApiController extends Controller {
+
+    private IOSession getSession() {
+        return PluginConfig.getInstance().getIOSessionByPluginName(getRequest().getParaToStr("name"));
+    }
+
+    public void plugins() {
+        List<Plugin> usedPlugins = new ArrayList<>();
+        List<Plugin> unusedPlugins = new ArrayList<>();
+        List<Plugin> allPlugins = new ArrayList<>();
+        for (PluginVO pluginEntry : PluginConfig.getInstance().getAllPluginVO()) {
+            PluginStatus pluginStatus = pluginEntry.getStatus();
+            if (pluginStatus != PluginStatus.START) {
+                unusedPlugins.add(pluginEntry.getPlugin());
+            } else {
+                usedPlugins.add(pluginEntry.getPlugin());
+            }
+            if (StringUtils.isEmpty(
+                    pluginEntry.getPlugin().getPreviewImageBase64())) {
+                pluginEntry.getPlugin().setPreviewImageBase64("");
+            }
+            allPlugins.add(pluginEntry.getPlugin());
+        }
+        getRequest().getAttr().put("plugins", allPlugins);
+        getRequest().getAttr().put("usedPlugins", usedPlugins);
+        getRequest().getAttr().put("unusedPlugins", unusedPlugins);
+        getRequest().getAttr().put("pluginVersion", ConfigKit.get("plugin.version", ""));
+        String from = request.getHeader("Referer");
+        if (from == null) {
+            //old version
+            from = request.getHeader("Full-Url").replace("/api", "");
+        }
+        getRequest().getAttr().put("pluginCenter",
+                "https://store.zrlog.com/plugin/?from=" + from.substring(0, from.lastIndexOf("/")));
+        response.renderJson(getRequest().getAttr());
+    }
+
+    private HttpRequestInfo genInfo() {
+        return HttpMsgUtil.genInfo(getRequest());
+    }
+
+    public void stop() {
+        Map<String, Object> map = new HashMap<>();
+        if (getSession() != null) {
+            String pluginName = getSession().getPlugin().getShortName();
+            PluginUtil.stopPlugin(pluginName);
+            map.put("code", 0);
+            map.put("message", "停止成功");
+        } else {
+            map.put("code", 1);
+            map.put("message", "插件没有启动");
+        }
+        getResponse().renderJson(map);
+
+    }
+
+    public void start() throws IOException {
+        if (getSession() != null) {
+            response.redirect("/admin/plugins/pluginStarted");
+            return;
+        }
+        if (RunConstants.runType != RunType.DEV) {
+            String pluginName = getRequest().getParaToStr("name");
+            PluginUtil.loadPlugin(new File(PluginConfig.getInstance().getPluginFileByName(pluginName)));
+            int id = IdUtil.getInt();
+            getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id,
+                    ActionType.PLUGIN_START.name()));
+            getResponse().addHeader("Content-Type", "text/html");
+            getResponse().write(getSession().getPipeInByMsgId(id), 200);
+        } else {
+            getResponse().renderHtmlStr("dev ENV");
+        }
+    }
+
+    public void uninstall() {
+        IOSession session = getSession();
+        String pluginName = getRequest().getParaToStr("name");
+        if (session != null) {
+            session.sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, IdUtil.getInt(),
+                    ActionType.PLUGIN_UNINSTALL.name()));
+        }
+        PluginUtil.deletePlugin(pluginName);
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", 0);
+        map.put("message", "移除成功");
+        getResponse().renderJson(map);
+    }
+}

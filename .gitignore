@@ -22,3 +22,4 @@ server/plugin.txt
 release.properties
 pom.xml.releaseBackup
 **/.DS_Store
+zrlog-plugin-core/src/main/resources/static
