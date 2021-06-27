@@ -20,9 +20,8 @@ class CoreIndex extends React.Component {
 
     load() {
         axios.get("/admin/plugins/api/plugins").then(e => {
-            console.info(e.data);
             this.setState({
-                plugins: [],
+                plugins: e.data.plugins,
                 version: "v" + e.data.pluginVersion,
                 pluginCenter: e.data.pluginCenter,
                 loading: false
