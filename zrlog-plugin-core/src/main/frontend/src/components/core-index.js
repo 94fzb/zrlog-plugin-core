@@ -47,12 +47,12 @@ class CoreIndex extends React.Component {
                     <Title className='page-header' level={3}>插件管理 <span
                         style={{fontSize: 16}}>({this.state.version})</span></Title>
                     <Divider/>
-                    <Empty hidden={this.state.plugins.length > 0} description='空空如也'>
+                    <Empty hidden={this.state.plugins.length === 0} description='空空如也'>
                         <a href={this.state.pluginCenter}>
                             <Button type='primary'><DownloadOutlined/>去下载</Button>
                         </a>
                     </Empty>
-                    <div hidden={this.state.plugins.length === 0}>
+                    <div hidden={this.state.plugins.length > 0}>
                         <Row gutter={[4, 4]} style={{margin: 4}}>
                             {this.state.plugins.map((plugin) => {
                                 return (
