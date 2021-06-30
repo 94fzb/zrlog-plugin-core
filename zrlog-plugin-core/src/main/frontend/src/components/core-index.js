@@ -55,7 +55,7 @@ class CoreIndex extends React.Component {
                         <Row gutter={[4, 4]} style={{margin: 4}}>
                             {this.state.plugins.map((plugin) => {
                                 return (
-                                    <Col md={8} xxl={4} xs={24}>
+                                    <Col md={6} xxl={4} xs={24}>
                                         <Badge.Ribbon
                                             text={plugin.use ? this.state.res['admin.theme.inUse'] : plugin.preview ? this.state.res['admin.theme.inPreview'] : ""}
                                             style={{
