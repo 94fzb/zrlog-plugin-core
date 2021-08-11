@@ -19,7 +19,7 @@ class CoreIndex extends React.Component {
     }
 
     load() {
-        axios.get("/admin/plugins/api/plugins").then(e => {
+        axios.get("api/plugins").then(e => {
             this.setState({
                 plugins: e.data.plugins,
                 version: "v" + e.data.pluginVersion,
@@ -34,7 +34,7 @@ class CoreIndex extends React.Component {
     }
 
     delete(pluginName) {
-        axios.get("/admin/plugins/api/uninstall?name=" + pluginName).then(e => {
+        axios.get("api/uninstall?name=" + pluginName).then(e => {
             this.load();
         })
     }
@@ -73,7 +73,7 @@ class CoreIndex extends React.Component {
                                                     />
                                                 }
                                                 actions={[
-                                                    <a href={"/admin/plugins/" + plugin.shortName + "/"}>
+                                                    <a href={plugin.shortName + "/"}>
                                                         <SettingOutlined key="preview"/>
                                                     </a>,
                                                     <Link onClick={e => this.delete(plugin.shortName)}>

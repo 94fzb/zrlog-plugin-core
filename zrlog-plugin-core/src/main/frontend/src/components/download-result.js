@@ -15,7 +15,7 @@ class DownloadResult extends React.Component {
         const pluginName = query.get("pluginName");
         this.setState({
             message: message,
-            viewLink: "/admin/plugins/"+pluginName+"/"
+            viewLink: pluginName+"/"
         })
     }
 
