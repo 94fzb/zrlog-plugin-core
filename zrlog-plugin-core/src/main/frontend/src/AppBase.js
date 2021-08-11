@@ -10,9 +10,9 @@ class AppBase extends React.Component {
     render() {
         return (
             <Switch>
-                <Route path='/admin/plugins/downloadResult' component={DownloadResult}/>
-                <Route path='/admin/plugins/pluginStarted' component={PluginStarted}/>
-                <Route path="/admin/plugins/" component={CoreIndex}/>
+                <Route path='*/downloadResult' component={DownloadResult}/>
+                <Route path='*/pluginStarted' component={PluginStarted}/>
+                <Route path="*" component={CoreIndex}/>
             </Switch>
         );
     }
