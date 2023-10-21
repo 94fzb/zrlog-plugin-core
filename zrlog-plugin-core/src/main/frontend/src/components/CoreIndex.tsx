@@ -6,7 +6,7 @@ import {
     Col,
     Divider,
     Empty,
-    Image,
+    Image, Popconfirm,
     Row,
     Spin,
 } from "antd";
@@ -96,9 +96,18 @@ const CoreIndex: React.FC = () => {
                                                 <a href={plugin.shortName + "/"}>
                                                     <SettingOutlined key="preview"/>
                                                 </a>,
-                                                <Link onClick={() => deletePlugin(plugin.shortName)} to={"#"}>
-                                                    <DeleteOutlined key="delete"/>
-                                                </Link>,
+                                                <Popconfirm
+                                                    title={`确定删除插件《${plugin.name}》吗？`}
+                                                    okText="确定"
+                                                    onConfirm={() => {
+                                                        deletePlugin(plugin.shortName)
+                                                    }}
+                                                    cancelText="取消"
+                                                >
+                                                    <Link to={"#"}>
+                                                        <DeleteOutlined key="delete"/>
+                                                    </Link>
+                                                </Popconfirm>
                                             ]}
                                         >
                                             <Meta

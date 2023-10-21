@@ -1,4 +1,4 @@
-import { createRoot } from "react-dom/client";
+import {createRoot} from "react-dom/client";
 import * as serviceWorker from './serviceWorker';
 import zh_CN from "antd/es/locale/zh_CN";
 
@@ -11,7 +11,7 @@ import AppBase from "./AppBase";
 
 const {darkAlgorithm, defaultAlgorithm} = theme;
 
-function getPreferredColorScheme() {
+/*function getPreferredColorScheme() {
     if (window.matchMedia) {
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             return 'dark';
@@ -23,20 +23,19 @@ function getPreferredColorScheme() {
 
 export const isDarkMode = (): boolean => {
     return getPreferredColorScheme() === "dark";
-}
+}*/
 
 const Index = () => {
-    const [dark, setDark] = useState<boolean>(isDarkMode());
+    const [dark, setDark] = useState<boolean | null>(null);
 
     useEffect(() => {
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        const changeHandler = () => setDark(isDarkMode);
-
-        mediaQuery.addEventListener('change', changeHandler);
-
-        // 在组件卸载时移除事件监听器
-        return () => mediaQuery.removeEventListener('change', changeHandler);
+        const configTheme = document.body.className.indexOf("dark") > -1;
+        setDark(configTheme);
     }, []);
+
+    if (dark === null) {
+        return <></>
+    }
 
     return (
         <ConfigProvider
@@ -45,8 +44,8 @@ const Index = () => {
                 algorithm: dark ? darkAlgorithm : defaultAlgorithm,
             }}
             divider={{
-                style:{
-                    margin:"8px 0px"
+                style: {
+                    margin: "8px 0px"
                 }
             }}
             table={
@@ -69,7 +68,7 @@ const Index = () => {
 
 const container = document.getElementById("app");
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
-root.render(<Index />);
+root.render(<Index/>);
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: http://bit.ly/CRA-PWA
