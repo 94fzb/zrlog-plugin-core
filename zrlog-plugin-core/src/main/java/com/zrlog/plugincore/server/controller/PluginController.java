@@ -10,11 +10,14 @@ import com.zrlog.plugin.data.codec.HttpRequestInfo;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.util.HttpMsgUtil;
 import com.zrlog.plugincore.server.util.PluginUtil;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -61,26 +64,27 @@ public class PluginController extends Controller {
         return basePath;
     }
 
-    public void download() {
+    public void download() throws UnsupportedEncodingException {
         String fileName = getRequest().getParaToStr("pluginName");
+        String pluginName = fileName.substring(0, fileName.indexOf("."));
         try {
             File path = new File(PluginConfig.getInstance().getPluginBasePath());
             File file = new File(path + "/" + fileName);
-            if (!file.exists()) {
-                String downloadUrl = getRequest().getParaToStr("host") + "/plugin/download?id=" + getRequest().getParaToInt("id");
-                File pluginFile = PluginUtil.downloadPlugin(fileName, downloadUrl);
-                PluginUtil.loadPlugin(pluginFile);
-                getRequest().getAttr().put("message", "下载插件成功");
-            } else {
-                getRequest().getAttr().put("message", "插件已经存在了");
+            if (file.exists()) {
+                response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode("插件已经存在了","UTF-8") +
+                        "&pluginName=" + pluginName);
+                return;
             }
+            String downloadUrl = getRequest().getParaToStr("host") + "/plugin/download?id=" + getRequest().getParaToInt("id");
+            File pluginFile = PluginUtil.downloadPlugin(fileName, downloadUrl);
+            PluginUtil.loadPlugin(pluginFile);
+            response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode("下载插件成功","UTF-8") +
+                    "&pluginName=" + pluginName);
         } catch (Exception e) {
-            getRequest().getAttr().put("message", e.getMessage());
+            response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode(e.getMessage(),"UTF-8") +
+                    "&pluginName=" + pluginName);
             LOGGER.log(Level.FINER, "download error ", e);
         }
-        String pluginName = fileName.substring(0, fileName.indexOf("."));
-        response.redirect(getBasePath() + "/downloadResult?message=" + request.getAttr().get("message") +
-                "&pluginName=" + pluginName);
     }
 
 
