@@ -112,7 +112,13 @@ const CoreIndex: React.FC = () => {
                                         >
                                             <Meta
                                                 title={plugin.name + ` (` + plugin.version + ")"}
-                                                description={plugin.desc}
+                                                description={<span style={{
+                                                    "overflow": "hidden",
+                                                    "textOverflow": "ellipsis",
+                                                    "display": "-webkit-box",
+                                                    "WebkitLineClamp": "2",
+                                                    "WebkitBoxOrient": "vertical"
+                                                }}>{plugin.desc}</span>}
                                             />
                                         </Card>
                                     </Badge.Ribbon>
