@@ -27,8 +27,7 @@ public class PluginHttpServerConfig extends AbstractServerConfig {
         serverConfig.getRouter().addMapper("/admin/plugins", PluginController.class);
         serverConfig.getRouter().addMapper("/admin/plugins/api", PluginApiController.class);
         serverConfig.getRouter().addMapper("/admin/plugins/setting", SettingController.class);
-        serverConfig.addStaticResourceMapper("/admin/plugins/static/css", "/static/static/css");
-        serverConfig.addStaticResourceMapper("/admin/plugins/static/js", "/static/static/js");
+        serverConfig.addStaticResourceMapper("/admin/plugins/static", "/static/static");
         return serverConfig;
     }
 
