@@ -28,6 +28,7 @@ function getFillBackImg(): string {
 const CoreIndex: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [plugins, setPlugins] = useState<any[]>([]);
+    const [buildNumber, setBuildNumber] = useState<any[]>([]);
     const [version, setVersion] = useState<string>("");
     const [pluginCenter, setPluginCenter] = useState<string>("");
 
@@ -35,6 +36,7 @@ const CoreIndex: React.FC = () => {
         axios.get("api/plugins").then((e) => {
             setPlugins(e.data.plugins);
             setVersion("v" + e.data.pluginVersion);
+            setBuildNumber(e.data.pluginBuildNumber);
             setPluginCenter(e.data.pluginCenter);
             setLoading(false);
         });
@@ -54,7 +56,7 @@ const CoreIndex: React.FC = () => {
         <Spin spinning={loading} style={{height: "100vh"}}>
             <Content hidden={loading} style={{height: "100vh"}}>
                 <Title className="page-header" level={3}>
-                    插件管理 <span style={{fontSize: 16}}>({version})</span>
+                    插件管理 <span style={{fontSize: 16}}>({version}.{buildNumber})</span>
                 </Title>
                 <Divider/>
                 {plugins.length === 0 && <Empty description="空空如也">

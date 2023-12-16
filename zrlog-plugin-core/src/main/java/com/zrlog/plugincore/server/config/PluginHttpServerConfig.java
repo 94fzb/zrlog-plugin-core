@@ -15,7 +15,7 @@ public class PluginHttpServerConfig extends AbstractServerConfig {
     public ServerConfig getServerConfig() {
         ServerConfig serverConfig = new ServerConfig();
         serverConfig.setPort(9089);
-        serverConfig.getInterceptors().add(CloseConnectInterceptor.class);
+        serverConfig.getInterceptors().add(PluginInterceptor.class);
         serverConfig.getInterceptors().add(MethodInterceptor.class);
         serverConfig.addErrorHandle(404, new PluginHandle());
         //real env

@@ -1,6 +1,7 @@
 package com.zrlog.plugincore.server.controller;
 
 import com.hibegin.common.util.StringUtils;
+import com.hibegin.http.annotation.ResponseBody;
 import com.hibegin.http.server.web.Controller;
 import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.RunConstants;
@@ -31,7 +32,8 @@ public class PluginApiController extends Controller {
         return PluginConfig.getInstance().getIOSessionByPluginName(getRequest().getParaToStr("name"));
     }
 
-    public void plugins() {
+    @ResponseBody
+    public Map<String,Object> plugins() {
         List<Plugin> allPlugins = new ArrayList<>();
         for (PluginVO pluginEntry : PluginConfig.getInstance().getAllPluginVO()) {
             if (StringUtils.isEmpty(pluginEntry.getPlugin().getPreviewImageBase64())) {
@@ -39,23 +41,27 @@ public class PluginApiController extends Controller {
             }
             allPlugins.add(pluginEntry.getPlugin());
         }
-        getRequest().getAttr().put("plugins", allPlugins);
-        getRequest().getAttr().put("pluginVersion", ConfigKit.get("plugin.version", ""));
+        Map<String,Object> map = new HashMap<>();
+        map.put("plugins", allPlugins);
+        map.put("pluginVersion", ConfigKit.get("version", ""));
+        map.put("pluginBuildId", ConfigKit.get("buildId", ""));
+        map.put("pluginBuildNumber", ConfigKit.get("buildNumber", ""));
         String from = request.getHeader("Referer");
         if (from == null) {
             //old version
             from = request.getHeader("Full-Url").replace("/api", "");
         }
-        getRequest().getAttr().put("pluginCenter",
+        map.put("pluginCenter",
                 "https://store.zrlog.com/plugin/?from=" + from.substring(0, from.lastIndexOf("/")));
-        response.renderJson(getRequest().getAttr());
+        return map;
     }
 
     private HttpRequestInfo genInfo() {
         return HttpMsgUtil.genInfo(getRequest());
     }
 
-    public void stop() {
+    @ResponseBody
+    public Map<String, Object> stop() {
         Map<String, Object> map = new HashMap<>();
         if (getSession() != null) {
             String pluginName = getSession().getPlugin().getShortName();
@@ -66,7 +72,7 @@ public class PluginApiController extends Controller {
             map.put("code", 1);
             map.put("message", "插件没有启动");
         }
-        getResponse().renderJson(map);
+        return map;
 
     }
 
@@ -87,8 +93,8 @@ public class PluginApiController extends Controller {
             getResponse().renderHtmlStr("dev ENV");
         }
     }
-
-    public void uninstall() {
+    @ResponseBody
+    public Map<String, Object> uninstall() {
         IOSession session = getSession();
         String pluginName = getRequest().getParaToStr("name");
         if (session != null) {
@@ -99,6 +105,6 @@ public class PluginApiController extends Controller {
         Map<String, Object> map = new HashMap<>();
         map.put("code", 0);
         map.put("message", "移除成功");
-        getResponse().renderJson(map);
+        return map;
     }
 }
