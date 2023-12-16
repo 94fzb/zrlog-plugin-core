@@ -1,1 +1,0 @@
-sh bin/releasePlugin.sh ${HOME}/git/zrlog/web/src/main/webapp/WEB-INF/plugins 1
