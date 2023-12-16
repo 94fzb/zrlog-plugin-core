@@ -22,5 +22,5 @@ jobs:
         run: |
           mkdir -p /tmp/download
           bash -e ./mvnw clean install -pl '!zrlog-plugin-core,!zrlog-plugin-freemarker-render'
-          bash -e ./mvnw clean compile assembly:single -f 'zrlog-plugin-core/pom.xml' -DoutputDirectory=/tmp/download/release
+          bash -e ./mvnw clean compile assembly:single -f 'zrlog-plugin-core/pom.xml' -DoutputDirectory=/tmp/download/release/plugin
           bash bin/upload-bin.sh ${{ secrets.SECRET_ID }} ${{ secrets.SECRET_KEY }} ${{ secrets.BUCKET }} /tmp/download release/plugin
