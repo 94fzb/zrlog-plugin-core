@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 
 public class MsgPacket {
 
-    private byte dStart;
+    private final byte dStart;
     private int msgId;
     private MsgPacketStatus status;
     private ContentType contentType;

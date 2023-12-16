@@ -38,7 +38,7 @@ import java.util.logging.Logger;
 
 public class ServerActionHandler implements IActionHandler {
 
-    private static Logger LOGGER = LoggerUtil.getLogger(ServerActionHandler.class);
+    private static final Logger LOGGER = LoggerUtil.getLogger(ServerActionHandler.class);
 
     @Override
     public void service(final IOSession session, final MsgPacket msgPacket) {

@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class DevUtil {
 
-    private static Properties prop = new Properties();
+    private static final Properties prop = new Properties();
     private static final Logger LOGGER = LoggerUtil.getLogger(DevUtil.class);
 
     static {

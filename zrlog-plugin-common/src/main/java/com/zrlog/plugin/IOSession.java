@@ -29,16 +29,16 @@ public class IOSession {
 
     private static final Logger LOGGER = LoggerUtil.getLogger(IOSession.class);
 
-    private Map<String, Object> attr = new ConcurrentHashMap<>();
-    private Map<Integer, PipeInfo> pipeMap = new ConcurrentHashMap<>();
-    private Map<String, Object> systemAttr = new ConcurrentHashMap<>();
-    private IActionHandler actionHandler;
+    private final Map<String, Object> attr = new ConcurrentHashMap<>();
+    private final Map<Integer, PipeInfo> pipeMap = new ConcurrentHashMap<>();
+    private final Map<String, Object> systemAttr = new ConcurrentHashMap<>();
+    private final IActionHandler actionHandler;
     private Plugin plugin;
-    private AtomicInteger msgIds = new AtomicInteger();
-    private MsgPacketDispose msgPacketDispose = new MsgPacketDispose();
-    private IRenderHandler renderHandler;
-    private SocketEncode socketEncode;
-    private Timer timer;
+    private final AtomicInteger msgIds = new AtomicInteger();
+    private final MsgPacketDispose msgPacketDispose = new MsgPacketDispose();
+    private final IRenderHandler renderHandler;
+    private final SocketEncode socketEncode;
+    private final Timer timer;
 
     public IOSession(SocketChannel channel, Selector selector, SocketCodec socketCodec, IActionHandler actionHandler, IRenderHandler renderHandler) {
         systemAttr.put("_channel", channel);

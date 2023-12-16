@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public class ClientActionHandler implements IActionHandler {
 
-    private static Logger LOGGER = LoggerUtil.getLogger(ClientActionHandler.class);
+    private static final Logger LOGGER = LoggerUtil.getLogger(ClientActionHandler.class);
 
     public static String ACTION_NOT_FOUND_PAGE = "<html><body><h1>Not Found</h1></body></html>";
 
@@ -75,7 +75,7 @@ public class ClientActionHandler implements IActionHandler {
         HttpRequestInfo httpRequestInfo = new Gson().fromJson(msgPacket.getDataStr(), HttpRequestInfo.class);
         InputStream in = ClientActionHandler.class.getResourceAsStream("/templates" + httpRequestInfo.getUri());
         if (in != null) {
-            byte tmpBytes[] = IOUtil.getByteByInputStream(in);
+            byte[] tmpBytes = IOUtil.getByteByInputStream(in);
             session.sendMsg(ContentType.BYTE, tmpBytes, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS, null);
         } else {
             session.sendMsg(ContentType.BYTE, new byte[]{}, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_ERROR, null);

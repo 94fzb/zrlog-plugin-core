@@ -30,7 +30,7 @@ public class PluginScanThread extends TimerTask {
         Set<String> fileSet =
                 PluginConfig.getInstance().getAllPluginVO().stream().map(PluginVO::getFile).collect(Collectors.toSet());
         File[] files = new File(PluginConfig.getInstance().getPluginBasePath()).listFiles();
-        if (files != null && files.length > 0) {
+        if (files != null) {
             for (File file : files) {
                 fileSet.add(file.toString());
             }

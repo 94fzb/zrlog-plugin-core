@@ -62,7 +62,7 @@ public class DAO implements IDAO {
 
     protected Object[] getMapValus(Map<String, Object> map) {
 
-        Object obj[] = new Object[map.size()];
+        Object[] obj = new Object[map.size()];
         int i = 0;
         for (Object value : map.values()) {
             obj[i++] = value;
@@ -71,7 +71,7 @@ public class DAO implements IDAO {
     }
 
     protected Object[] getAttsValus(Map<String, Object> attrs, Map<String, Object> cond) {
-        Object obj[] = new Object[attrs.size() + cond.size()];
+        Object[] obj = new Object[attrs.size() + cond.size()];
         int i = 0;
         for (Object value : attrs.values()) {
             obj[i++] = value;
@@ -112,49 +112,45 @@ public class DAO implements IDAO {
             //抛出异常信息
             return false;
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("insert into ");
-        sb.append(tableName);
-        sb.append("(");
-        sb.append(getAttrsKey());
-        sb.append(") values(");
-        sb.append(appendParams());
-        sb.append(")");
-        return queryRunner.update(sb.toString(), getMapValus(attrs)) > 0;
+        String sb = "insert into " +
+                tableName +
+                "(" +
+                getAttrsKey() +
+                ") values(" +
+                appendParams() +
+                ")";
+        return queryRunner.update(sb, getMapValus(attrs)) > 0;
     }
 
 
     @Override
     public boolean update(Map<String, Object> conditions) throws SQLException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("update ");
-        sb.append(tableName);
-        sb.append(" set ");
-        sb.append(attrsMap2Str(attrs));
-        sb.append(" where ");
-        sb.append(condsMap2Str(conditions));
-        return queryRunner.update(sb.toString(), getAttsValus(attrs, conditions)) > 0;
+        String sb = "update " +
+                tableName +
+                " set " +
+                attrsMap2Str(attrs) +
+                " where " +
+                condsMap2Str(conditions);
+        return queryRunner.update(sb, getAttsValus(attrs, conditions)) > 0;
     }
 
 
     @Override
     public boolean delete() throws SQLException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("delete from ");
-        sb.append(tableName);
-        sb.append(" where ");
-        sb.append(condsMap2Str(attrs));
-        return queryRunner.update(sb.toString(), getMapValus(attrs)) > 0;
+        String sb = "delete from " +
+                tableName +
+                " where " +
+                condsMap2Str(attrs);
+        return queryRunner.update(sb, getMapValus(attrs)) > 0;
     }
 
 
     @Override
     public boolean deleteById(int id) throws SQLException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("delete from ");
-        sb.append(tableName);
-        sb.append(" where id=?");
-        return queryRunner.update(sb.toString(), id) > 0;
+        String sb = "delete from " +
+                tableName +
+                " where id=?";
+        return queryRunner.update(sb, id) > 0;
     }
 
 
@@ -191,9 +187,9 @@ public class DAO implements IDAO {
         if (!attrs.isEmpty()) {
             sb.append(" where ");
             sb.append(condsMap2Str(attrs));
-            map = queryRunner.query(sb.toString() + " order by " + column, new MapHandler(), getMapValus(attrs));
+            map = queryRunner.query(sb + " order by " + column, new MapHandler(), getMapValus(attrs));
         } else {
-            map = queryRunner.query(sb.toString() + " order by " + column, new MapHandler());
+            map = queryRunner.query(sb + " order by " + column, new MapHandler());
         }
         if (map != null) {
             return map.get(column);

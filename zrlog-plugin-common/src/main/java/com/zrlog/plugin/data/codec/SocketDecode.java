@@ -16,7 +16,7 @@ public class SocketDecode {
     private static final Logger LOGGER = LoggerUtil.getLogger(SocketDecode.class);
 
     private MsgPacket packet;
-    private ByteBuffer header = ByteBuffer.allocate(7);
+    private final ByteBuffer header = ByteBuffer.allocate(7);
     private ByteBuffer methodAndLengthAndContentType;
 
     public SocketDecode() {

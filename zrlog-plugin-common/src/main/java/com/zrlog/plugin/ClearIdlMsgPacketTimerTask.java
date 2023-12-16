@@ -7,7 +7,7 @@ import java.util.TimerTask;
 
 public class ClearIdlMsgPacketTimerTask extends TimerTask {
 
-    private Map<Integer, PipeInfo> pipeMap;
+    private final Map<Integer, PipeInfo> pipeMap;
 
     public ClearIdlMsgPacketTimerTask(Map<Integer, PipeInfo> pipeMap) {
         this.pipeMap = pipeMap;

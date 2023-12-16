@@ -14,8 +14,8 @@ public enum ActionType {
     HTTP_ATTACHMENT_FILE(0, "响应HTTP附件"), LOAD_PUBLIC_INFO(0, "读取程序公开信息"),
     CURRENT_TEMPLATE(1, ""), BLOG_RUN_TIME(1, ""), CREATE_ARTICLE(1, "创建文章");
 
-    private int level;
-    private String desc;
+    private final int level;
+    private final String desc;
 
     ActionType(int level, String desc) {
         this.level = level;

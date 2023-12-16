@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 public class FileConvertMsgBody implements ConvertMsgBody {
 
-    private static Logger LOGGER = LoggerUtil.getLogger(FileConvertMsgBody.class);
+    private static final Logger LOGGER = LoggerUtil.getLogger(FileConvertMsgBody.class);
 
     private static ByteBuffer toByteArr(FileInfo fileInfo) {
         byte[] fileDescBytes = new Gson().toJson(fileInfo.getFileDesc()).getBytes();

@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 public class ListenWebServerThread extends Thread {
 
-    private static Logger LOGGER = LoggerUtil.getLogger(ListenWebServerThread.class);
+    private static final Logger LOGGER = LoggerUtil.getLogger(ListenWebServerThread.class);
 
     private final int port;
 

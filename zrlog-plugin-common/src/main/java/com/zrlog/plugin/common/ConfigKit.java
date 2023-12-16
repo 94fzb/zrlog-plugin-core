@@ -10,7 +10,7 @@ public class ConfigKit {
 
     private static final Logger LOGGER = LoggerUtil.getLogger(ConfigKit.class);
 
-    private static Properties prop = new Properties();
+    private static final Properties prop = new Properties();
 
     static {
         try {

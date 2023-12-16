@@ -94,10 +94,10 @@ public class HexaConversionUtil {
 
     public static int byteArrayToIntH(byte[] bytes) {
         int value;
-        value = (int) (((bytes[0] & 0xFF) << 24)
+        value = ((bytes[0] & 0xFF) << 24)
                 | ((bytes[1] & 0xFF) << 16)
                 | ((bytes[2] & 0xFF) << 8)
-                | (bytes[3] & 0xFF));
+                | (bytes[3] & 0xFF);
         return value;
     }
 
@@ -171,7 +171,7 @@ public class HexaConversionUtil {
     public static void main(String[] args) {
         byte[] bs = intToByteArray(23);
         int i = byteArrayToInt(bs);
-        System.out.println("" + bs[0] + "" + bs[1] + "" + bs[2] + "" + bs[3]);
+        System.out.println("" + bs[0] + bs[1] + bs[2] + bs[3]);
         System.out.println(i);
     }
 
