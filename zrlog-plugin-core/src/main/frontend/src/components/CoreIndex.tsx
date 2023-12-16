@@ -67,10 +67,10 @@ const CoreIndex: React.FC = () => {
                     </a>
                 </Empty>}
                 <div hidden={plugins.length === 0}>
-                    <Row gutter={[4, 4]} style={{margin: 4}}>
+                    <Row gutter={[4, 4]} style={{margin: 0}}>
                         {plugins.map((plugin) => {
                             return (
-                                <Col md={6} xxl={4} xs={24} key={plugin.shortName}>
+                                <Col md={6} xxl={4} xs={24} key={plugin.shortName} style={{padding:0}}>
                                     <Badge.Ribbon
                                         text={
                                             plugin.use
