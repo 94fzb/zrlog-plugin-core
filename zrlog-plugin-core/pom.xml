@@ -76,6 +76,7 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.15.0</version>
                 <executions>
                     <execution>
                         <id>install node and yarn</id>
@@ -106,13 +107,14 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <nodeVersion>v15.4.0</nodeVersion>
-                    <yarnVersion>v1.22.10</yarnVersion>
+                    <nodeVersion>v16.15.1</nodeVersion>
+                    <yarnVersion>v1.22.18</yarnVersion>
+                    <npmVersion>8.11.0</npmVersion>
                     <workingDirectory>src/main/frontend</workingDirectory>
                     <installDirectory>target</installDirectory>
-                    <nodeDownloadRoot>https://npm.taobao.org/mirrors/node/</nodeDownloadRoot>
-                    <yarnDownloadRoot>https://npm.taobao.org/mirrors/yarn/</yarnDownloadRoot>
-                    <npmRegistryURL>https://registry.npm.taobao.org</npmRegistryURL>
+                    <nodeDownloadRoot>https://npmmirror.com/mirrors/node/</nodeDownloadRoot>
+                    <yarnDownloadRoot>https://dl.zrlog.com/yarnpkg/yarn/releases/download/</yarnDownloadRoot>
+                    <npmRegistryURL>https://registry.npmmirror.com</npmRegistryURL>
                 </configuration>
             </plugin>
             <plugin>

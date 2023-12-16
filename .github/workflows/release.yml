@@ -1,0 +1,26 @@
+name: ZrLog plugin core release package
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: ZrLog plugin core package ${{ matrix.os }} ${{ matrix.architecture }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        architecture: [ amd64 ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+      - name: Build with Maven
+        run: |
+          mkdir -p /tmp/download
+          bash -e ./mvnw clean install -pl '!zrlog-plugin-core,!zrlog-plugin-freemarker-render'
+          bash -e ./mvnw clean compile assembly:single -f 'zrlog-plugin-core/pom.xml' -DoutputDirectory=/tmp/download/release
+          bash bin/upload-bin.sh ${{ secrets.SECRET_ID }} ${{ secrets.SECRET_KEY }} ${{ secrets.BUCKET }} /tmp/download release/plugin

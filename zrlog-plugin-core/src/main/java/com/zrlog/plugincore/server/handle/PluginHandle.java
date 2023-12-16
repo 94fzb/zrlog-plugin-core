@@ -46,7 +46,7 @@ public class PluginHandle implements HttpErrorHandle {
     }
 
     @Override
-    public void doHandle(HttpRequest httpRequest, HttpResponse httpResponse) {
+    public void doHandle(HttpRequest httpRequest, HttpResponse httpResponse,Throwable e) {
         boolean isLogin = Boolean.parseBoolean(httpRequest.getHeader("IsLogin"));
         if (RunConstants.runType == RunType.DEV) {
             isLogin = true;

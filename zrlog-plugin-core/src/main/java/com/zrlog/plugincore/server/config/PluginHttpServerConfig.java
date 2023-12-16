@@ -40,7 +40,7 @@ public class PluginHttpServerConfig extends AbstractServerConfig {
     @Override
     public ResponseConfig getResponseConfig() {
         ResponseConfig responseConfig = new ResponseConfig();
-        responseConfig.setIsGzip(false);
+        responseConfig.setEnableGzip(false);
         return responseConfig;
     }
 }
