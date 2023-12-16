@@ -122,7 +122,7 @@
                 <version>3.2.0</version>
                 <executions>
                     <execution>
-                        <id>prepare-package</id>
+                        <id>copy-resources</id>
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -135,6 +135,16 @@
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
+                            <nonFilteredFileExtensions>
+                                <nonFilteredFileExtension>ico</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>jpg</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>png</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>eot</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>svg</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>woff</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
+                                <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                            </nonFilteredFileExtensions>
                         </configuration>
                     </execution>
                 </executions>
