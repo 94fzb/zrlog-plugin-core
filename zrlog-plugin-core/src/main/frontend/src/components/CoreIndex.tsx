@@ -67,7 +67,7 @@ const CoreIndex: React.FC = () => {
                     </a>
                 </Empty>}
                 <div hidden={plugins.length === 0}>
-                    <Row gutter={[4, 4]} style={{margin: 0}}>
+                    <Row gutter={[4, 4]} style={{margin: 0,gap:'.25rem'}}>
                         {plugins.map((plugin) => {
                             return (
                                 <Col md={6} xxl={4} xs={24} key={plugin.shortName} style={{padding:0}}>
