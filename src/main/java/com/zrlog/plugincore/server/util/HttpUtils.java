@@ -17,12 +17,11 @@ public class HttpUtils {
     }
 
     public static InputStream doGetRequest(String url, Map<String, String> headers) throws Exception {
-        try (HttpClient httpClient = HttpClient.newHttpClient()) {
-            HttpRequest.Builder builder = HttpRequest.newBuilder();
-            headers.forEach(builder::header);
-            builder.uri(new URI(url));
-            HttpRequest httpRequest = builder.GET().build();
-            return httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofInputStream()).body();
-        }
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest.Builder builder = HttpRequest.newBuilder();
+        headers.forEach(builder::header);
+        builder.uri(new URI(url));
+        HttpRequest httpRequest = builder.GET().build();
+        return httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofInputStream()).body();
     }
 }

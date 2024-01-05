@@ -215,6 +215,11 @@ public class PluginUtil {
         return downloadFile;
     }
 
+    public static void main(String[] args) throws Exception {
+        File file =  downloadPlugin("oss.jar");
+        System.out.println(file);
+    }
+
     public static boolean isRunningBySessionId(String sessionId) {
         return processMap.containsKey(sessionId);
     }
