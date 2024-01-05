@@ -46,7 +46,7 @@ public class PluginScanThread extends TimerTask {
             Optional<PluginVO> first =
                     PluginConfig.getInstance().getAllPluginVO().stream().filter(x -> Objects.equals(x.getFile(),
                             file.toString())).findFirst();
-            if (!first.isPresent()) {
+            if (first.isEmpty()) {
                 return;
             }
             PluginVO pluginVO = first.get();
@@ -73,10 +73,8 @@ public class PluginScanThread extends TimerTask {
             try {
                 String fileName = pluginVO.getPlugin().getShortName() + ".jar";
                 File downloadFile = PluginUtil.downloadPlugin( fileName,
-                        "http" + "://dl.zrlog.com/plugin/" + fileName);
-                if (downloadFile != null) {
-                    pluginVO.setFile(downloadFile.toString());
-                }
+                        "https://dl.zrlog.com/plugin/" + fileName);
+                pluginVO.setFile(downloadFile.toString());
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "download error", e);
             }
