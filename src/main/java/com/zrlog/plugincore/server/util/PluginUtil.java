@@ -11,6 +11,9 @@ import com.zrlog.plugincore.server.config.PluginVO;
 import com.zrlog.plugincore.server.type.PluginStatus;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -184,13 +187,18 @@ public class PluginUtil {
         }));
     }
 
+    private static void copyInputStreamToFile(InputStream inputStream, String filePath) {
+        try {
+            Files.copy(inputStream, Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            LOGGER.info("copy plugin error " + e.getMessage());
+        }
+    }
+
     public static File downloadPlugin(String fileName) throws Exception {
         LOGGER.info("download plugin " + fileName);
-        String tempFolder = PluginConfig.getInstance().getPluginBasePath() + "/tmp/";
-        new File(tempFolder).mkdirs();
         File downloadFile = new File(PluginConfig.getInstance().getPluginBasePath() + "/" + fileName);
-        String downloadUrl = "https://dl.zrlog.com/plugin/" + fileName;
-        IOUtil.writeBytesToFile(HttpUtils.sendGetRequest(downloadUrl, new HashMap<>()), downloadFile);
+        copyInputStreamToFile(HttpUtils.doGetRequest("https://dl.zrlog.com/plugin/" + fileName, new HashMap<>()), downloadFile.toString());
         if (downloadFile.length() == 0) {
             throw new RuntimeException("Download error");
         }
