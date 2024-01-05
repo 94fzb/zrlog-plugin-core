@@ -184,11 +184,12 @@ public class PluginUtil {
         }));
     }
 
-    public static File downloadPlugin(String fileName, String downloadUrl) throws Exception {
+    public static File downloadPlugin(String fileName) throws Exception {
         LOGGER.info("download plugin " + fileName);
         String tempFolder = PluginConfig.getInstance().getPluginBasePath() + "/tmp/";
         new File(tempFolder).mkdirs();
         File downloadFile = new File(PluginConfig.getInstance().getPluginBasePath() + "/" + fileName);
+        String downloadUrl = "https://dl.zrlog.com/plugin/" + fileName;
         IOUtil.writeBytesToFile(HttpUtils.sendGetRequest(downloadUrl, new HashMap<>()), downloadFile);
         if (downloadFile.length() == 0) {
             throw new RuntimeException("Download error");

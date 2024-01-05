@@ -72,8 +72,7 @@ public class PluginScanThread extends TimerTask {
             }
             try {
                 String fileName = pluginVO.getPlugin().getShortName() + ".jar";
-                File downloadFile = PluginUtil.downloadPlugin( fileName,
-                        "https://dl.zrlog.com/plugin/" + fileName);
+                File downloadFile = PluginUtil.downloadPlugin(fileName);
                 pluginVO.setFile(downloadFile.toString());
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "download error", e);

@@ -75,8 +75,7 @@ public class PluginController extends Controller {
                         "&pluginName=" + pluginName);
                 return;
             }
-            String downloadUrl = getRequest().getParaToStr("host") + "/plugin/download?id=" + getRequest().getParaToInt("id");
-            File pluginFile = PluginUtil.downloadPlugin(fileName, downloadUrl);
+            File pluginFile = PluginUtil.downloadPlugin(fileName);
             PluginUtil.loadPlugin(pluginFile);
             response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode("下载插件成功","UTF-8") +
                     "&pluginName=" + pluginName);
