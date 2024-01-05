@@ -188,8 +188,7 @@ public class PluginUtil {
         LOGGER.info("download plugin " + fileName);
         String tempFolder = PluginConfig.getInstance().getPluginBasePath() + "/tmp/";
         new File(tempFolder).mkdirs();
-        String fileNameTarget = PluginConfig.getInstance().getPluginBasePath() + "/" + fileName;
-        File downloadFile = new File(fileNameTarget);
+        File downloadFile = new File(PluginConfig.getInstance().getPluginBasePath() + "/" + fileName);
         IOUtil.writeBytesToFile(HttpUtils.sendGetRequest(downloadUrl, new HashMap<>()), downloadFile);
         if (downloadFile.length() == 0) {
             throw new RuntimeException("Download error");
