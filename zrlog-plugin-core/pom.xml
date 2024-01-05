@@ -3,11 +3,11 @@
     <parent>
         <groupId>com.hibegin</groupId>
         <artifactId>zrlog-plugin-parent</artifactId>
-        <version>2.1.6-SNAPSHOT</version>
+        <version>2.1.6</version>
     </parent>
     <artifactId>zrlog-plugin-core</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>2.1.6-SNAPSHOT</version>
+    <version>2.1.6</version>
     <packaging>jar</packaging>
 
     <dependencies>
