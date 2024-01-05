@@ -3,8 +3,6 @@ package com.zrlog.plugincore.server.impl;
 import com.fzb.common.dao.impl.DAO;
 import com.google.gson.Gson;
 import com.hibegin.common.util.LoggerUtil;
-import com.hibegin.common.util.http.HttpUtil;
-import com.hibegin.common.util.http.handle.HttpStringHandle;
 import com.zrlog.plugin.IMsgPacketCallBack;
 import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.RunConstants;
@@ -24,10 +22,15 @@ import com.zrlog.plugincore.server.dao.CommentDAO;
 import com.zrlog.plugincore.server.dao.TypeDAO;
 import com.zrlog.plugincore.server.dao.WebSiteDAO;
 import com.zrlog.plugincore.server.type.PluginStatus;
+import com.zrlog.plugincore.server.util.HttpUtils;
 import com.zrlog.plugincore.server.util.PluginUtil;
 import org.jsoup.Jsoup;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -69,15 +72,12 @@ public class ServerActionHandler implements IActionHandler {
     }
 
     private static void refreshCache(IOSession session) {
-        if (RunConstants.runType == RunType.BLOG) {
-            Map<String, String> requestHeaders = new HashMap<>();
-            requestHeaders.put("Cookie", session.getAttr().get("cookie").toString());
-            try {
-                HttpUtil.getInstance().sendGetRequest(session.getAttr().get("accessUrl") + "/api/admin/refreshCache", new HttpStringHandle(), requestHeaders);
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "", e);
-            }
+        if (RunConstants.runType != RunType.BLOG) {
+            return;
         }
+        Map<String, String> requestHeaders = new HashMap<>();
+        requestHeaders.put("Cookie", session.getAttr().get("cookie").toString());
+        HttpUtils.sendGetRequest(session.getAttr().get("accessUrl") + "/api/admin/refreshCache",requestHeaders);
     }
 
     @Override

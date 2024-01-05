@@ -1,12 +1,9 @@
 package com.zrlog.plugincore.server.util;
 
-import com.hibegin.common.util.CmdUtil;
-import com.hibegin.common.util.FileUtils;
-import com.hibegin.common.util.http.HttpUtil;
-import com.hibegin.common.util.http.handle.HttpFileHandle;
 import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.common.ConfigKit;
+import com.zrlog.plugin.common.IOUtil;
 import com.zrlog.plugin.common.LoggerUtil;
 import com.zrlog.plugin.type.RunType;
 import com.zrlog.plugincore.server.config.PluginConfig;
@@ -191,13 +188,9 @@ public class PluginUtil {
         LOGGER.info("download plugin " + fileName);
         String tempFolder = PluginConfig.getInstance().getPluginBasePath() + "/tmp/";
         new File(tempFolder).mkdirs();
-        HttpFileHandle fileHandle = (HttpFileHandle) HttpUtil.getInstance().sendGetRequest(downloadUrl,
-                new HttpFileHandle(tempFolder), new HashMap<>());
         String fileNameTarget = PluginConfig.getInstance().getPluginBasePath() + "/" + fileName;
-        if (!fileNameTarget.equals(fileHandle.getT().toString())) {
-            FileUtils.moveOrCopyFile(fileHandle.getT().toString(), fileNameTarget, true);
-        }
         File downloadFile = new File(fileNameTarget);
+        IOUtil.writeBytesToFile(HttpUtils.sendGetRequest(downloadUrl, new HashMap<>()), downloadFile);
         if (downloadFile.length() == 0) {
             throw new RuntimeException("Download error");
         }
