@@ -55,7 +55,15 @@ const CoreIndex: React.FC = () => {
     return (
         <Spin spinning={loading} style={{height: "100vh"}}>
             <Content hidden={loading} style={{height: "100vh"}}>
-                <Title className="page-header" level={3}>
+                <Title style={{
+                    marginBottom: "24px",
+                    fontWeight: 600,
+                    fontSize: "24px",
+                    lineHeight: 1.35,
+                    marginTop: "20px",
+                    borderLeft: "3px solid #1677ff",
+                    paddingLeft: "5px"
+                }} level={3}>
                     插件管理 <span style={{fontSize: 16}}>({version}.{buildNumber})</span>
                 </Title>
                 <Divider/>
