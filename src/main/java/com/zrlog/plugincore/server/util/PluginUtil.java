@@ -184,7 +184,7 @@ public class PluginUtil {
         }));
     }
 
-    public static File downloadPlugin(String fileName, String downloadUrl) throws IOException {
+    public static File downloadPlugin(String fileName, String downloadUrl) throws Exception {
         LOGGER.info("download plugin " + fileName);
         String tempFolder = PluginConfig.getInstance().getPluginBasePath() + "/tmp/";
         new File(tempFolder).mkdirs();

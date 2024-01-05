@@ -71,7 +71,7 @@ public class ServerActionHandler implements IActionHandler {
         }
     }
 
-    private static void refreshCache(IOSession session) {
+    private static void refreshCache(IOSession session) throws Exception {
         if (RunConstants.runType != RunType.BLOG) {
             return;
         }
@@ -149,7 +149,11 @@ public class ServerActionHandler implements IActionHandler {
             }
         }
         session.sendJsonMsg(resultMap, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
-        refreshCache(session);
+        try {
+            refreshCache(session);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -314,7 +318,7 @@ public class ServerActionHandler implements IActionHandler {
                     refreshCache(session);
                     map.put("result", result);
                     session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     map.put("result", false);
                     LOGGER.log(Level.SEVERE, "save comment error", e);
                     session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_ERROR);
@@ -327,7 +331,7 @@ public class ServerActionHandler implements IActionHandler {
                     refreshCache(session);
                     map.put("result", result);
                     session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     map.put("result", false);
                     LOGGER.log(Level.SEVERE, "save comment error", e);
                     session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_ERROR);

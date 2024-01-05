@@ -77,7 +77,7 @@ public class PluginScanThread extends TimerTask {
                 if (downloadFile != null) {
                     pluginVO.setFile(downloadFile.toString());
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "download error", e);
             }
         }
