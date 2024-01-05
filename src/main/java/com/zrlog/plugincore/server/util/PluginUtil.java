@@ -14,10 +14,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -187,11 +184,24 @@ public class PluginUtil {
         }));
     }
 
-    private static void copyInputStreamToFile(InputStream inputStream, String filePath) {
-        try {
-            Files.copy(inputStream, Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
+    static void copyInputStreamToFile(InputStream inputStream, String filePath) {
+        try (OutputStream outputStream = new FileOutputStream(filePath)) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, length);
+            }
         } catch (IOException e) {
             LOGGER.info("copy plugin error " + e.getMessage());
+        } finally {
+            if (Objects.nonNull(inputStream)) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    //ignore
+                }
+            }
+
         }
     }
 
