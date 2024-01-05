@@ -10,6 +10,10 @@
     <version>2.1.8-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <properties>
+        <nexus.skip.staging>true</nexus.skip.staging>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.hibegin</groupId>
