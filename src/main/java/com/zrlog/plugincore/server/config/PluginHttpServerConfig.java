@@ -51,8 +51,7 @@ public class PluginHttpServerConfig extends AbstractServerConfig {
     @Override
     public ResponseConfig getResponseConfig() {
         ResponseConfig responseConfig = new ResponseConfig();
-        responseConfig.setEnableGzip(true);
-        responseConfig.setGzipMimeTypes(List.of("text/", "application/javascript", "application/json"));
+        responseConfig.setEnableGzip(false);
         return responseConfig;
     }
 }
