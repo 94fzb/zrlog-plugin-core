@@ -10,11 +10,21 @@ import com.zrlog.plugincore.server.controller.PluginController;
 import com.zrlog.plugincore.server.controller.SettingController;
 import com.zrlog.plugincore.server.handle.PluginHandle;
 
+import java.util.List;
+
 public class PluginHttpServerConfig extends AbstractServerConfig {
+
+    private final Integer port;
+
+    public PluginHttpServerConfig(Integer port) {
+        this.port = port;
+    }
+
     @Override
     public ServerConfig getServerConfig() {
         ServerConfig serverConfig = new ServerConfig();
-        serverConfig.setPort(9089);
+        serverConfig.setPort(port);
+        serverConfig.setDisableSession(true);
         serverConfig.getInterceptors().add(PluginInterceptor.class);
         serverConfig.getInterceptors().add(MethodInterceptor.class);
         serverConfig.addErrorHandle(404, new PluginHandle());
@@ -33,13 +43,16 @@ public class PluginHttpServerConfig extends AbstractServerConfig {
 
     @Override
     public RequestConfig getRequestConfig() {
-        return null;
+        RequestConfig requestConfig = new RequestConfig();
+        requestConfig.setDisableSession(true);
+        return requestConfig;
     }
 
     @Override
     public ResponseConfig getResponseConfig() {
         ResponseConfig responseConfig = new ResponseConfig();
-        responseConfig.setEnableGzip(false);
+        responseConfig.setEnableGzip(true);
+        responseConfig.setGzipMimeTypes(List.of("text/", "application/javascript", "application/json"));
         return responseConfig;
     }
 }

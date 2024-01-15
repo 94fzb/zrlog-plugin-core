@@ -63,9 +63,8 @@ public class Application {
     }
 
     private static void loadHttpServer(Integer serverPort) {
-        PluginHttpServerConfig config = new PluginHttpServerConfig();
+        PluginHttpServerConfig config = new PluginHttpServerConfig(serverPort);
         ServerConfig serverConfig = config.getServerConfig();
-        serverConfig.setPort(serverPort);
         serverConfig.setHost("127.0.0.1");
         serverConfig.setDisableCookie(true);
         new WebServerBuilder.Builder().config(config).serverConfig(serverConfig).build().startWithThread();
