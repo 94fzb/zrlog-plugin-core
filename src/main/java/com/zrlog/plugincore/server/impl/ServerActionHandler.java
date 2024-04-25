@@ -106,6 +106,7 @@ public class ServerActionHandler implements IActionHandler {
                 String name = session.getPlugin().getShortName() + "_" + key;
                 Object obj = new WebSiteDAO().set("name", name).queryFirst("value");
                 LOGGER.info(name + "_" + obj);
+                response.put(key, (String) obj);
             }
             session.sendJsonMsg(response, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         } catch (Exception e) {
