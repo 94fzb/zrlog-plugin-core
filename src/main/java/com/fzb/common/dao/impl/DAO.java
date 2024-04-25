@@ -183,7 +183,7 @@ public class DAO implements IDAO {
         sb.deleteCharAt(sb.length() - 1);
         sb.append(" from ");
         sb.append(tableName);
-        Map<String, Object> map = null;
+        Map<String, Object> map;
         if (!attrs.isEmpty()) {
             sb.append(" where ");
             sb.append(condsMap2Str(attrs));

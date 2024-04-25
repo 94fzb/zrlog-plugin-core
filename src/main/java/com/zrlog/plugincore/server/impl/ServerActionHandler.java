@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -100,11 +101,14 @@ public class ServerActionHandler implements IActionHandler {
         Map map = new Gson().fromJson(msgPacket.getDataStr(), Map.class);
         String[] keys = ((String) map.get("key")).split(",");
         try {
-            Map<String, String> response = new HashMap<>();
+            Map<String, String> response = new LinkedHashMap<>();
             for (String key : keys) {
-                String str = (String) new WebSiteDAO().set("name", session.getPlugin().getShortName() + "_" + key).queryFirst("value");
-                LOGGER.info(new Gson().toJson(response));
-                response.put(key, str);
+                Object obj = new WebSiteDAO().set("name", session.getPlugin().getShortName() + "_" + key).queryFirst("value");
+                if (obj instanceof String) {
+                    response.put(key, (String) obj);
+                } else {
+                    LOGGER.info(new Gson().toJson(obj));
+                }
             }
             session.sendJsonMsg(response, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         } catch (Exception e) {
