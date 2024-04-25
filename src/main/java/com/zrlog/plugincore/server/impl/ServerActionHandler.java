@@ -24,13 +24,9 @@ import com.zrlog.plugincore.server.dao.WebSiteDAO;
 import com.zrlog.plugincore.server.type.PluginStatus;
 import com.zrlog.plugincore.server.util.HttpUtils;
 import com.zrlog.plugincore.server.util.PluginUtil;
+import com.zrlog.plugincore.server.util.StringUtils;
 import org.jsoup.Jsoup;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -76,8 +72,12 @@ public class ServerActionHandler implements IActionHandler {
             return;
         }
         Map<String, String> requestHeaders = new HashMap<>();
-        requestHeaders.put("Cookie", session.getAttr().get("cookie").toString());
-        HttpUtils.sendGetRequest(session.getAttr().get("accessUrl") + "/api/admin/refreshCache",requestHeaders);
+        String cookie = (String) session.getAttr().get("cookie");
+        if (StringUtils.isEmpty(cookie)) {
+            return;
+        }
+        requestHeaders.put("Cookie", cookie);
+        HttpUtils.sendGetRequest(session.getAttr().get("accessUrl") + "/api/admin/refreshCache", requestHeaders);
     }
 
     @Override
