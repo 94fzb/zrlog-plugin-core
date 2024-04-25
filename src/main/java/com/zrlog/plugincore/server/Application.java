@@ -41,7 +41,7 @@ public class Application {
             blogRunTime.setPath(DevUtil.blogRuntimePath());
             blogRunTime.setVersion("1.5");
         } else {
-            RunConstants.runType = RunType.DEV;
+            RunConstants.runType = RunType.BLOG;
             int port = (args.length > 4) ? Integer.parseInt(args[4]) : -1;
             blogRunTime.setPath((args.length > 5) ? args[5] : DevUtil.blogRuntimePath());
             blogRunTime.setVersion((args.length > 5) ? args[5] : DevUtil.blogVersion());
