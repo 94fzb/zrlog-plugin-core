@@ -103,6 +103,7 @@ public class ServerActionHandler implements IActionHandler {
             Map<String, String> response = new HashMap<>();
             for (String key : keys) {
                 String str = (String) new WebSiteDAO().set("name", session.getPlugin().getShortName() + "_" + key).queryFirst("value");
+                LOGGER.info(new Gson().toJson(response));
                 response.put(key, str);
             }
             session.sendJsonMsg(response, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
