@@ -106,7 +106,7 @@ public class ServerActionHandler implements IActionHandler {
                 response.put(key, str);
             }
             session.sendJsonMsg(response, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "", e);
         }
     }
