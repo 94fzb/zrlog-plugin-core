@@ -103,11 +103,12 @@ public class ServerActionHandler implements IActionHandler {
         try {
             Map<String, String> response = new LinkedHashMap<>();
             for (String key : keys) {
-                Object obj = new WebSiteDAO().set("name", session.getPlugin().getShortName() + "_" + key).queryFirst("value");
+                String name = session.getPlugin().getShortName() + "_" + key;
+                Object obj = new WebSiteDAO().set("name", name).queryFirst("value");
                 if (obj instanceof String) {
                     response.put(key, (String) obj);
                 } else {
-                    LOGGER.info(new Gson().toJson(obj));
+                    LOGGER.info(name + "_" + obj);
                 }
             }
             session.sendJsonMsg(response, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
