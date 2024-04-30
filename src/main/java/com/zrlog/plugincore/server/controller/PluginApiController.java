@@ -52,7 +52,7 @@ public class PluginApiController extends Controller {
             from = request.getHeader("Full-Url").replace("/api", "");
         }
         map.put("pluginCenter",
-                "https://store.zrlog.com/plugin/?upgrade-v3=true&from=" + from.substring(0, from.lastIndexOf("/")));
+                "https://store.zrlog.com/plugin/index.html?upgrade-v3=true&from=" + from.substring(0, from.lastIndexOf("/")));
         return map;
     }
 
