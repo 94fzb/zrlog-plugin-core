@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -65,22 +66,23 @@ public class PluginController extends Controller {
     }
 
     public void download() throws UnsupportedEncodingException {
-        String fileName = getRequest().getParaToStr("pluginName");
+        String downloadUrl = getRequest().getParaToStr("downloadUrl");
+        String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/") + 1);
         String pluginName = fileName.substring(0, fileName.indexOf("."));
         try {
             File path = new File(PluginConfig.getInstance().getPluginBasePath());
             File file = new File(path + "/" + fileName);
             if (file.exists()) {
-                response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode("插件已经存在了","UTF-8") +
+                response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode("插件已经存在了", StandardCharsets.UTF_8) +
                         "&pluginName=" + pluginName);
                 return;
             }
-            File pluginFile = PluginUtil.downloadPlugin(fileName);
+            File pluginFile = PluginUtil.downloadPluginByUrl(downloadUrl, fileName);
             PluginUtil.loadPlugin(pluginFile);
-            response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode("下载插件成功","UTF-8") +
+            response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode("下载插件成功", StandardCharsets.UTF_8) +
                     "&pluginName=" + pluginName);
         } catch (Exception e) {
-            response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode(e.getMessage(),"UTF-8") +
+            response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8) +
                     "&pluginName=" + pluginName);
             LOGGER.log(Level.FINER, "download error ", e);
         }

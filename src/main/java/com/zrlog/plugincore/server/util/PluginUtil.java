@@ -3,7 +3,6 @@ package com.zrlog.plugincore.server.util;
 import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.common.ConfigKit;
-import com.zrlog.plugin.common.IOUtil;
 import com.zrlog.plugin.common.LoggerUtil;
 import com.zrlog.plugin.type.RunType;
 import com.zrlog.plugincore.server.config.PluginConfig;
@@ -11,9 +10,6 @@ import com.zrlog.plugincore.server.config.PluginVO;
 import com.zrlog.plugincore.server.type.PluginStatus;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
@@ -205,18 +201,24 @@ public class PluginUtil {
         }
     }
 
-    public static File downloadPlugin(String fileName) throws Exception {
+    public static File downloadPluginByUrl(String url, String fileName) throws Exception {
         LOGGER.info("download plugin " + fileName);
         File downloadFile = new File(PluginConfig.getInstance().getPluginBasePath() + "/" + fileName);
-        copyInputStreamToFile(HttpUtils.doGetRequest("https://dl.zrlog.com/plugin/" + fileName, new HashMap<>()), downloadFile.toString());
+        copyInputStreamToFile(HttpUtils.doGetRequest(url, new HashMap<>()), downloadFile.toString());
         if (downloadFile.length() == 0) {
             throw new RuntimeException("Download error");
         }
         return downloadFile;
     }
 
+    public static File downloadPlugin(String fileName) throws Exception {
+        String downloadUrl = "https://dl.zrlog.com/plugin/" + fileName;
+        return downloadPluginByUrl(downloadUrl, fileName);
+
+    }
+
     public static void main(String[] args) throws Exception {
-        File file =  downloadPlugin("oss.jar");
+        File file = downloadPlugin("oss.jar");
         System.out.println(file);
     }
 
