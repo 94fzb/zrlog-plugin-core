@@ -24,10 +24,7 @@ import com.zrlog.plugincore.server.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PluginApiController extends Controller {
 
@@ -54,7 +51,7 @@ public class PluginApiController extends Controller {
         Map<String,Object> map = new HashMap<>();
         map.put("plugins", allPlugins);
         map.put("dark", BooleanUtils.isTrue(getRequest().getHeader("Dark-Mode")));
-        map.put("primaryColor", getRequest().getHeader("Admin-Color-Primary"));
+        map.put("primaryColor", Objects.requireNonNullElse(getRequest().getHeader("Admin-Color-Primary"),"#1677ff"));
         map.put("pluginVersion", ConfigKit.get("version", ""));
         map.put("pluginBuildId", ConfigKit.get("buildId", ""));
         map.put("pluginBuildNumber", ConfigKit.get("buildNumber", ""));
