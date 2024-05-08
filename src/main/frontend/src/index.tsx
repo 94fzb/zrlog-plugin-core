@@ -1,39 +1,65 @@
+/* eslint-disable */
 import {createRoot} from "react-dom/client";
 import * as serviceWorker from './serviceWorker';
 import zh_CN from "antd/es/locale/zh_CN";
-
-
 import {legacyLogicalPropertiesTransformer, StyleProvider} from "@ant-design/cssinjs";
 import {useEffect, useState} from "react";
 import {App, ConfigProvider, theme} from "antd";
 import {BrowserRouter} from "react-router-dom";
 import AppBase from "./AppBase";
+import axios from "axios";
 
 const {darkAlgorithm, defaultAlgorithm} = theme;
 
-/*function getPreferredColorScheme() {
-    if (window.matchMedia) {
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            return 'dark';
-        }
-    }
-    return 'light';
+export interface PluginCoreInfoResponse {
+    pluginBuildId: string
+    pluginBuildNumber: string
+    pluginVersion: string
+    pluginCenter: string
+    dark: boolean
+    primaryColor: string
+    plugins: Plugin[]
 }
 
+export interface Plugin {
+    id: string
+    version: string
+    name: string
+    paths: string[]
+    actions: any[]
+    desc: string
+    author: string
+    shortName: string
+    indexPage: string
+    previewImageBase64: string
+    services: string[]
+    dependentService: string[]
+}
 
-export const isDarkMode = (): boolean => {
-    return getPreferredColorScheme() === "dark";
-}*/
+const loadFromDocument = () => {
+    try {
+        const a = document.getElementById("pluginInfo");
+        if (a === null || a.innerText.length === 0) {
+            return null;
+        }
+        return JSON.parse(a.innerText);
+    } catch (e) {
+        return null;
+    }
+}
 
 const Index = () => {
-    const [dark, setDark] = useState<boolean | null>(null);
+    const [pluginInfo, setPluginInfo] = useState<PluginCoreInfoResponse | null>(loadFromDocument);
 
     useEffect(() => {
-        const configTheme = document.body.className.indexOf("dark") > -1;
-        setDark(configTheme);
+        if (pluginInfo === null) {
+            axios.get("api/plugins").then(({data}) => {
+                setPluginInfo(data);
+            });
+        }
     }, []);
 
-    if (dark === null) {
+    if (pluginInfo === null) {
         return <></>
     }
 
@@ -41,7 +67,10 @@ const Index = () => {
         <ConfigProvider
             locale={zh_CN}
             theme={{
-                algorithm: dark ? darkAlgorithm : defaultAlgorithm,
+                algorithm: pluginInfo.dark ? darkAlgorithm : defaultAlgorithm,
+                token: {
+                    colorPrimary: pluginInfo.primaryColor
+                }
             }}
             divider={{
                 style: {
@@ -58,7 +87,7 @@ const Index = () => {
             <BrowserRouter>
                 <StyleProvider transformers={[legacyLogicalPropertiesTransformer]}>
                     <App>
-                        <AppBase/>
+                        <AppBase pluginInfo={pluginInfo}/>
                     </App>
                 </StyleProvider>
             </BrowserRouter>

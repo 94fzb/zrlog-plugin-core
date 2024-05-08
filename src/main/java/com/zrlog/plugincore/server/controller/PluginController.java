@@ -1,6 +1,7 @@
 package com.zrlog.plugincore.server.controller;
 
 
+import com.google.gson.Gson;
 import com.hibegin.http.server.util.PathUtil;
 import com.hibegin.http.server.web.Controller;
 import com.zrlog.plugin.IOSession;
@@ -13,6 +14,7 @@ import com.zrlog.plugincore.server.util.HttpMsgUtil;
 import com.zrlog.plugincore.server.util.PluginUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,6 +41,11 @@ public class PluginController extends Controller {
             document.body().addClass("dark");
         } else {
             document.body().addClass("light");
+        }
+        String jsonStr = new Gson().toJson(new PluginApiController(request, response).plugins());
+        Element pluginInfo = document.getElementById("pluginInfo");
+        if (Objects.nonNull(pluginInfo)) {
+            pluginInfo.text(jsonStr);
         }
         response.renderHtmlStr(document.html());
     }
