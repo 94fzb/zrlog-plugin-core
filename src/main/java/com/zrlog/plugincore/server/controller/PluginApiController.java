@@ -54,7 +54,7 @@ public class PluginApiController extends Controller {
         Map<String,Object> map = new HashMap<>();
         map.put("plugins", allPlugins);
         map.put("dark", BooleanUtils.isTrue(getRequest().getHeader("Dark-Mode")));
-        map.put("primaryColor", BooleanUtils.isTrue(getRequest().getHeader("Admin-Color-Primary")));
+        map.put("primaryColor", getRequest().getHeader("Admin-Color-Primary"));
         map.put("pluginVersion", ConfigKit.get("version", ""));
         map.put("pluginBuildId", ConfigKit.get("buildId", ""));
         map.put("pluginBuildNumber", ConfigKit.get("buildNumber", ""));
