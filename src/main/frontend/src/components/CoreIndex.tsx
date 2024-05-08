@@ -44,7 +44,7 @@ const CoreIndex: React.FC<CoreIndexProps> = ({data}) => {
                 fontSize: "24px",
                 lineHeight: 1.35,
                 marginTop: "20px",
-                borderLeft: "3px solid #1677ff",
+                borderLeft: "3px solid " + data.primaryColor,
                 paddingLeft: "5px"
             }} level={3}>
                 插件管理 <span style={{fontSize: 16}}>({data.pluginVersion}.{data.pluginBuildNumber})</span>
