@@ -37,9 +37,9 @@ const CoreIndex: React.FC<CoreIndexProps> = ({data}) => {
     };
 
     return (
-        <Content style={{height: "100vh"}}>
+        <Content>
             <Title style={{
-                marginBottom: "24px",
+                marginBottom: 0,
                 fontWeight: 600,
                 fontSize: "24px",
                 lineHeight: 1.35,

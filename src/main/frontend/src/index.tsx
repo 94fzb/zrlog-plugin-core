@@ -74,7 +74,7 @@ const Index = () => {
             }}
             divider={{
                 style: {
-                    margin: "8px 0px"
+                    margin: "16px 0px"
                 }
             }}
             table={
