@@ -10,8 +10,8 @@ import {
 } from "antd";
 import Title from "antd/es/typography/Title";
 import {
+    CloudDownloadOutlined,
     DeleteOutlined,
-    DownloadOutlined,
     SettingOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
@@ -52,8 +52,8 @@ const CoreIndex: React.FC<CoreIndexProps> = ({data}) => {
             <Divider/>
             {data.plugins.length === 0 && <Empty description="空空如也">
                 <a href={data.pluginCenter}>
-                    <Button type="primary">
-                        <DownloadOutlined/>去下载
+                    <Button icon={<CloudDownloadOutlined/>} type="primary">
+                        去下载
                     </Button>
                 </a>
             </Empty>}
@@ -107,8 +107,8 @@ const CoreIndex: React.FC<CoreIndexProps> = ({data}) => {
                 </Row>
                 <Divider/>
                 <a href={data.pluginCenter} style={{paddingBottom: 32}}>
-                    <Button type="primary">
-                        <DownloadOutlined/> 下载
+                    <Button icon={<CloudDownloadOutlined/>} type="primary">
+                        下载
                     </Button>
                 </a>
             </div>
