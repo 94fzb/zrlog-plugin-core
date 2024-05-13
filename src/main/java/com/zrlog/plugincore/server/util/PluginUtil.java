@@ -11,6 +11,7 @@ import com.zrlog.plugincore.server.type.PluginStatus;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,11 +23,11 @@ public class PluginUtil {
 
     private static final Logger LOGGER = LoggerUtil.getLogger(PluginUtil.class);
 
-    private static final Map<String, File> idFileMap = new HashMap<>();
+    private static final Map<String, File> idFileMap = new ConcurrentHashMap<>();
 
     private static final ReentrantLock reentrantLock = new ReentrantLock();
 
-    private static final Map<String, Process> processMap = new HashMap<>();
+    private static final Map<String, Process> processMap = new ConcurrentHashMap<>();
 
     public static void loadJarPlugin() {
         try {
@@ -142,32 +143,26 @@ public class PluginUtil {
 
     private static void printInputStreamWithThread(final Process pr, final InputStream in, final String pluginName,
                                                    final String printLevel, final String uuid) {
-        new Thread() {
-            @Override
-            public void run() {
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                String str;
+        new Thread(() -> {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(in));) {
+                String str = br.readLine();
+                if ("PERROR".equals(printLevel) && str.startsWith("Error: Invalid or corrupt jarfile")) {
+                    processMap.remove(uuid);
+                } else {
+                    while ((str = br.readLine()) != null) {
+                        System.out.println("[" + printLevel + "]" + ": " + pluginName + " - " + str);
+                    }
+                }
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "plugin output error", e);
+            } finally {
                 try {
-                    str = br.readLine();
-                    if ("PERROR".equals(printLevel) && str.startsWith("Error: Invalid or corrupt jarfile")) {
-                        processMap.remove(uuid);
-                    } else {
-                        while ((str = br.readLine()) != null) {
-                            System.out.println("[" + printLevel + "]" + ": " + pluginName + " - " + str);
-                        }
-                    }
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, "plugin output error", e);
+                    destroy(pluginName);
                 } finally {
-                    try {
-                        in.close();
-                    } catch (IOException e) {
-                        LOGGER.log(Level.SEVERE, "", e);
-                    }
                     pr.destroy();
                 }
             }
-        }.start();
+        }).start();
     }
 
     private static void registerHook() {
