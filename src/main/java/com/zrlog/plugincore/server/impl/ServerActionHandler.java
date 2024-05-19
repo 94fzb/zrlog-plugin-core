@@ -306,8 +306,8 @@ public class ServerActionHandler implements IActionHandler {
         try {
             Integer logId = (Integer) new ArticleDAO().queryFirstObj("select logId from log where alias = ?", alias);
             DAO articleDAO = new ArticleDAO()
-                    .set("releaseTime", new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(createArticleRequest.getReleaseDate()))
-                    .set("last_update_date", new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(createArticleRequest.getReleaseDate()))
+                    .set("releaseTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(createArticleRequest.getReleaseDate()))
+                    .set("last_update_date", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(createArticleRequest.getReleaseDate()))
                     .set("content", createArticleRequest.getContent())
                     .set("title", createArticleRequest.getTitle())
                     .set("markdown", createArticleRequest.getMarkdown())

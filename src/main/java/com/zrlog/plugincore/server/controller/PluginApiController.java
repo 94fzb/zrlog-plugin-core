@@ -1,6 +1,8 @@
 package com.zrlog.plugincore.server.controller;
 
 import com.hibegin.http.annotation.ResponseBody;
+import com.hibegin.http.server.api.HttpRequest;
+import com.hibegin.http.server.api.HttpResponse;
 import com.hibegin.http.server.web.Controller;
 import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.RunConstants;
@@ -15,18 +17,23 @@ import com.zrlog.plugin.type.ActionType;
 import com.zrlog.plugin.type.RunType;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.config.PluginVO;
+import com.zrlog.plugincore.server.util.BooleanUtils;
 import com.zrlog.plugincore.server.util.HttpMsgUtil;
 import com.zrlog.plugincore.server.util.PluginUtil;
 import com.zrlog.plugincore.server.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PluginApiController extends Controller {
+
+    public PluginApiController() {
+    }
+
+    public PluginApiController(HttpRequest request, HttpResponse response) {
+        super(request, response);
+    }
 
     private IOSession getSession() {
         return PluginConfig.getInstance().getIOSessionByPluginName(getRequest().getParaToStr("name"));
@@ -43,6 +50,8 @@ public class PluginApiController extends Controller {
         }
         Map<String,Object> map = new HashMap<>();
         map.put("plugins", allPlugins);
+        map.put("dark", BooleanUtils.isTrue(getRequest().getHeader("Dark-Mode")));
+        map.put("primaryColor", Objects.requireNonNullElse(getRequest().getHeader("Admin-Color-Primary"),"#1677ff"));
         map.put("pluginVersion", ConfigKit.get("version", ""));
         map.put("pluginBuildId", ConfigKit.get("buildId", ""));
         map.put("pluginBuildNumber", ConfigKit.get("buildNumber", ""));
