@@ -34,9 +34,11 @@ public class PluginHandle implements HttpErrorHandle {
 
     private boolean includePath(Set<String> paths, String uri) {
         for (String path : paths) {
-            LOGGER.log(Level.INFO, "path " + path + " uri " + uri);
+            if (RunConstants.runType == RunType.DEV) {
+                LOGGER.log(Level.INFO, "path " + path + " uri " + uri);
+            }
             String tPath = path.trim();
-            if (tPath.length() > 0) {
+            if (!tPath.isEmpty()) {
                 if (uri.startsWith(path)) {
                     return true;
                 }
@@ -46,21 +48,22 @@ public class PluginHandle implements HttpErrorHandle {
     }
 
     @Override
-    public void doHandle(HttpRequest httpRequest, HttpResponse httpResponse,Throwable e) {
+    public void doHandle(HttpRequest httpRequest, HttpResponse httpResponse, Throwable e) {
         boolean isLogin = Boolean.parseBoolean(httpRequest.getHeader("IsLogin"));
         if (RunConstants.runType == RunType.DEV) {
             isLogin = true;
         }
         httpRequest.getAttr().put("isLogin", isLogin);
         if (httpRequest.getUri().contains("/")) {
-            LOGGER.info("request uri " + httpRequest.getUri());
             String pluginName = httpRequest.getUri().replace("/admin/plugins", "").substring(1);
             if (!pluginName.contains("/")) {
                 httpResponse.renderCode(404);
                 return;
             }
             pluginName = pluginName.substring(0, pluginName.indexOf("/"));
-            LOGGER.log(Level.INFO, "plugin name " + pluginName);
+            if (RunConstants.runType == RunType.DEV) {
+                LOGGER.log(Level.INFO, "plugin name " + pluginName);
+            }
             final IOSession session = PluginConfig.getInstance().getIOSessionByPluginName(pluginName);
             if (!isLogin && RunConstants.runType != RunType.DEV && (session == null ||
                     !includePath(session.getPlugin().getPaths(), httpRequest.getUri().replace("/" + session.getPlugin().getShortName(), "")))) {
