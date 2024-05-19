@@ -36,6 +36,7 @@
     </dependencies>
 
     <build>
+        <finalName>plugin-core</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -132,7 +133,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.7.1</version>
                 <executions>
                     <execution>
                         <id>make-assembly</id>
@@ -155,14 +156,6 @@
                     </descriptorRefs>
                     <appendAssemblyId>false</appendAssemblyId>
                     <outputDirectory>${outputDirectory}</outputDirectory>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>11</source>
-                    <target>11</target>
                 </configuration>
             </plugin>
         </plugins>
