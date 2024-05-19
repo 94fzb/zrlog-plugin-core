@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import com.mysql.cj.jdbc.MysqlDataSource;
 import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.common.LoggerUtil;
-import com.zrlog.plugin.common.modle.BlogRunTime;
+import com.zrlog.plugin.common.model.BlogRunTime;
 import com.zrlog.plugin.type.RunType;
 import com.zrlog.plugincore.server.dao.WebSiteDAO;
 

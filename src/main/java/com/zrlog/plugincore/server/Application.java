@@ -7,7 +7,7 @@ import com.hibegin.http.server.config.ServerConfig;
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.common.ConfigKit;
 import com.zrlog.plugin.common.LoggerUtil;
-import com.zrlog.plugin.common.modle.BlogRunTime;
+import com.zrlog.plugin.common.model.BlogRunTime;
 import com.zrlog.plugin.type.RunType;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.config.PluginHttpServerConfig;

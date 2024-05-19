@@ -7,10 +7,10 @@ import com.zrlog.plugin.IMsgPacketCallBack;
 import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.api.IActionHandler;
-import com.zrlog.plugin.common.modle.Comment;
-import com.zrlog.plugin.common.modle.CreateArticleRequest;
-import com.zrlog.plugin.common.modle.PublicInfo;
-import com.zrlog.plugin.common.modle.TemplatePath;
+import com.zrlog.plugin.common.model.Comment;
+import com.zrlog.plugin.common.model.CreateArticleRequest;
+import com.zrlog.plugin.common.model.PublicInfo;
+import com.zrlog.plugin.common.model.TemplatePath;
 import com.zrlog.plugin.data.codec.MsgPacket;
 import com.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.zrlog.plugin.message.Plugin;
@@ -29,10 +29,7 @@ import org.jsoup.Jsoup;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -224,11 +221,21 @@ public class ServerActionHandler implements IActionHandler {
 
     }
 
+    private static boolean convertToBool(Object dbSetting) {
+        if (Objects.isNull(dbSetting)) {
+            return false;
+        }
+        if (dbSetting instanceof Boolean) {
+            return (boolean) dbSetting;
+        }
+        return dbSetting instanceof String && ("1".equals(dbSetting) || "on".equals(dbSetting) || Objects.equals(dbSetting, "true"));
+    }
+
     @Override
     public void loadPublicInfo(IOSession session, MsgPacket msgPacket) {
-        String[] keys = "title,second_title,home".split(",");
+        String[] keys = "title,second_title,home,admin_darkMode,admin_color_primary".split(",");
         try {
-            Map<String, String> response = new HashMap();
+            Map<String, String> response = new HashMap<>();
             for (String key : keys) {
                 String str = (String) new WebSiteDAO().set("name", key).queryFirst("value");
                 response.put(key, str);
@@ -238,6 +245,8 @@ public class ServerActionHandler implements IActionHandler {
             publicInfo.setHomeUrl(response.get("home"));
             publicInfo.setTitle(response.get("title"));
             publicInfo.setSecondTitle(response.get("second_title"));
+            publicInfo.setAdminColorPrimary(response.get("admin_color_primary"));
+            publicInfo.setDarkMode(convertToBool(response.get("admin_darkMode")));
             session.sendJsonMsg(publicInfo, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "", e);
