@@ -15,12 +15,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class PluginConfig {
 
     private static final String PLUGIN_DB_KEY = "plugin_core_db_key";
-    private static final Logger LOGGER = LoggerUtil.getLogger(PluginConfig.class);
     private static final PluginConfig instance = new PluginConfig();
     private File dbPropertiesFile;
     private RunType runType;
@@ -52,7 +50,7 @@ public class PluginConfig {
             dataSource.setPassword(properties.get("password").toString());
             dataSource.setUser(properties.get("user").toString());
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "", e);
+            LoggerUtil.getLogger(PluginConfig.class).log(Level.SEVERE, "", e);
         }
         DAO.setDs(dataSource);
         try {
@@ -64,7 +62,7 @@ public class PluginConfig {
             }
             saveToJsonFileThread();
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "", e);
+            LoggerUtil.getLogger(PluginConfig.class).log(Level.SEVERE, "", e);
         }
     }
 
@@ -77,7 +75,7 @@ public class PluginConfig {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {
-                        LOGGER.log(Level.SEVERE, "stop", e);
+                        LoggerUtil.getLogger(PluginConfig.class).log(Level.SEVERE, "stop", e);
                     }
                     if (getInstance().pluginCore != null) {
                         String jsonStr = new Gson().toJson(getInstance().pluginCore);
@@ -86,7 +84,7 @@ public class PluginConfig {
                             try {
                                 new WebSiteDAO().saveOrUpdate(PLUGIN_DB_KEY, currentPluginText);
                             } catch (SQLException e) {
-                                LOGGER.log(Level.SEVERE, "", e);
+                                LoggerUtil.getLogger(PluginConfig.class).log(Level.SEVERE, "", e);
                             }
                         }
                     }

@@ -23,6 +23,7 @@ public class PluginHttpServerConfig extends AbstractServerConfig {
     @Override
     public ServerConfig getServerConfig() {
         ServerConfig serverConfig = new ServerConfig();
+        serverConfig.setHost("127.0.0.1");
         serverConfig.setPort(port);
         serverConfig.setDisableSession(true);
         serverConfig.getInterceptors().add(PluginInterceptor.class);

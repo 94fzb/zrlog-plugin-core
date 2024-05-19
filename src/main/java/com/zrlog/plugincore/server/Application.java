@@ -3,7 +3,6 @@ package com.zrlog.plugincore.server;
 import com.fzb.net.socket.ISocketServer;
 import com.hibegin.common.util.IOUtil;
 import com.hibegin.http.server.WebServerBuilder;
-import com.hibegin.http.server.config.ServerConfig;
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.common.ConfigKit;
 import com.zrlog.plugin.common.LoggerUtil;
@@ -62,9 +61,6 @@ public class Application {
 
     private static void loadHttpServer(Integer serverPort) {
         PluginHttpServerConfig config = new PluginHttpServerConfig(serverPort);
-        ServerConfig serverConfig = config.getServerConfig();
-        serverConfig.setHost("127.0.0.1");
-        serverConfig.setDisableSession(true);
-        new WebServerBuilder.Builder().config(config).serverConfig(serverConfig).build().startWithThread();
+        new WebServerBuilder.Builder().config(config).build().startWithThread();
     }
 }
