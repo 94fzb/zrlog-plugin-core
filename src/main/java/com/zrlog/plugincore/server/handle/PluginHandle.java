@@ -112,7 +112,6 @@ public class PluginHandle implements HttpErrorHandle {
         }
         msgBody.setHeader(httpRequest.getHeaderMap());
         msgBody.setParam(httpRequest.decodeParamMap());
-        String fileExt = httpRequest.getUri().substring(httpRequest.getUri().lastIndexOf(".") + 1);
         int id = IdUtil.getInt();
         try {
             session.sendJsonMsg(msgBody, actionType.name(), id, MsgPacketStatus.SEND_REQUEST);
@@ -131,17 +130,19 @@ public class PluginHandle implements HttpErrorHandle {
                 InputStream in = session.getPipeInByMsgId(id);
                 File file = new FileConvertMsgBody().toFile(IOUtil.getByteByInputStream(in));
                 httpResponse.renderFile(file);
-            } else {
-                String ext = fileExt;
-                if (responseMsgPacket.getContentType() == ContentType.JSON) {
-                    ext = "json";
-                } else if (responseMsgPacket.getContentType() == ContentType.HTML) {
-                    ext = "html";
-                }
-                InputStream in = session.getPipeInByMsgId(id);
-                httpResponse.addHeader("Content-Type", MimeTypeUtil.getMimeStrByExt(ext));
-                httpResponse.write(in, 200);
+                return;
             }
+            String ext;
+            if (responseMsgPacket.getContentType() == ContentType.JSON) {
+                ext = "json";
+            } else if (responseMsgPacket.getContentType() == ContentType.HTML) {
+                ext = "html";
+            } else {
+                ext = httpRequest.getUri().substring(httpRequest.getUri().lastIndexOf(".") + 1);
+            }
+            InputStream in = session.getPipeInByMsgId(id);
+            httpResponse.addHeader("Content-Type", MimeTypeUtil.getMimeStrByExt(ext));
+            httpResponse.write(in, 200);
         } finally {
             session.getPipeMap().remove(id);
         }
