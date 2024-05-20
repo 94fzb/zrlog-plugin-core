@@ -40,7 +40,7 @@ public class PluginApiController extends Controller {
     }
 
     @ResponseBody
-    public Map<String,Object> plugins() {
+    public Map<String, Object> plugins() {
         List<Plugin> allPlugins = new ArrayList<>();
         for (PluginVO pluginEntry : PluginConfig.getInstance().getAllPluginVO()) {
             if (StringUtils.isEmpty(pluginEntry.getPlugin().getPreviewImageBase64())) {
@@ -48,20 +48,15 @@ public class PluginApiController extends Controller {
             }
             allPlugins.add(pluginEntry.getPlugin());
         }
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("plugins", allPlugins);
         map.put("dark", BooleanUtils.isTrue(getRequest().getHeader("Dark-Mode")));
-        map.put("primaryColor", Objects.requireNonNullElse(getRequest().getHeader("Admin-Color-Primary"),"#1677ff"));
+        map.put("primaryColor", Objects.requireNonNullElse(getRequest().getHeader("Admin-Color-Primary"), "#1677ff"));
         map.put("pluginVersion", ConfigKit.get("version", ""));
         map.put("pluginBuildId", ConfigKit.get("buildId", ""));
         map.put("pluginBuildNumber", ConfigKit.get("buildNumber", ""));
         String from = request.getHeader("Referer");
-        if (from == null) {
-            //old version
-            from = request.getHeader("Full-Url").replace("/api", "");
-        }
-        map.put("pluginCenter",
-                "https://store.zrlog.com/plugin/index.html?upgrade-v3=true&from=" + from.substring(0, from.lastIndexOf("/")));
+        map.put("pluginCenter", "https://store.zrlog.com/plugin/index.html?upgrade-v3=true&from=" + from.substring(0, from.lastIndexOf("/")) + "/plugins");
         return map;
     }
 
@@ -102,6 +97,7 @@ public class PluginApiController extends Controller {
             getResponse().renderHtmlStr("dev ENV");
         }
     }
+
     @ResponseBody
     public Map<String, Object> uninstall() {
         IOSession session = getSession();

@@ -18,7 +18,7 @@ import org.jsoup.nodes.Element;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -60,19 +60,14 @@ public class PluginController extends Controller {
 
     private String getBasePath() {
         String fullUrl = request.getHeader("Full-Url");
-        String basePath;
         if (fullUrl == null) {
-            basePath = request.getUrl().substring(0, request.getUrl().lastIndexOf("/"));
+            return request.getUri().substring(0, request.getUri().lastIndexOf("/"));
         } else {
-            if (fullUrl.contains("?")) {
-                fullUrl = fullUrl.substring(0, fullUrl.indexOf("?"));
-            }
-            basePath = fullUrl.substring(0, fullUrl.lastIndexOf("/"));
+            return URI.create(fullUrl).getPath();
         }
-        return basePath;
     }
 
-    public void download() throws UnsupportedEncodingException {
+    public void download() {
         String downloadUrl = getRequest().getParaToStr("downloadUrl");
         String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/") + 1);
         String pluginName = fileName.substring(0, fileName.indexOf("."));

@@ -146,6 +146,9 @@ public class PluginUtil {
         new Thread(() -> {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(in));) {
                 String str = br.readLine();
+                if (Objects.isNull(str)) {
+                    return;
+                }
                 if ("PERROR".equals(printLevel) && str.startsWith("Error: Invalid or corrupt jarfile")) {
                     processMap.remove(uuid);
                 } else {
