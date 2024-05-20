@@ -18,6 +18,7 @@ import com.zrlog.plugin.type.ActionType;
 import com.zrlog.plugin.type.RunType;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.util.HttpMsgUtil;
+import com.zrlog.plugincore.server.util.StringUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -34,10 +35,10 @@ public class PluginHandle implements HttpErrorHandle {
     private static final Logger LOGGER = LoggerUtil.getLogger(PluginHandle.class);
 
     private boolean includePath(Set<String> paths, String uri) {
+        if (RunConstants.runType == RunType.DEV) {
+            return true;
+        }
         for (String path : paths) {
-            if (RunConstants.runType == RunType.DEV) {
-                LOGGER.log(Level.INFO, "path " + path + " uri " + uri);
-            }
             String tPath = path.trim();
             if (!tPath.isEmpty()) {
                 if (uri.startsWith(path)) {
@@ -48,6 +49,26 @@ public class PluginHandle implements HttpErrorHandle {
         return false;
     }
 
+    private static RequestUriInfo parseRequestUri(String uri) {
+        String realUri = uri.replaceFirst("/admin/plugins/", "")
+                .replaceFirst("/p/", "")
+                .replaceFirst("/plugin/", "");
+        if (StringUtils.isEmpty(realUri)) {
+            return new RequestUriInfo("", "");
+        }
+        String pluginName = realUri.split("/")[0];
+        String action = realUri.replaceFirst(pluginName, "");
+        if (StringUtils.isEmpty(action)) {
+            action = "/";
+        }
+        return new RequestUriInfo(pluginName, action);
+    }
+
+    public static void main(String[] args) {
+        RequestUriInfo requestUriInfo = parseRequestUri("/p/x");
+        System.out.println(requestUriInfo.getPluginName() + " -> " + requestUriInfo.getAction());
+    }
+
     @Override
     public void doHandle(HttpRequest httpRequest, HttpResponse httpResponse, Throwable e) {
         boolean isLogin = Boolean.parseBoolean(httpRequest.getHeader("IsLogin"));
@@ -55,31 +76,25 @@ public class PluginHandle implements HttpErrorHandle {
             isLogin = true;
         }
         httpRequest.getAttr().put("isLogin", isLogin);
-        String realUri = httpRequest.getUri().replaceFirst("/admin/plugins/", "");
+        RequestUriInfo requestUriInfo = parseRequestUri(httpRequest.getUri());
 
-        if (!realUri.contains("/")) {
-            httpResponse.renderCode(404);
-            return;
-        }
-        String pluginName = realUri.split("/")[0];
         if (RunConstants.runType == RunType.DEV) {
-            LOGGER.log(Level.INFO, "plugin name " + pluginName);
+            LOGGER.log(Level.INFO, "plugin name " + requestUriInfo.getPluginName());
         }
-        final IOSession session = PluginConfig.getInstance().getIOSessionByPluginName(pluginName);
+        IOSession session = PluginConfig.getInstance().getIOSessionByPluginName(requestUriInfo.getPluginName());
         if (Objects.isNull(session)) {
             httpResponse.renderCode(404);
             return;
         }
-        String requestUri = realUri.replaceFirst(pluginName, "");
-        if (!isLogin && RunConstants.runType != RunType.DEV && !includePath(session.getPlugin().getPaths(), httpRequest.getUri().replace("/" + session.getPlugin().getShortName(), ""))) {
+        if (!isLogin && !includePath(session.getPlugin().getPaths(), requestUriInfo.getAction())) {
             httpResponse.renderCode(403);
             return;
         }
 
         //Full Blog System ENV
         HttpRequestInfo msgBody = HttpMsgUtil.genInfo(httpRequest);
-        msgBody.setUri(requestUri);
-        if (("/".equals(msgBody.getUri()) || "".equals(msgBody.getUri())) && !"".equals(session.getPlugin().getIndexPage())) {
+        msgBody.setUri(requestUriInfo.getAction());
+        if (("/".equals(msgBody.getUri()) && !"".equals(session.getPlugin().getIndexPage()))) {
             msgBody.setUri(session.getPlugin().getIndexPage());
         }
         ActionType actionType;
