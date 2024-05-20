@@ -49,24 +49,24 @@ public class PluginHandle implements HttpErrorHandle {
         return false;
     }
 
-    private static RequestUriInfo parseRequestUri(String uri) {
+    private static PluginRequestUriInfo parseRequestUri(String uri) {
         String realUri = uri.replaceFirst("/admin/plugins/", "")
                 .replaceFirst("/p/", "")
                 .replaceFirst("/plugin/", "");
         if (StringUtils.isEmpty(realUri)) {
-            return new RequestUriInfo("", "");
+            return new PluginRequestUriInfo("", "");
         }
         String pluginName = realUri.split("/")[0];
         String action = realUri.replaceFirst(pluginName, "");
         if (StringUtils.isEmpty(action)) {
             action = "/";
         }
-        return new RequestUriInfo(pluginName, action);
+        return new PluginRequestUriInfo(pluginName, action);
     }
 
     public static void main(String[] args) {
-        RequestUriInfo requestUriInfo = parseRequestUri("/p/x");
-        System.out.println(requestUriInfo.getPluginName() + " -> " + requestUriInfo.getAction());
+        PluginRequestUriInfo pluginRequestUriInfo = parseRequestUri("/p/x");
+        System.out.println(pluginRequestUriInfo.getName() + " -> " + pluginRequestUriInfo.getAction());
     }
 
     @Override
@@ -76,24 +76,24 @@ public class PluginHandle implements HttpErrorHandle {
             isLogin = true;
         }
         httpRequest.getAttr().put("isLogin", isLogin);
-        RequestUriInfo requestUriInfo = parseRequestUri(httpRequest.getUri());
+        PluginRequestUriInfo pluginRequestUriInfo = parseRequestUri(httpRequest.getUri());
 
         if (RunConstants.runType == RunType.DEV) {
-            LOGGER.log(Level.INFO, "plugin name " + requestUriInfo.getPluginName());
+            LOGGER.log(Level.INFO, "plugin name " + pluginRequestUriInfo.getName());
         }
-        IOSession session = PluginConfig.getInstance().getIOSessionByPluginName(requestUriInfo.getPluginName());
+        IOSession session = PluginConfig.getInstance().getIOSessionByPluginName(pluginRequestUriInfo.getName());
         if (Objects.isNull(session)) {
             httpResponse.renderCode(404);
             return;
         }
-        if (!isLogin && !includePath(session.getPlugin().getPaths(), requestUriInfo.getAction())) {
+        if (!isLogin && !includePath(session.getPlugin().getPaths(), pluginRequestUriInfo.getAction())) {
             httpResponse.renderCode(403);
             return;
         }
 
         //Full Blog System ENV
         HttpRequestInfo msgBody = HttpMsgUtil.genInfo(httpRequest);
-        msgBody.setUri(requestUriInfo.getAction());
+        msgBody.setUri(pluginRequestUriInfo.getAction());
         if (("/".equals(msgBody.getUri()) && !"".equals(session.getPlugin().getIndexPage()))) {
             msgBody.setUri(session.getPlugin().getIndexPage());
         }
