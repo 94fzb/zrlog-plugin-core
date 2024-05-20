@@ -17,20 +17,20 @@ import com.zrlog.plugincore.server.util.ListenWebServerThread;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.logging.Logger;
+import java.util.logging.FileHandler;
 
 public class Application {
 
-    private static final Logger LOGGER = com.hibegin.common.util.LoggerUtil.getLogger(Application.class);
-
     static {
-        LoggerUtil.initFileHandle(com.hibegin.common.util.LoggerUtil.getFileHandler());
+        System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %5$s%6$s%n");
+        FileHandler fileHandler = com.hibegin.common.util.LoggerUtil.buildFileHandle();
+        LoggerUtil.initFileHandle(fileHandler);
+        com.hibegin.common.util.LoggerUtil.initFileHandle(fileHandler);
     }
 
     public static void main(String[] args) throws IOException {
-        System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %5$s%6$s%n");
         if (args != null && args.length > 0 && RunConstants.runType == RunType.DEV) {
-            LOGGER.info("args = " + Arrays.toString(args));
+            LoggerUtil.getLogger(Application.class).info("args = " + Arrays.toString(args));
         }
         Integer serverPort = (args != null && args.length > 0) ? Integer.parseInt(args[0]) : 9089;
         int masterPort = (args != null && args.length > 1) ? Integer.valueOf(args[1]) : ConfigKit.getServerPort();
