@@ -68,7 +68,7 @@ public class PluginHandle implements HttpErrorHandle {
     }
 
     public static void main(String[] args) {
-        PluginRequestUriInfo pluginRequestUriInfo = parseRequestUri("/backup-sql-file/");
+        PluginRequestUriInfo pluginRequestUriInfo = parseRequestUri("/admin/plugins/oss/assets/js/bootstrap-switch.js");
         System.out.println(pluginRequestUriInfo.getName() + " -> " + pluginRequestUriInfo.getAction());
     }
 
@@ -101,7 +101,7 @@ public class PluginHandle implements HttpErrorHandle {
             msgBody.setUri(session.getPlugin().getIndexPage());
         }
         ActionType actionType;
-        if (msgBody.getUri().endsWith(".")) {
+        if (new File(msgBody.getUri()).getName().contains(".")) {
             actionType = ActionType.HTTP_FILE;
         } else {
             actionType = ActionType.HTTP_METHOD;
