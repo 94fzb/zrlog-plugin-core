@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class PluginController extends Controller {
@@ -67,7 +68,7 @@ public class PluginController extends Controller {
                 return;
             }
             File pluginFile = PluginUtil.downloadPluginByUrl(downloadUrl, fileName);
-            PluginUtil.loadPlugin(pluginFile);
+            PluginUtil.loadPlugin(pluginFile, UUID.randomUUID().toString());
             response.redirect("/admin/plugins/downloadResult?message=" + URLEncoder.encode("下载插件成功", StandardCharsets.UTF_8) +
                     "&pluginName=" + pluginName);
         } catch (Exception e) {

@@ -86,7 +86,7 @@ public class PluginApiController extends Controller {
         }
         if (RunConstants.runType != RunType.DEV) {
             String pluginName = getRequest().getParaToStr("name");
-            PluginUtil.loadPlugin(new File(PluginConfig.getInstance().getPluginFileByName(pluginName)));
+            PluginUtil.loadPlugin(new File(PluginConfig.getInstance().getPluginFileByName(pluginName)), PluginConfig.getInstance().getPluginVOByName(pluginName).getSessionId());
             int id = IdUtil.getInt();
             getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id,
                     ActionType.PLUGIN_START.name()));

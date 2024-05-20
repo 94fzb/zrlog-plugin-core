@@ -10,7 +10,10 @@ import com.zrlog.plugincore.server.config.PluginVO;
 import com.zrlog.plugincore.server.type.PluginStatus;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
@@ -39,7 +42,7 @@ public class PluginUtil {
 
     }
 
-    public static void loadPlugin(final File file) {
+    public static void loadPlugin(final File file, String uuid) {
         if (file == null || !file.exists()) {
             return;
         }
@@ -50,7 +53,6 @@ public class PluginUtil {
         LOGGER.info("run plugin " + pluginName);
         reentrantLock.lock();
         try {
-            String uuid = UUID.randomUUID().toString();
             idFileMap.put(uuid, file);
             String userDir = PluginConfig.getInstance().getPluginBasePath() + "/" + pluginName + "/usr/";
             String tmpDir = PluginConfig.getInstance().getPluginBasePath() + "/" + pluginName + "/tmp/";
@@ -70,12 +72,11 @@ public class PluginUtil {
     }
 
     public static void registerPlugin(String id, PluginStatus pluginStatus, IOSession session) {
+        if (StringUtils.isEmpty(id)) {
+            throw new IllegalArgumentException("plugin id must be not empty");
+        }
         if (pluginStatus != PluginStatus.START && pluginStatus != PluginStatus.WAIT_INSTALL) {
             throw new IllegalArgumentException("status must be not " + pluginStatus);
-        }
-
-        if (RunConstants.runType == RunType.DEV) {
-            id = UUID.randomUUID().toString();
         }
         PluginVO pluginVO = new PluginVO();
         if (RunConstants.runType == RunType.BLOG) {

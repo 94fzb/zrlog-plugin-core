@@ -8,7 +8,6 @@ import com.zrlog.plugincore.server.config.PluginVO;
 import com.zrlog.plugincore.server.type.PluginStatus;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -52,7 +51,7 @@ public class PluginScanThread extends TimerTask {
             PluginVO pluginVO = first.get();
             //插件为开启状态，且还没有启动的情况
             if (pluginVO.getSessionId() != null && pluginVO.getStatus() == PluginStatus.START && !PluginUtil.isRunningBySessionId(pluginVO.getSessionId())) {
-                PluginUtil.loadPlugin(file);
+                PluginUtil.loadPlugin(file, pluginVO.getSessionId());
             }
         }
     }
