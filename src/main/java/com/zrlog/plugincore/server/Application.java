@@ -17,6 +17,7 @@ import com.zrlog.plugincore.server.util.ListenWebServerThread;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.logging.FileHandler;
 
 public class Application {
@@ -31,6 +32,9 @@ public class Application {
     public static void main(String[] args) throws IOException {
         if (args != null && args.length > 0 && RunConstants.runType == RunType.DEV) {
             LoggerUtil.getLogger(Application.class).info("args = " + Arrays.toString(args));
+        }
+        if (Objects.isNull(args) || args.length == 0) {
+            RunConstants.runType = RunType.DEV;
         }
         Integer serverPort = (args != null && args.length > 0) ? Integer.parseInt(args[0]) : 9089;
         int masterPort = (args != null && args.length > 1) ? Integer.valueOf(args[1]) : ConfigKit.getServerPort();

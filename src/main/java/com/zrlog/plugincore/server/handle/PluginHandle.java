@@ -55,7 +55,7 @@ public class PluginHandle implements HttpErrorHandle {
         }
         httpRequest.getAttr().put("isLogin", isLogin);
         if (httpRequest.getUri().contains("/")) {
-            String pluginName = httpRequest.getUri().replace("/admin/plugins", "").substring(1);
+            String pluginName = httpRequest.getUri().replaceFirst("/admin/plugins/", "");
             if (!pluginName.contains("/")) {
                 httpResponse.renderCode(404);
                 return;
@@ -73,7 +73,7 @@ public class PluginHandle implements HttpErrorHandle {
             ActionType actionType = ActionType.HTTP_FILE;
             //Full Blog System ENV
             HttpRequestInfo msgBody = HttpMsgUtil.genInfo(httpRequest);
-            msgBody.setUri(httpRequest.getUri().replace(pluginName + "/", ""));
+            msgBody.setUri(httpRequest.getUri().replace("/admin/plugins/" + pluginName + "/", "/"));
             if (session != null) {
                 if (("/".equals(msgBody.getUri()) || "".equals(msgBody.getUri())) && !"".equals(session.getPlugin().getIndexPage())) {
                     msgBody.setUri(session.getPlugin().getIndexPage());
