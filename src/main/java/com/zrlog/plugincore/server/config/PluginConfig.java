@@ -77,16 +77,18 @@ public class PluginConfig {
                     } catch (InterruptedException e) {
                         LoggerUtil.getLogger(PluginConfig.class).log(Level.SEVERE, "stop", e);
                     }
-                    if (getInstance().pluginCore != null) {
-                        String jsonStr = new Gson().toJson(getInstance().pluginCore);
-                        if (!currentPluginText.equals(jsonStr)) {
-                            currentPluginText = jsonStr;
-                            try {
-                                new WebSiteDAO().saveOrUpdate(PLUGIN_DB_KEY, currentPluginText);
-                            } catch (SQLException e) {
-                                LoggerUtil.getLogger(PluginConfig.class).log(Level.SEVERE, "", e);
-                            }
-                        }
+                    if (Objects.isNull(getInstance().pluginCore)) {
+                        return;
+                    }
+                    String jsonStr = new Gson().toJson(getInstance().pluginCore);
+                    if (currentPluginText.equals(jsonStr)) {
+                        continue;
+                    }
+                    currentPluginText = jsonStr;
+                    try {
+                        new WebSiteDAO().saveOrUpdate(PLUGIN_DB_KEY, currentPluginText);
+                    } catch (SQLException e) {
+                        LoggerUtil.getLogger(PluginConfig.class).log(Level.SEVERE, "", e);
                     }
                 }
             }
@@ -110,10 +112,10 @@ public class PluginConfig {
     }
 
     public IOSession getIOSessionByPluginName(String pluginName) {
-        if(pluginCore!= null) {
+        if (pluginCore != null) {
             PluginVO pluginVO = pluginCore.getPluginInfoMap().get(pluginName);
             if (pluginVO != null) {
-                return sessionMap.get(pluginVO.getSessionId());
+                return sessionMap.get(pluginVO.getPlugin().getId());
             }
         }
         return null;
@@ -122,7 +124,7 @@ public class PluginConfig {
     public IOSession getIOSessionByService(String service) {
         for (PluginVO pluginVO : pluginCore.getPluginInfoMap().values()) {
             if (pluginVO.getPlugin().getServices().contains(service)) {
-                return sessionMap.get(pluginVO.getSessionId());
+                return sessionMap.get(pluginVO.getPlugin().getId());
             }
         }
         return null;

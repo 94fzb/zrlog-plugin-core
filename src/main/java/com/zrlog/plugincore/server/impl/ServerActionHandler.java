@@ -85,7 +85,7 @@ public class ServerActionHandler implements IActionHandler {
         Map<String, Object> map = new HashMap<>();
         map.put("runType", RunConstants.runType);
         session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
-        PluginUtil.registerPlugin(session.getPlugin().getId(), PluginStatus.START, session);
+        PluginUtil.registerPlugin(PluginStatus.START, session);
     }
 
     @Override

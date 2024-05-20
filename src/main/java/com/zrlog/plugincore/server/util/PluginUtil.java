@@ -13,8 +13,9 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Timer;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +36,7 @@ public class PluginUtil {
     public static void loadJarPlugin() {
         try {
             registerHook();
-            new Timer().scheduleAtFixedRate(new PluginScanThread(), 0, 1000 * 120);
+            Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new PluginScanRunnable(), 0, 5, TimeUnit.SECONDS);
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "start plugin exception ", e);
         }
@@ -71,28 +72,27 @@ public class PluginUtil {
         }
     }
 
-    public static void registerPlugin(String id, PluginStatus pluginStatus, IOSession session) {
-        if (StringUtils.isEmpty(id)) {
-            throw new IllegalArgumentException("plugin id must be not empty");
+    public static void registerPlugin(PluginStatus pluginStatus, IOSession session) {
+        if (Objects.isNull(session)) {
+            return;
         }
         if (pluginStatus != PluginStatus.START && pluginStatus != PluginStatus.WAIT_INSTALL) {
             throw new IllegalArgumentException("status must be not " + pluginStatus);
         }
         PluginVO pluginVO = new PluginVO();
         if (RunConstants.runType == RunType.BLOG) {
-            pluginVO.setFile(idFileMap.get(id).toString());
+            pluginVO.setFile(idFileMap.get(session.getPlugin().getId()).toString());
         }
         pluginVO.setStatus(pluginStatus);
         pluginVO.setPlugin(session.getPlugin());
-        pluginVO.setSessionId(id);
         PluginConfig.getInstance().getPluginInfoMap().put(session.getPlugin().getShortName(), pluginVO);
-        PluginConfig.getInstance().getSessionMap().put(id, session);
+        PluginConfig.getInstance().getSessionMap().put(session.getPlugin().getId(), session);
     }
 
     public static void stopPlugin(String pluginName) {
         PluginVO pluginVO = PluginConfig.getInstance().getPluginVOByName(pluginName);
-        String sessionId = pluginVO.getSessionId();
-        IOSession session = PluginConfig.getInstance().getSessionMap().get(sessionId);
+        String pluginId = pluginVO.getPlugin().getId();
+        IOSession session = PluginConfig.getInstance().getSessionMap().get(pluginId);
         session.close();
 
         destroy(pluginName);
@@ -103,8 +103,8 @@ public class PluginUtil {
     public static void deletePlugin(String pluginName) {
         PluginVO pluginVO = PluginConfig.getInstance().getPluginVOByName(pluginName);
         if (pluginVO != null) {
-            String sessionId = pluginVO.getSessionId();
-            IOSession session = PluginConfig.getInstance().getSessionMap().get(sessionId);
+            String pluginId = pluginVO.getPlugin().getId();
+            IOSession session = PluginConfig.getInstance().getSessionMap().get(pluginId);
             if (session != null) {
                 session.close();
                 destroy(pluginName);
@@ -121,22 +121,22 @@ public class PluginUtil {
     private static void destroy(String pluginName) {
         PluginVO pluginVO = PluginConfig.getInstance().getPluginVOByName(pluginName);
         if (pluginVO != null) {
-            String sessionId = pluginVO.getSessionId();
-            IOSession session = PluginConfig.getInstance().getSessionMap().get(sessionId);
+            String pluginId = pluginVO.getPlugin().getId();
+            IOSession session = PluginConfig.getInstance().getSessionMap().get(pluginId);
             if (session != null) {
                 session.close();
             }
             //关闭进程
             if (RunConstants.runType != RunType.DEV) {
-                Process process = processMap.get(sessionId);
+                Process process = processMap.get(pluginId);
                 if (process != null) {
                     process.destroy();
                 }
-                processMap.remove(sessionId);
+                processMap.remove(pluginId);
             }
             //移除相关映射
-            PluginConfig.getInstance().getSessionMap().remove(sessionId);
-            idFileMap.remove(sessionId);
+            PluginConfig.getInstance().getSessionMap().remove(pluginId);
+            idFileMap.remove(pluginId);
         }
     }
 
@@ -219,7 +219,7 @@ public class PluginUtil {
         System.out.println(file);
     }
 
-    public static boolean isRunningBySessionId(String sessionId) {
-        return processMap.containsKey(sessionId);
+    public static boolean isRunningByPluginId(String pluginId) {
+        return processMap.containsKey(pluginId);
     }
 }

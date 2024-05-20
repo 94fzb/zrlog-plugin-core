@@ -8,7 +8,6 @@ public class PluginVO {
     private Plugin plugin;
     private PluginStatus status;
     private String file;
-    private String sessionId;
 
     public Plugin getPlugin() {
         return plugin;
@@ -32,13 +31,5 @@ public class PluginVO {
 
     public void setFile(String file) {
         this.file = file;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
     }
 }

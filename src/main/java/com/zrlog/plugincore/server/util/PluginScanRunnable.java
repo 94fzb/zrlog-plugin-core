@@ -11,12 +11,11 @@ import java.io.File;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class PluginScanThread extends TimerTask {
+public class PluginScanRunnable implements Runnable {
 
     private static final Logger LOGGER = LoggerUtil.getLogger(PluginUtil.class);
 
@@ -50,8 +49,9 @@ public class PluginScanThread extends TimerTask {
             }
             PluginVO pluginVO = first.get();
             //插件为开启状态，且还没有启动的情况
-            if (pluginVO.getSessionId() != null && pluginVO.getStatus() == PluginStatus.START && !PluginUtil.isRunningBySessionId(pluginVO.getSessionId())) {
-                PluginUtil.loadPlugin(file, pluginVO.getSessionId());
+            String pluginId = pluginVO.getPlugin().getId();
+            if (pluginVO.getPlugin().getId() != null && pluginVO.getStatus() == PluginStatus.START && !PluginUtil.isRunningByPluginId(pluginId)) {
+                PluginUtil.loadPlugin(file, pluginId);
             }
         }
     }
