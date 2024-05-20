@@ -49,9 +49,13 @@ const loadFromDocument = () => {
 }
 
 const covertData = (data: PluginCoreInfoResponse) => {
+    let locationHref = window.location.href;
+    if (locationHref.endsWith("/")) {
+        locationHref = locationHref.substring(0, locationHref.length - 1);
+    }
     return {
         ...data,
-        pluginCenter: data.pluginCenter.replace(`#locationHref`, window.location.href)
+        pluginCenter: data.pluginCenter.replace(`#locationHref`, locationHref)
     }
 }
 
