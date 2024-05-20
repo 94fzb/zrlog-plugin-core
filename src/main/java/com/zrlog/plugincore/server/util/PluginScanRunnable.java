@@ -21,7 +21,7 @@ public class PluginScanRunnable implements Runnable {
 
     @Override
     public void run() {
-        if (RunConstants.runType != RunType.BLOG) {
+        if (RunConstants.runType == RunType.DEV) {
             return;
         }
         checkLostFile();
