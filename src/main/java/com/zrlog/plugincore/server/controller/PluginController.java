@@ -2,14 +2,12 @@ package com.zrlog.plugincore.server.controller;
 
 
 import com.google.gson.Gson;
-import com.hibegin.http.server.util.PathUtil;
 import com.hibegin.http.server.web.Controller;
 import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.common.LoggerUtil;
 import com.zrlog.plugin.data.codec.HttpRequestInfo;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.util.BooleanUtils;
-import com.zrlog.plugincore.server.util.FileUtils;
 import com.zrlog.plugincore.server.util.HttpMsgUtil;
 import com.zrlog.plugincore.server.util.PluginUtil;
 import org.jsoup.Jsoup;
@@ -18,11 +16,8 @@ import org.jsoup.nodes.Element;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -58,14 +53,6 @@ public class PluginController extends Controller {
         index();
     }
 
-    private String getBasePath() {
-        String fullUrl = request.getHeader("Full-Url");
-        if (fullUrl == null) {
-            return request.getUri().substring(0, request.getUri().lastIndexOf("/"));
-        } else {
-            return URI.create(fullUrl).getPath();
-        }
-    }
 
     public void download() {
         String downloadUrl = getRequest().getParaToStr("downloadUrl");
@@ -75,16 +62,16 @@ public class PluginController extends Controller {
             File path = new File(PluginConfig.getInstance().getPluginBasePath());
             File file = new File(path + "/" + fileName);
             if (file.exists()) {
-                response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode("插件已经存在了", StandardCharsets.UTF_8) +
+                response.redirect("/admin/plugins/downloadResult?message=" + URLEncoder.encode("插件已经存在了", StandardCharsets.UTF_8) +
                         "&pluginName=" + pluginName);
                 return;
             }
             File pluginFile = PluginUtil.downloadPluginByUrl(downloadUrl, fileName);
             PluginUtil.loadPlugin(pluginFile);
-            response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode("下载插件成功", StandardCharsets.UTF_8) +
+            response.redirect("/admin/plugins/downloadResult?message=" + URLEncoder.encode("下载插件成功", StandardCharsets.UTF_8) +
                     "&pluginName=" + pluginName);
         } catch (Exception e) {
-            response.redirect(getBasePath() + "/downloadResult?message=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8) +
+            response.redirect("/admin/plugins/downloadResult?message=" + URLEncoder.encode(e.getMessage(), StandardCharsets.UTF_8) +
                     "&pluginName=" + pluginName);
             LOGGER.log(Level.FINER, "download error ", e);
         }
@@ -111,11 +98,12 @@ public class PluginController extends Controller {
     }
 
     public void upload() {
-        Map<String, Object> map = new HashMap<>();
+        /*Map<String, Object> map = new HashMap<>();
         File file = getRequest().getFile("file");
         String finalFile = PathUtil.getStaticPath() + file.getName() + "." + getRequest().getParaToStr("ext");
         FileUtils.moveOrCopyFile(file.toString(), finalFile, true);
         map.put("url", getBasePath() + "/" + new File(finalFile).getName());
-        response.renderJson(map);
+        response.renderJson(map);*/
+        throw new RuntimeException("Not implemented");
     }
 }
