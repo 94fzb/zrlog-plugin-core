@@ -42,9 +42,16 @@ const loadFromDocument = () => {
         if (a === null || a.innerText.length === 0) {
             return null;
         }
-        return JSON.parse(a.innerText);
+        return covertData(JSON.parse(a.innerText));
     } catch (e) {
         return null;
+    }
+}
+
+const covertData = (data: PluginCoreInfoResponse) => {
+    return {
+        ...data,
+        pluginCenter: data.pluginCenter.replace(`#locationHref`, window.location.href)
     }
 }
 
@@ -54,7 +61,7 @@ const Index = () => {
     useEffect(() => {
         if (pluginInfo === null) {
             axios.get("api/plugins").then(({data}) => {
-                setPluginInfo(data);
+                setPluginInfo(covertData(data));
             });
         }
     }, []);

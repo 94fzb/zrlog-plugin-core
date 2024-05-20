@@ -55,8 +55,7 @@ public class PluginApiController extends Controller {
         map.put("pluginVersion", ConfigKit.get("version", ""));
         map.put("pluginBuildId", ConfigKit.get("buildId", ""));
         map.put("pluginBuildNumber", ConfigKit.get("buildNumber", ""));
-        String from = request.getHeader("Referer");
-        map.put("pluginCenter", "https://store.zrlog.com/plugin/index.html?upgrade-v3=true&from=" + from.substring(0, from.lastIndexOf("/")) + "/plugins");
+        map.put("pluginCenter", "https://store.zrlog.com/plugin/index.html?upgrade-v3=true&from=#locationHref");
         return map;
     }
 
