@@ -56,6 +56,9 @@ public class PluginHandle implements HttpErrorHandle {
         if (StringUtils.isEmpty(realUri)) {
             return new PluginRequestUriInfo("", "");
         }
+        if (realUri.startsWith("/")) {
+            realUri = realUri.substring(1);
+        }
         String pluginName = realUri.split("/")[0];
         String action = realUri.replaceFirst(pluginName, "");
         if (StringUtils.isEmpty(action)) {
@@ -65,7 +68,7 @@ public class PluginHandle implements HttpErrorHandle {
     }
 
     public static void main(String[] args) {
-        PluginRequestUriInfo pluginRequestUriInfo = parseRequestUri("/p/x");
+        PluginRequestUriInfo pluginRequestUriInfo = parseRequestUri("/backup-sql-file/");
         System.out.println(pluginRequestUriInfo.getName() + " -> " + pluginRequestUriInfo.getAction());
     }
 
