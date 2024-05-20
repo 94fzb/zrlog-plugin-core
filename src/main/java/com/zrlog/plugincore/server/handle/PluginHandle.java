@@ -114,32 +114,36 @@ public class PluginHandle implements HttpErrorHandle {
         msgBody.setParam(httpRequest.decodeParamMap());
         String fileExt = httpRequest.getUri().substring(httpRequest.getUri().lastIndexOf(".") + 1);
         int id = IdUtil.getInt();
-        session.sendJsonMsg(msgBody, actionType.name(), id, MsgPacketStatus.SEND_REQUEST);
-        String accessUrl = httpRequest.getHeader("AccessUrl");
-        String cookie = httpRequest.getHeader("Cookie");
-        if (accessUrl == null) {
-            accessUrl = "";
-        }
-        if (cookie == null) {
-            cookie = "";
-        }
-        session.getAttr().put("accessUrl", accessUrl);
-        session.getAttr().put("cookie", cookie);
-        MsgPacket responseMsgPacket = session.getResponseMsgPacketByMsgId(id);
-        if (responseMsgPacket.getMethodStr().equals(ActionType.HTTP_ATTACHMENT_FILE.name())) {
-            InputStream in = session.getPipeInByMsgId(id);
-            File file = new FileConvertMsgBody().toFile(IOUtil.getByteByInputStream(in));
-            httpResponse.renderFile(file);
-        } else {
-            String ext = fileExt;
-            if (responseMsgPacket.getContentType() == ContentType.JSON) {
-                ext = "json";
-            } else if (responseMsgPacket.getContentType() == ContentType.HTML) {
-                ext = "html";
+        try {
+            session.sendJsonMsg(msgBody, actionType.name(), id, MsgPacketStatus.SEND_REQUEST);
+            String accessUrl = httpRequest.getHeader("AccessUrl");
+            String cookie = httpRequest.getHeader("Cookie");
+            if (accessUrl == null) {
+                accessUrl = "";
             }
-            InputStream in = session.getPipeInByMsgId(id);
-            httpResponse.addHeader("Content-Type", MimeTypeUtil.getMimeStrByExt(ext));
-            httpResponse.write(in, 200);
+            if (cookie == null) {
+                cookie = "";
+            }
+            session.getAttr().put("accessUrl", accessUrl);
+            session.getAttr().put("cookie", cookie);
+            MsgPacket responseMsgPacket = session.getResponseMsgPacketByMsgId(id);
+            if (responseMsgPacket.getMethodStr().equals(ActionType.HTTP_ATTACHMENT_FILE.name())) {
+                InputStream in = session.getPipeInByMsgId(id);
+                File file = new FileConvertMsgBody().toFile(IOUtil.getByteByInputStream(in));
+                httpResponse.renderFile(file);
+            } else {
+                String ext = fileExt;
+                if (responseMsgPacket.getContentType() == ContentType.JSON) {
+                    ext = "json";
+                } else if (responseMsgPacket.getContentType() == ContentType.HTML) {
+                    ext = "html";
+                }
+                InputStream in = session.getPipeInByMsgId(id);
+                httpResponse.addHeader("Content-Type", MimeTypeUtil.getMimeStrByExt(ext));
+                httpResponse.write(in, 200);
+            }
+        } finally {
+            session.getPipeMap().remove(id);
         }
     }
 }
