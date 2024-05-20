@@ -21,6 +21,7 @@ import com.zrlog.plugincore.server.util.HttpMsgUtil;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -54,73 +55,73 @@ public class PluginHandle implements HttpErrorHandle {
             isLogin = true;
         }
         httpRequest.getAttr().put("isLogin", isLogin);
-        if (httpRequest.getUri().contains("/")) {
-            String pluginName = httpRequest.getUri().replaceFirst("/admin/plugins/", "");
-            if (!pluginName.contains("/")) {
-                httpResponse.renderCode(404);
-                return;
+        String realUri = httpRequest.getUri().replaceFirst("/admin/plugins/", "");
+
+        if (!realUri.contains("/")) {
+            httpResponse.renderCode(404);
+            return;
+        }
+        String pluginName = realUri.split("/")[0];
+        if (RunConstants.runType == RunType.DEV) {
+            LOGGER.log(Level.INFO, "plugin name " + pluginName);
+        }
+        final IOSession session = PluginConfig.getInstance().getIOSessionByPluginName(pluginName);
+        if (Objects.isNull(session)) {
+            httpResponse.renderCode(404);
+            return;
+        }
+        String requestUri = realUri.replaceFirst(pluginName, "");
+        if (!isLogin && RunConstants.runType != RunType.DEV && !includePath(session.getPlugin().getPaths(), httpRequest.getUri().replace("/" + session.getPlugin().getShortName(), ""))) {
+            httpResponse.renderCode(403);
+            return;
+        }
+
+        //Full Blog System ENV
+        HttpRequestInfo msgBody = HttpMsgUtil.genInfo(httpRequest);
+        msgBody.setUri(requestUri);
+        if (("/".equals(msgBody.getUri()) || "".equals(msgBody.getUri())) && !"".equals(session.getPlugin().getIndexPage())) {
+            msgBody.setUri(session.getPlugin().getIndexPage());
+        }
+        ActionType actionType;
+        if (msgBody.getUri().endsWith(".")) {
+            actionType = ActionType.HTTP_FILE;
+        } else {
+            actionType = ActionType.HTTP_METHOD;
+            if (httpRequest.getRequestBodyByteBuffer() != null) {
+                msgBody.setRequestBody(httpRequest.getRequestBodyByteBuffer().array());
             }
-            pluginName = pluginName.substring(0, pluginName.indexOf("/"));
-            if (RunConstants.runType == RunType.DEV) {
-                LOGGER.log(Level.INFO, "plugin name " + pluginName);
+            msgBody.setUri(msgBody.getUri() + ".action");
+        }
+        msgBody.setHeader(httpRequest.getHeaderMap());
+        msgBody.setParam(httpRequest.decodeParamMap());
+        String fileExt = httpRequest.getUri().substring(httpRequest.getUri().lastIndexOf(".") + 1);
+        int id = IdUtil.getInt();
+        session.sendJsonMsg(msgBody, actionType.name(), id, MsgPacketStatus.SEND_REQUEST);
+        String accessUrl = httpRequest.getHeader("AccessUrl");
+        String cookie = httpRequest.getHeader("Cookie");
+        if (accessUrl == null) {
+            accessUrl = "";
+        }
+        if (cookie == null) {
+            cookie = "";
+        }
+        session.getAttr().put("accessUrl", accessUrl);
+        session.getAttr().put("cookie", cookie);
+        MsgPacket responseMsgPacket = session.getResponseMsgPacketByMsgId(id);
+        if (responseMsgPacket.getMethodStr().equals(ActionType.HTTP_ATTACHMENT_FILE.name())) {
+            InputStream in = session.getPipeInByMsgId(id);
+            File file = new FileConvertMsgBody().toFile(IOUtil.getByteByInputStream(in));
+            httpResponse.renderFile(file);
+        } else {
+            String ext = fileExt;
+            if (responseMsgPacket.getContentType() == ContentType.JSON) {
+                ext = "json";
+            } else if (responseMsgPacket.getContentType() == ContentType.HTML) {
+                ext = "html";
             }
-            final IOSession session = PluginConfig.getInstance().getIOSessionByPluginName(pluginName);
-            if (!isLogin && RunConstants.runType != RunType.DEV && (session == null ||
-                    !includePath(session.getPlugin().getPaths(), httpRequest.getUri().replace("/" + session.getPlugin().getShortName(), "")))) {
-                httpResponse.renderCode(403);
-                return;
-            }
-            ActionType actionType = ActionType.HTTP_FILE;
-            //Full Blog System ENV
-            HttpRequestInfo msgBody = HttpMsgUtil.genInfo(httpRequest);
-            msgBody.setUri(httpRequest.getUri().replace("/admin/plugins/" + pluginName + "/", "/"));
-            if (session != null) {
-                if (("/".equals(msgBody.getUri()) || "".equals(msgBody.getUri())) && !"".equals(session.getPlugin().getIndexPage())) {
-                    msgBody.setUri(session.getPlugin().getIndexPage());
-                }
-                if (!msgBody.getUri().contains(".")) {
-                    msgBody.setUri(msgBody.getUri() + ".action");
-                }
-                if (msgBody.getUri().endsWith(".action")) {
-                    actionType = ActionType.HTTP_METHOD;
-                    msgBody.setHeader(httpRequest.getHeaderMap());
-                    if (httpRequest.getRequestBodyByteBuffer() != null) {
-                        msgBody.setRequestBody(httpRequest.getRequestBodyByteBuffer().array());
-                    }
-                    msgBody.setParam(httpRequest.decodeParamMap());
-                }
-                String fileExt = httpRequest.getUri().substring(httpRequest.getUri().lastIndexOf(".") + 1);
-                int id = IdUtil.getInt();
-                session.sendJsonMsg(msgBody, actionType.name(), id, MsgPacketStatus.SEND_REQUEST);
-                String accessUrl = httpRequest.getHeader("AccessUrl");
-                String cookie = httpRequest.getHeader("Cookie");
-                if (accessUrl == null) {
-                    accessUrl = "";
-                }
-                if (cookie == null) {
-                    cookie = "";
-                }
-                session.getAttr().put("accessUrl", accessUrl);
-                session.getAttr().put("cookie", cookie);
-                MsgPacket responseMsgPacket = session.getResponseMsgPacketByMsgId(id);
-                if (responseMsgPacket.getMethodStr().equals(ActionType.HTTP_ATTACHMENT_FILE.name())) {
-                    InputStream in = session.getPipeInByMsgId(id);
-                    File file = new FileConvertMsgBody().toFile(IOUtil.getByteByInputStream(in));
-                    httpResponse.renderFile(file);
-                } else {
-                    String ext = fileExt;
-                    if (responseMsgPacket.getContentType() == ContentType.JSON) {
-                        ext = "json";
-                    } else if (responseMsgPacket.getContentType() == ContentType.HTML) {
-                        ext = "html";
-                    }
-                    InputStream in = session.getPipeInByMsgId(id);
-                    httpResponse.addHeader("Content-Type", MimeTypeUtil.getMimeStrByExt(ext));
-                    httpResponse.write(in, 200);
-                }
-            } else {
-                httpResponse.renderCode(404);
-            }
+            InputStream in = session.getPipeInByMsgId(id);
+            httpResponse.addHeader("Content-Type", MimeTypeUtil.getMimeStrByExt(ext));
+            httpResponse.write(in, 200);
         }
     }
 }
