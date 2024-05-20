@@ -80,8 +80,9 @@ public class PluginHandle implements HttpErrorHandle {
         }
         httpRequest.getAttr().put("isLogin", isLogin);
         PluginRequestUriInfo pluginRequestUriInfo = parseRequestUri(httpRequest.getUri());
+        System.out.println(pluginRequestUriInfo.getName() + " -> " + pluginRequestUriInfo.getAction());
 
-        if (RunConstants.runType == RunType.DEV) {
+        if (Objects.equals(httpRequest.getHeader("DEV_MODE"), "true") || RunConstants.runType == RunType.DEV) {
             LOGGER.log(Level.INFO, "plugin name " + pluginRequestUriInfo.getName());
         }
         IOSession session = PluginConfig.getInstance().getIOSessionByPluginName(pluginRequestUriInfo.getName());
