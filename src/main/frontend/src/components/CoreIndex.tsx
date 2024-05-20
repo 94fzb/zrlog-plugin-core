@@ -1,19 +1,7 @@
 import React from "react";
-import {
-    Button,
-    Card,
-    Col,
-    Divider,
-    Empty,
-    Image, Popconfirm,
-    Row,
-} from "antd";
+import {Button, Card, Col, Divider, Empty, Image, Popconfirm, Row,} from "antd";
 import Title from "antd/es/typography/Title";
-import {
-    CloudDownloadOutlined,
-    DeleteOutlined,
-    SettingOutlined,
-} from "@ant-design/icons";
+import {CloudDownloadOutlined, DeleteOutlined, SettingOutlined,} from "@ant-design/icons";
 import axios from "axios";
 import Meta from "antd/es/card/Meta";
 import {Link} from "react-router-dom";
@@ -106,7 +94,7 @@ const CoreIndex: React.FC<CoreIndexProps> = ({data}) => {
                     })}
                 </Row>
                 <Divider/>
-                <a href={data.pluginCenter} style={{paddingBottom: 32}}>
+                <a href={data.pluginCenter} style={{marginBottom: 32, display: "inline-block"}}>
                     <Button icon={<CloudDownloadOutlined/>} type="primary">
                         下载
                     </Button>
