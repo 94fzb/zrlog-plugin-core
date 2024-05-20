@@ -42,7 +42,7 @@ public class PluginUtil {
 
     }
 
-    public static void loadPlugin(final File file, String uuid) {
+    public static void loadPlugin(final File file, String pluginId) {
         if (file == null || !file.exists()) {
             return;
         }
@@ -53,18 +53,18 @@ public class PluginUtil {
         LOGGER.info("run plugin " + pluginName);
         reentrantLock.lock();
         try {
-            idFileMap.put(uuid, file);
+            idFileMap.put(pluginId, file);
             String userDir = PluginConfig.getInstance().getPluginBasePath() + "/" + pluginName + "/usr/";
             String tmpDir = PluginConfig.getInstance().getPluginBasePath() + "/" + pluginName + "/tmp/";
             new File(userDir).mkdirs();
             new File(tmpDir).mkdirs();
             Process pr = CmdUtil.getProcess(System.getProperty("java.home") + "/bin/java",
                     "-Djava.io.tmpdir=" + tmpDir, "-Duser.dir=" + userDir, ConfigKit.get("pluginJvmArgs", ""), "-jar "
-                            + file + " " + PluginConfig.getInstance().getMasterPort() + " " + uuid);
+                            + file + " " + PluginConfig.getInstance().getMasterPort() + " " + pluginId);
             if (pr != null) {
-                processMap.put(uuid, pr);
-                printInputStreamWithThread(pr, pr.getInputStream(), pluginName, "PINFO", uuid);
-                printInputStreamWithThread(pr, pr.getErrorStream(), pluginName, "PERROR", uuid);
+                processMap.put(pluginId, pr);
+                printInputStreamWithThread(pr, pr.getInputStream(), pluginName, "PINFO", pluginId);
+                printInputStreamWithThread(pr, pr.getErrorStream(), pluginName, "PERROR", pluginId);
             }
         } finally {
             reentrantLock.unlock();
