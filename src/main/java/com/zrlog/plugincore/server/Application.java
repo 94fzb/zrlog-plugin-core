@@ -22,6 +22,9 @@ import java.util.logging.FileHandler;
 
 public class Application {
 
+    public static String BLOG_PLUGIN_TOKEN = "";
+    public static Integer BLOG_PORT = 0;
+
     static {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %5$s%6$s%n");
         FileHandler fileHandler = com.hibegin.common.util.LoggerUtil.buildFileHandle();
@@ -52,6 +55,8 @@ public class Application {
             int port = (args.length > 4) ? Integer.parseInt(args[4]) : -1;
             blogRunTime.setPath((args.length > 5) ? args[5] : DevUtil.blogRuntimePath());
             blogRunTime.setVersion((args.length > 5) ? args[5] : DevUtil.blogVersion());
+            BLOG_PORT = (args.length > 6) ? Integer.parseInt(args[6]) : 0;
+            BLOG_PLUGIN_TOKEN = (args.length > 7) ? args[7] : "_NOT_FOUND";
             if (port > 0) {
                 new ListenWebServerThread(port).start();
             }

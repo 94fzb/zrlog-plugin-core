@@ -16,6 +16,7 @@ import com.zrlog.plugin.data.codec.MsgPacketStatus;
 import com.zrlog.plugin.message.Plugin;
 import com.zrlog.plugin.type.ActionType;
 import com.zrlog.plugin.type.RunType;
+import com.zrlog.plugincore.server.Application;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.dao.ArticleDAO;
 import com.zrlog.plugincore.server.dao.CommentDAO;
@@ -24,7 +25,6 @@ import com.zrlog.plugincore.server.dao.WebSiteDAO;
 import com.zrlog.plugincore.server.type.PluginStatus;
 import com.zrlog.plugincore.server.util.HttpUtils;
 import com.zrlog.plugincore.server.util.PluginUtil;
-import com.zrlog.plugincore.server.util.StringUtils;
 import org.jsoup.Jsoup;
 
 import java.sql.SQLException;
@@ -65,17 +65,13 @@ public class ServerActionHandler implements IActionHandler {
         }
     }
 
-    private static void refreshCache(IOSession session) throws Exception {
+    private static void refreshCache() throws Exception {
         if (RunConstants.runType != RunType.BLOG) {
             return;
         }
         Map<String, String> requestHeaders = new HashMap<>();
-        String cookie = (String) session.getAttr().get("cookie");
-        if (StringUtils.isEmpty(cookie)) {
-            return;
-        }
-        requestHeaders.put("Cookie", cookie);
-        HttpUtils.sendGetRequest(session.getAttr().get("accessUrl") + "/api/admin/refreshCache", requestHeaders);
+        requestHeaders.put("X-Plugin-Token", Application.BLOG_PLUGIN_TOKEN);
+        HttpUtils.sendGetRequest("http://localhost:" + Application.BLOG_PORT + "/api/admin/refreshCache", requestHeaders);
     }
 
     @Override
@@ -86,6 +82,11 @@ public class ServerActionHandler implements IActionHandler {
         map.put("runType", RunConstants.runType);
         session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         PluginUtil.registerPlugin(PluginStatus.START, session);
+        try {
+            refreshCache();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -149,7 +150,7 @@ public class ServerActionHandler implements IActionHandler {
         }
         session.sendJsonMsg(resultMap, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         try {
-            refreshCache(session);
+            refreshCache();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -326,7 +327,7 @@ public class ServerActionHandler implements IActionHandler {
             if (logId == null) {
                 try {
                     boolean result = articleDAO.save();
-                    refreshCache(session);
+                    refreshCache();
                     map.put("result", result);
                     session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
                 } catch (Exception e) {
@@ -339,7 +340,7 @@ public class ServerActionHandler implements IActionHandler {
                     Map<String, Object> cond = new HashMap<>();
                     cond.put("logId", logId);
                     boolean result = articleDAO.update(cond);
-                    refreshCache(session);
+                    refreshCache();
                     map.put("result", result);
                     session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
                 } catch (Exception e) {
