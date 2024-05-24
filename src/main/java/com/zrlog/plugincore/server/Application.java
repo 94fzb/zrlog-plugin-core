@@ -54,9 +54,9 @@ public class Application {
             RunConstants.runType = RunType.BLOG;
             int port = (args.length > 4) ? Integer.parseInt(args[4]) : -1;
             blogRunTime.setPath((args.length > 5) ? args[5] : DevUtil.blogRuntimePath());
-            blogRunTime.setVersion((args.length > 5) ? args[5] : DevUtil.blogVersion());
-            BLOG_PORT = (args.length > 6) ? Integer.parseInt(args[6]) : 0;
-            BLOG_PLUGIN_TOKEN = (args.length > 7) ? args[7] : "_NOT_FOUND";
+            blogRunTime.setVersion((args.length > 6) ? args[6] : DevUtil.blogVersion());
+            BLOG_PORT = (args.length > 7) ? Integer.parseInt(args[7]) : 0;
+            BLOG_PLUGIN_TOKEN = (args.length > 8) ? args[8] : "_NOT_FOUND";
             if (port > 0) {
                 new ListenWebServerThread(port).start();
             }
