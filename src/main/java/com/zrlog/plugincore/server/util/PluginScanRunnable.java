@@ -71,9 +71,7 @@ public class PluginScanRunnable implements Runnable {
                 continue;
             }
             try {
-                String fileName = StringUtils.isEmpty(Application.NATIVE_INFO) ? pluginVO.getPlugin().getShortName() + ".jar" :
-                        pluginVO.getPlugin().getShortName() + "-" + Application.NATIVE_INFO + ".bin";
-                File downloadFile = PluginUtil.downloadPlugin(fileName);
+                File downloadFile = PluginUtil.downloadPlugin(PluginUtil.getPluginFile(pluginVO.getPlugin().getShortName()));
                 pluginVO.setFile(downloadFile.toString());
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "download error", e);

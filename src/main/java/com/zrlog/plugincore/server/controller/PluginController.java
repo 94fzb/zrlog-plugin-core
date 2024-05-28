@@ -58,7 +58,7 @@ public class PluginController extends Controller {
     public void download() {
         String downloadUrl = getRequest().getParaToStr("downloadUrl");
         String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/") + 1);
-        String pluginName = fileName.substring(0, fileName.indexOf("."));
+        String pluginName = PluginUtil.getPluginName(new File(fileName));
         try {
             File path = new File(PluginConfig.getInstance().getPluginBasePath());
             File file = new File(path + "/" + fileName);
@@ -67,7 +67,7 @@ public class PluginController extends Controller {
                         "&pluginName=" + pluginName);
                 return;
             }
-            File pluginFile = PluginUtil.downloadPluginByUrl(downloadUrl, fileName);
+            File pluginFile = PluginUtil.downloadPlugin(PluginUtil.getPluginFile(pluginName));
             PluginUtil.loadPlugin(pluginFile, UUID.randomUUID().toString());
             response.redirect("/admin/plugins/downloadResult?message=" + URLEncoder.encode("下载插件成功", StandardCharsets.UTF_8) +
                     "&pluginName=" + pluginName);

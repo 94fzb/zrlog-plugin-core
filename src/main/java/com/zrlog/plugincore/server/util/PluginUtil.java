@@ -5,6 +5,7 @@ import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.common.ConfigKit;
 import com.zrlog.plugin.common.LoggerUtil;
 import com.zrlog.plugin.type.RunType;
+import com.zrlog.plugincore.server.Application;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.config.PluginVO;
 import com.zrlog.plugincore.server.type.PluginStatus;
@@ -53,16 +54,26 @@ public class PluginUtil {
         return file.toString();
     }
 
-    public static void loadPlugin(final File file, String pluginId) {
-        if (file == null || !file.exists()) {
-            return;
-        }
-        String pluginName = file.getName()
+    public static String getPluginName(File file) {
+        return file.getName()
                 .replace("-Darwin", "")
                 .replace("-x86_64", "")
                 .replace("-Linux", "")
                 .replace("-arm64", "")
+                .replace(".bin", "")
                 .replace(".jar", "");
+    }
+
+    public static String getPluginFile(String pluginName) {
+        return StringUtils.isEmpty(Application.NATIVE_INFO) ? pluginName + ".jar" :
+                pluginName + "-" + Application.NATIVE_INFO + ".bin";
+    }
+
+    public static void loadPlugin(final File file, String pluginId) {
+        if (file == null || !file.exists()) {
+            return;
+        }
+        String pluginName = getPluginName(file);
         if (processMap.containsKey(pluginName)) {
             return;
         }
@@ -213,7 +224,7 @@ public class PluginUtil {
         }
     }
 
-    public static File downloadPluginByUrl(String url, String fileName) throws Exception {
+    private static File downloadPluginByUrl(String url, String fileName) throws Exception {
         LOGGER.info("download plugin " + fileName);
         File downloadFile = new File(PluginConfig.getInstance().getPluginBasePath() + "/" + fileName);
         copyInputStreamToFile(HttpUtils.doGetRequest(url, new HashMap<>()), downloadFile.toString());
