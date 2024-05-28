@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <artifactId>zrlog-plugin-core</artifactId>
+    <artifactId>plugin-core</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.hibegin</groupId>
+    <groupId>com.zrlog</groupId>
     <version>3.0.2</version>
     <packaging>jar</packaging>
 
     <properties>
         <imageName>plugin-core</imageName>
         <native.maven.plugin.version>0.9.18</native.maven.plugin.version>
+        <native.image.mainClass>com.zrlog.plugincore.server.Application</native.image.mainClass>
+        <native.image.agentMainClass>com.zrlog.plugincore.server.GraalvmAgentApplication</native.image.agentMainClass>
     </properties>
 
     <dependencies>
@@ -68,7 +70,7 @@
                                 <argument>--enable-preview</argument>
                                 <argument>-classpath</argument>
                                 <classpath/>
-                                <argument>com.zrlog.plugincore.server.GraalvmAgentApplication</argument>
+                                <argument>${native.image.agentMainClass}</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -206,7 +208,7 @@
                                     -H:+DashboardAll -H:IncludeResources= --enable-url-protocols=http --enable-url-protocols=https --enable-monitoring=heapdump
                                 </arg>
                             </buildArgs>
-                            <mainClass>com.zrlog.plugincore.server.Application</mainClass>
+                            <mainClass>${native.image.mainClass}</mainClass>
                             <agent>
                                 <enabled>true</enabled>
                                 <options>
