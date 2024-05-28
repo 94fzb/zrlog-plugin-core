@@ -3,6 +3,7 @@ package com.zrlog.plugincore.server.util;
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.common.LoggerUtil;
 import com.zrlog.plugin.type.RunType;
+import com.zrlog.plugincore.server.Application;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.config.PluginVO;
 import com.zrlog.plugincore.server.type.PluginStatus;
@@ -38,7 +39,7 @@ public class PluginScanRunnable implements Runnable {
                 continue;
             }
             File file = new File(filePath);
-            if (!file.getName().endsWith(".jar")) {
+            if (!file.getName().endsWith(".jar") && !file.getName().endsWith(".bin")) {
                 continue;
             }
             Optional<PluginVO> first =
@@ -70,7 +71,8 @@ public class PluginScanRunnable implements Runnable {
                 continue;
             }
             try {
-                String fileName = pluginVO.getPlugin().getShortName() + ".jar";
+                String fileName = StringUtils.isEmpty(Application.NATIVE_INFO) ? pluginVO.getPlugin().getShortName() + ".jar" :
+                        pluginVO.getPlugin().getShortName() + "-" + Application.NATIVE_INFO + ".bin";
                 File downloadFile = PluginUtil.downloadPlugin(fileName);
                 pluginVO.setFile(downloadFile.toString());
             } catch (Exception e) {

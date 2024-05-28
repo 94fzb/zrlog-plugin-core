@@ -25,6 +25,7 @@ public class Application {
     public static String BLOG_PLUGIN_TOKEN = "";
     public static Integer BLOG_PORT = 0;
     public static Boolean nativeAgent = false;
+    public static String NATIVE_INFO = "";
 
     public static void init() {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %5$s%6$s%n");
@@ -59,8 +60,12 @@ public class Application {
             blogRunTime.setVersion((args.length > 6) ? args[6] : DevUtil.blogVersion());
             BLOG_PORT = (args.length > 7) ? Integer.parseInt(args[7]) : 0;
             BLOG_PLUGIN_TOKEN = (args.length > 8) ? args[8] : "_NOT_FOUND";
+            NATIVE_INFO = (args.length > 9) ? args[9] : "";
             if (port > 0) {
                 new ListenWebServerThread(port).start();
+            }
+            if (Objects.equals(NATIVE_INFO, "-")) {
+                NATIVE_INFO = "";
             }
         }
         loadHttpServer(serverPort);
