@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.hibegin.common.util.Pid;
 import com.hibegin.http.server.util.NativeImageUtils;
 import com.hibegin.http.server.util.PathUtil;
+import com.zrlog.plugin.data.codec.FileDesc;
 import com.zrlog.plugin.data.codec.HttpRequestInfo;
 import com.zrlog.plugin.message.Plugin;
 import com.zrlog.plugincore.server.config.PluginCore;
@@ -18,6 +19,7 @@ public class GraalvmAgentApplication {
 
     public static void main(String[] args) throws IOException {
         new Gson().toJson(new PluginVO());
+        new Gson().toJson(new FileDesc());
         new Gson().toJson(new HashMap<>());
         new Gson().toJson(new HttpRequestInfo());
         new Gson().toJson(new PluginCoreSetting());
