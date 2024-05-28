@@ -12,11 +12,13 @@ import com.zrlog.plugincore.server.config.PluginVO;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class GraalvmAgentApplication {
 
     public static void main(String[] args) throws IOException {
         new Gson().toJson(new PluginVO());
+        new Gson().toJson(new HashMap<>());
         new Gson().toJson(new HttpRequestInfo());
         new Gson().toJson(new PluginCoreSetting());
         new Gson().toJson(new PluginCore());
