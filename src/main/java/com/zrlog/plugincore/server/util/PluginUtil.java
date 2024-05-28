@@ -43,11 +43,26 @@ public class PluginUtil {
 
     }
 
+    private static String getProgramName(File file) {
+        if (file.getName().endsWith(".jar")) {
+            if (Objects.isNull(System.getProperty("java.home"))) {
+                return "java";
+            }
+            return System.getProperty("java.home") + "/bin/java";
+        }
+        return file.toString();
+    }
+
     public static void loadPlugin(final File file, String pluginId) {
         if (file == null || !file.exists()) {
             return;
         }
-        String pluginName = file.getName().replace(".jar", "");
+        String pluginName = file.getName()
+                .replace("-Darwin", "")
+                .replace("-x86_64", "")
+                .replace("-Linux", "")
+                .replace("-arm64", "")
+                .replace(".jar", "");
         if (processMap.containsKey(pluginName)) {
             return;
         }
@@ -59,7 +74,7 @@ public class PluginUtil {
             String tmpDir = PluginConfig.getInstance().getPluginBasePath() + "/" + pluginName + "/tmp/";
             new File(userDir).mkdirs();
             new File(tmpDir).mkdirs();
-            Process pr = CmdUtil.getProcess(System.getProperty("java.home") + "/bin/java",
+            Process pr = CmdUtil.getProcess(getProgramName(file),
                     "-Djava.io.tmpdir=" + tmpDir, "-Duser.dir=" + userDir, ConfigKit.get("pluginJvmArgs", ""), "-jar "
                             + file + " " + PluginConfig.getInstance().getMasterPort() + " " + pluginId);
             if (pr != null) {

@@ -58,11 +58,12 @@ public class PluginConfig {
             if (text != null && !"".equals(text)) {
                 instance.pluginCore = new Gson().fromJson(text, PluginCore.class);
             } else {
-                instance.pluginCore = new PluginCore();
+                instance.pluginCore = new Gson().fromJson("{}", PluginCore.class);
             }
             saveToJsonFileThread();
         } catch (SQLException e) {
             LoggerUtil.getLogger(PluginConfig.class).log(Level.SEVERE, "", e);
+            instance.pluginCore = new Gson().fromJson("{}", PluginCore.class);
         }
     }
 
