@@ -88,7 +88,7 @@ public class PluginUtil {
                 args.add("-Djava.io.tmpdir=" + tmpDir);
                 args.add("-Duser.dir=" + userDir);
                 args.add(ConfigKit.get("pluginJvmArgs", "") + "");
-                args.add("-jar ");
+                args.add("-jar");
                 args.add(pluginFile.toString());
                 args.add(PluginConfig.getInstance().getMasterPort() + "");
                 args.add(pluginId);
