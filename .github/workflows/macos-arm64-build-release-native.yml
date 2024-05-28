@@ -2,7 +2,7 @@ name: build on macos arm64 preview native
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   build:
     name: ZrLog on ${{ matrix.os }} ${{ matrix.architecture }}
