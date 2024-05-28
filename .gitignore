@@ -5,7 +5,6 @@
 *.iml
 **/target
 **/temp/**
-/build/
 
 .settings
 .classpath
@@ -23,4 +22,6 @@ server/plugin.txt
 release.properties
 pom.xml.releaseBackup
 **/.DS_Store
-zrlog-plugin-core/src/main/resources/static
+src/main/resources/static
+plugin-core.bgv
+plugin-core-Darwin-arm64.bin

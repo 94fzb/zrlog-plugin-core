@@ -7,6 +7,7 @@ import com.hibegin.http.server.config.ServerConfig;
 import com.hibegin.http.server.web.MethodInterceptor;
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.type.RunType;
+import com.zrlog.plugincore.server.Application;
 import com.zrlog.plugincore.server.controller.PluginApiController;
 import com.zrlog.plugincore.server.controller.PluginController;
 import com.zrlog.plugincore.server.controller.SettingController;
@@ -23,6 +24,7 @@ public class PluginHttpServerConfig extends AbstractServerConfig {
     @Override
     public ServerConfig getServerConfig() {
         ServerConfig serverConfig = new ServerConfig();
+        serverConfig.setNativeImageAgent(Application.nativeAgent);
         serverConfig.setHost(RunConstants.runType == RunType.BLOG ? "127.0.0.1" : "0.0.0.0");
         serverConfig.setPort(port);
         serverConfig.setDisableSession(true);

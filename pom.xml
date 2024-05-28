@@ -7,6 +7,11 @@
     <version>2.1.18</version>
     <packaging>jar</packaging>
 
+    <properties>
+        <imageName>plugin-core</imageName>
+        <native.maven.plugin.version>0.9.18</native.maven.plugin.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.hibegin</groupId>
@@ -16,7 +21,7 @@
         <dependency>
             <groupId>com.hibegin</groupId>
             <artifactId>simplewebserver</artifactId>
-            <version>0.3.105</version>
+            <version>0.3.113</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
@@ -47,6 +52,39 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>java-agent</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <workingDirectory>${project.build.directory}</workingDirectory>
+                            <arguments>
+                                <argument>--enable-preview</argument>
+                                <argument>-classpath</argument>
+                                <classpath/>
+                                <argument>com.zrlog.plugincore.server.GraalvmAgentApplication</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>native</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${project.build.directory}/${imageName}</executable>
+                            <workingDirectory>${project.build.directory}</workingDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
@@ -55,50 +93,7 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.15.0</version>
-                <executions>
-                    <execution>
-                        <id>install node and yarn</id>
-                        <goals>
-                            <goal>install-node-and-yarn</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                    </execution>
-                    <execution>
-                        <id>yarn install</id>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install --registry=https://registry.npmmirror.com --frozen-lockfile</arguments>
-                        </configuration>
-                        <phase>generate-resources</phase>
-                    </execution>
-                    <execution>
-                        <id>yarn build</id>
-                        <goals>
-                            <goal>yarn</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>build</arguments>
-                        </configuration>
-                        <phase>generate-resources</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <nodeVersion>v16.15.1</nodeVersion>
-                    <yarnVersion>v1.22.18</yarnVersion>
-                    <npmVersion>8.11.0</npmVersion>
-                    <workingDirectory>src/main/frontend</workingDirectory>
-                    <installDirectory>target</installDirectory>
-                    <nodeDownloadRoot>https://npmmirror.com/mirrors/node/</nodeDownloadRoot>
-                    <yarnDownloadRoot>https://dl.zrlog.com/yarnpkg/yarn/releases/download/</yarnDownloadRoot>
-                    <npmRegistryURL>https://registry.npmmirror.com</npmRegistryURL>
-                </configuration>
-            </plugin>
+
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.2.0</version>
@@ -160,5 +155,120 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>native</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <version>${native.maven.plugin.version}</version>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <goals>
+                                    <goal>compile-no-fork</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                            <execution>
+                                <id>test-native</id>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <fallback>false</fallback>
+                            <buildArgs>
+                                <arg>
+                                    -Ob
+                                    --enable-sbom
+                                    -H:+BuildReport
+                                    -H:+AddAllCharsets
+                                    -H:+UnlockExperimentalVMOptions
+                                    --initialize-at-build-time=sun.security.krb5.SCDynamicStoreConfig
+                                    --initialize-at-build-time=java.util.ImmutableCollections$ListN
+                                    --trace-class-initialization=sun.security.krb5.SCDynamicStoreConfig
+                                    -H:+UnlockExperimentalVMOptions
+                                    -march=compatibility --enable-preview -H:DashboardDump=${imageName}
+                                    -H:+DashboardAll -H:IncludeResources= --enable-url-protocols=http --enable-url-protocols=https --enable-monitoring=heapdump
+                                </arg>
+                            </buildArgs>
+                            <mainClass>com.zrlog.plugincore.server.Application</mainClass>
+                            <agent>
+                                <enabled>true</enabled>
+                                <options>
+                                    <option>experimental-class-loader-support</option>
+                                </options>
+                            </agent>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>nodeBuild</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <version>1.15.0</version>
+                        <executions>
+                            <execution>
+                                <id>install node and yarn</id>
+                                <goals>
+                                    <goal>install-node-and-yarn</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                            </execution>
+                            <execution>
+                                <id>yarn install</id>
+                                <goals>
+                                    <goal>yarn</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>install --registry=https://registry.npmmirror.com --frozen-lockfile</arguments>
+                                </configuration>
+                                <phase>generate-resources</phase>
+                            </execution>
+                            <execution>
+                                <id>yarn build</id>
+                                <goals>
+                                    <goal>yarn</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>build</arguments>
+                                </configuration>
+                                <phase>generate-resources</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <nodeVersion>v16.15.1</nodeVersion>
+                            <yarnVersion>v1.22.18</yarnVersion>
+                            <npmVersion>8.11.0</npmVersion>
+                            <workingDirectory>src/main/frontend</workingDirectory>
+                            <installDirectory>target</installDirectory>
+                            <nodeDownloadRoot>https://npmmirror.com/mirrors/node/</nodeDownloadRoot>
+                            <yarnDownloadRoot>https://dl.zrlog.com/yarnpkg/yarn/releases/download/</yarnDownloadRoot>
+                            <npmRegistryURL>https://registry.npmmirror.com</npmRegistryURL>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

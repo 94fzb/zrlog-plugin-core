@@ -1,4 +1,4 @@
-name: ZrLog plugin core release package
+name: build plugin core release jar
 on:
   push:
     branches:
@@ -31,5 +31,6 @@ jobs:
         run: |
           mkdir -p /tmp/download
           bash -e bin/build-info.sh
-          bash -e ./mvnw clean package assembly:single -DoutputDirectory=/tmp/download/plugin/core
+          bash -e ./mvnw -Pnative -Dagent exec:exec@java-agent -U 
+          bash -e ./mvnw -Pnative package
           bash bin/upload-bin.sh ${{ secrets.SECRET_ID }} ${{ secrets.SECRET_KEY }} ${{ secrets.BUCKET }} /tmp/download plugin/core

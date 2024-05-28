@@ -24,8 +24,9 @@ public class Application {
 
     public static String BLOG_PLUGIN_TOKEN = "";
     public static Integer BLOG_PORT = 0;
+    public static Boolean nativeAgent = false;
 
-    static {
+    public static void init() {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS %4$s %5$s%6$s%n");
         FileHandler fileHandler = com.hibegin.common.util.LoggerUtil.buildFileHandle();
         LoggerUtil.initFileHandle(fileHandler);
@@ -33,6 +34,7 @@ public class Application {
     }
 
     public static void main(String[] args) throws IOException {
+        init();
         if (args != null && args.length > 0 && RunConstants.runType == RunType.DEV) {
             LoggerUtil.getLogger(Application.class).info("args = " + Arrays.toString(args));
         }
@@ -76,6 +78,20 @@ public class Application {
 
     private static void loadHttpServer(Integer serverPort) {
         PluginHttpServerConfig config = new PluginHttpServerConfig(serverPort);
-        new WebServerBuilder.Builder().config(config).build().startWithThread();
+        WebServerBuilder build = new WebServerBuilder.Builder().config(config).build();
+        build.addStartSuccessHandle(() -> {
+            if (nativeAgent) {
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.exit(0);
+                }).start();
+            }
+            return null;
+        });
+        build.startWithThread();
     }
 }
