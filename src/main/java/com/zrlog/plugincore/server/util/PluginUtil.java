@@ -11,9 +11,7 @@ import com.zrlog.plugincore.server.config.PluginVO;
 import com.zrlog.plugincore.server.type.PluginStatus;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -85,12 +83,23 @@ public class PluginUtil {
             String tmpDir = PluginConfig.getInstance().getPluginBasePath() + "/" + pluginName + "/tmp/";
             new File(userDir).mkdirs();
             new File(tmpDir).mkdirs();
-            if (pluginFile.getName().endsWith(".bin")) {
+            List<String> args = new ArrayList<>();
+            if (pluginFile.getName().endsWith(".jar")) {
+                args.add("-Djava.io.tmpdir=" + tmpDir);
+                args.add("-Duser.dir=" + userDir);
+                args.add(ConfigKit.get("pluginJvmArgs", "") + "");
+                args.add("-jar ");
+                args.add(pluginFile.toString());
+                args.add(PluginConfig.getInstance().getMasterPort() + "");
+                args.add(pluginId);
+            } else {
                 CmdUtil.sendCmd("chmod", "a+x", pluginFile.toString());
+                args.add(PluginConfig.getInstance().getMasterPort() + "");
+                args.add(pluginId);
+                args.add("-Djava.io.tmpdir=" + tmpDir);
+                args.add("-Duser.dir=" + userDir);
             }
-            Process pr = CmdUtil.getProcess(getProgramName(pluginFile),
-                    "-Djava.io.tmpdir=" + tmpDir, "-Duser.dir=" + userDir, ConfigKit.get("pluginJvmArgs", ""), "-jar "
-                            + pluginFile + " " + PluginConfig.getInstance().getMasterPort() + " " + pluginId);
+            Process pr = CmdUtil.getProcess(getProgramName(pluginFile), args.toArray(new Object[0]));
             if (pr != null) {
                 processMap.put(pluginId, pr);
                 printInputStreamWithThread(pr, pr.getInputStream(), pluginName, "PINFO", pluginId);
