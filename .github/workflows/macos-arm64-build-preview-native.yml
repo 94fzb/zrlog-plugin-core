@@ -26,7 +26,5 @@ jobs:
 
       - name: Build and upload binary
         run: |
-          brew install coreutils
-          mkdir -p /tmp/download
-          bash -e bin/build-final-native.sh preview 预览版 /tmp/download
-          bash -e bin/upload-bin.sh ${{ secrets.SECRET_ID }} ${{ secrets.SECRET_KEY }} ${{ secrets.BUCKET }} /tmp/download preview
+          bash -e bin/package-native-github.sh
+          bash -e bin/upload-bin.sh ${{ secrets.SECRET_ID }} ${{ secrets.SECRET_KEY }} ${{ secrets.BUCKET }} /tmp/download plugin/core

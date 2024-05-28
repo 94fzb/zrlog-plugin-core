@@ -26,6 +26,6 @@ jobs:
 
       - name: Build and upload binary
         run: |
-          mkdir -p /tmp/download
-          bash -e bin/build-final-native.sh preview 预览版 /tmp/download
-          bash -e bin/upload-bin.sh ${{ secrets.SECRET_ID }} ${{ secrets.SECRET_KEY }} ${{ secrets.BUCKET }} /tmp/download preview
+          bash -e ./mvnw -Pnative -Dagent exec:exec@java-agent -U 
+          bash -e ./mvnw -Pnative package
+          bash -e bin/upload-bin.sh ${{ secrets.SECRET_ID }} ${{ secrets.SECRET_KEY }} ${{ secrets.BUCKET }} /tmp/download plugin/core
