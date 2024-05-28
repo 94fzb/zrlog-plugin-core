@@ -78,8 +78,8 @@ public class ServerActionHandler implements IActionHandler {
     public void initConnect(IOSession session, MsgPacket msgPacket) {
         Plugin plugin = new Gson().fromJson(msgPacket.getDataStr(), Plugin.class);
         session.setPlugin(plugin);
-        Map<String, Object> map = new HashMap<>();
-        map.put("runType", RunConstants.runType);
+        Map<String, String> map = new HashMap<>();
+        map.put("runType", RunConstants.runType.toString());
         session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         PluginUtil.registerPlugin(PluginStatus.START, session);
         try {
