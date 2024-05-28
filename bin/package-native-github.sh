@@ -1,4 +1,5 @@
 java -version
+sh bin/build-info.sh
 ./mvnw clean package
 ./mvnw -Pnative -Dagent exec:exec@java-agent -U
 ./mvnw -Pnative package
