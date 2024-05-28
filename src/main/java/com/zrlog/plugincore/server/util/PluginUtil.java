@@ -69,25 +69,28 @@ public class PluginUtil {
                 pluginName + "-" + Application.NATIVE_INFO + ".bin";
     }
 
-    public static void loadPlugin(final File file, String pluginId) {
-        if (file == null || !file.exists()) {
+    public static void loadPlugin(final File pluginFile, String pluginId) {
+        if (pluginFile == null || !pluginFile.exists()) {
             return;
         }
-        String pluginName = getPluginName(file);
+        String pluginName = getPluginName(pluginFile);
         if (processMap.containsKey(pluginName)) {
             return;
         }
         LOGGER.info("run plugin " + pluginName);
         reentrantLock.lock();
         try {
-            idFileMap.put(pluginId, file);
+            idFileMap.put(pluginId, pluginFile);
             String userDir = PluginConfig.getInstance().getPluginBasePath() + "/" + pluginName + "/usr/";
             String tmpDir = PluginConfig.getInstance().getPluginBasePath() + "/" + pluginName + "/tmp/";
             new File(userDir).mkdirs();
             new File(tmpDir).mkdirs();
-            Process pr = CmdUtil.getProcess(getProgramName(file),
+            if (pluginFile.getName().endsWith(".bin")) {
+                CmdUtil.sendCmd("chmod", "a+x", pluginFile.toString());
+            }
+            Process pr = CmdUtil.getProcess(getProgramName(pluginFile),
                     "-Djava.io.tmpdir=" + tmpDir, "-Duser.dir=" + userDir, ConfigKit.get("pluginJvmArgs", ""), "-jar "
-                            + file + " " + PluginConfig.getInstance().getMasterPort() + " " + pluginId);
+                            + pluginFile + " " + PluginConfig.getInstance().getMasterPort() + " " + pluginId);
             if (pr != null) {
                 processMap.put(pluginId, pr);
                 printInputStreamWithThread(pr, pr.getInputStream(), pluginName, "PINFO", pluginId);
