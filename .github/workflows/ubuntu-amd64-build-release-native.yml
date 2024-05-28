@@ -26,6 +26,5 @@ jobs:
 
       - name: Build and upload binary
         run: |
-          bash -e ./mvnw -Pnative -Dagent exec:exec@java-agent -U 
-          bash -e ./mvnw -Pnative package
+          bash -e bin/package-native-github.sh
           bash -e bin/upload-bin.sh ${{ secrets.SECRET_ID }} ${{ secrets.SECRET_KEY }} ${{ secrets.BUCKET }} /tmp/download plugin/core
