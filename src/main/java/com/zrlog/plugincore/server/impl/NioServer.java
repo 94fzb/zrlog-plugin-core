@@ -91,7 +91,7 @@ public class NioServer implements ISocketServer {
 
             LOGGER.info("plugin listening on port -> " + PluginConfig.getInstance().getMasterPort());
             PluginUtil.loadJarPlugin();
-            LOGGER.info("load jar files");
+            LOGGER.info("load plugin files");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "", e);
         }
