@@ -161,7 +161,7 @@ public class ServerActionHandler implements IActionHandler {
         }
         session.sendJsonMsg(resultMap, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         try {
-            refreshCache();
+            refreshCache(20);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -338,7 +338,7 @@ public class ServerActionHandler implements IActionHandler {
             if (logId == null) {
                 try {
                     boolean result = articleDAO.save();
-                    refreshCache();
+                    refreshCache(20);
                     map.put("result", result);
                     session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
                 } catch (Exception e) {
@@ -351,7 +351,7 @@ public class ServerActionHandler implements IActionHandler {
                     Map<String, Object> cond = new HashMap<>();
                     cond.put("logId", logId);
                     boolean result = articleDAO.update(cond);
-                    refreshCache();
+                    refreshCache(20);
                     map.put("result", result);
                     session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
                 } catch (Exception e) {
