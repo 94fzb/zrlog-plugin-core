@@ -41,7 +41,7 @@ public class NioServer implements ISocketServer {
         if (selector == null) {
             return;
         }
-        while (true) {
+        while (selector.isOpen()) {
             try {
                 selector.select();
                 Set<SelectionKey> keys = selector.selectedKeys();
@@ -106,9 +106,7 @@ public class NioServer implements ISocketServer {
                 Thread.sleep(100);
             }
         } catch (Exception e) {
-            if (e instanceof IOException) {
-                key.cancel();
-            }
+            key.cancel();
             LOGGER.log(Level.SEVERE, "dispose error " + e.getMessage());
         } finally {
             if (RunConstants.runType == RunType.DEV) {
