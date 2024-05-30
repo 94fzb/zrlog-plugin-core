@@ -11,6 +11,7 @@ import com.zrlog.plugin.type.RunType;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.util.PluginUtil;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.channels.SelectionKey;
@@ -106,6 +107,11 @@ public class NioServer implements ISocketServer {
             }
         } catch (Exception e) {
             key.cancel();
+            try {
+                channel.close();
+            } catch (IOException ex) {
+                LOGGER.log(Level.SEVERE, "close channel error " + e.getMessage());
+            }
             LOGGER.log(Level.SEVERE, "dispose error " + e.getMessage());
         } finally {
             if (RunConstants.runType == RunType.DEV) {
