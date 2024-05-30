@@ -69,6 +69,9 @@ public class ServerActionHandler implements IActionHandler {
         if (RunConstants.runType != RunType.BLOG) {
             return;
         }
+        if (Application.BLOG_PORT <= 0) {
+            return;
+        }
         try {
             Map<String, String> requestHeaders = new HashMap<>();
             requestHeaders.put("X-Plugin-Token", Application.BLOG_PLUGIN_TOKEN);
@@ -194,18 +197,7 @@ public class ServerActionHandler implements IActionHandler {
         Comment comment = new Gson().fromJson(msgPacket.getDataStr(), Comment.class);
         Map<String, Boolean> map = new HashMap<>();
         try {
-            boolean result = new CommentDAO()
-                    .set("userHome", comment.getHome())
-                    .set("userMail", comment.getMail())
-                    .set("userIp", comment.getIp())
-                    .set("userName", comment.getName())
-                    .set("logId", comment.getLogId())
-                    .set("postId", comment.getPostId())
-                    .set("userComment", comment.getContent())
-                    .set("commTime", comment.getCreatedTime())
-                    .set("td", new Date())
-                    .set("header", comment.getHeadPortrait())
-                    .set("hide", 1).save();
+            boolean result = new CommentDAO().set("userHome", comment.getHome()).set("userMail", comment.getMail()).set("userIp", comment.getIp()).set("userName", comment.getName()).set("logId", comment.getLogId()).set("postId", comment.getPostId()).set("userComment", comment.getContent()).set("commTime", comment.getCreatedTime()).set("td", new Date()).set("header", comment.getHeadPortrait()).set("hide", 1).save();
 
             map.put("result", result);
             session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
@@ -317,24 +309,7 @@ public class ServerActionHandler implements IActionHandler {
         Map<String, Boolean> map = new HashMap<>();
         try {
             Integer logId = (Integer) new ArticleDAO().queryFirstObj("select logId from log where alias = ?", alias);
-            DAO articleDAO = new ArticleDAO()
-                    .set("releaseTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(createArticleRequest.getReleaseDate()))
-                    .set("last_update_date", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(createArticleRequest.getReleaseDate()))
-                    .set("content", createArticleRequest.getContent())
-                    .set("title", createArticleRequest.getTitle())
-                    .set("markdown", createArticleRequest.getMarkdown())
-                    .set("digest", createArticleRequest.getDigest())
-                    .set("typeId", typeId)
-                    .set("private", createArticleRequest.is_private())
-                    .set("rubbish", createArticleRequest.isRubbish())
-                    .set("alias", alias)
-                    .set("plain_content", getPlainSearchTxt(createArticleRequest.getContent()))
-                    .set("thumbnail", createArticleRequest.getThumbnail())
-                    .set("canComment", createArticleRequest.isCanComment())
-                    .set("recommended", createArticleRequest.isRecommended())
-                    .set("keywords", createArticleRequest.getKeywords())
-                    .set("editor_type", createArticleRequest.getEditorType())
-                    .set("userId", createArticleRequest.getUserId());
+            DAO articleDAO = new ArticleDAO().set("releaseTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(createArticleRequest.getReleaseDate())).set("last_update_date", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(createArticleRequest.getReleaseDate())).set("content", createArticleRequest.getContent()).set("title", createArticleRequest.getTitle()).set("markdown", createArticleRequest.getMarkdown()).set("digest", createArticleRequest.getDigest()).set("typeId", typeId).set("private", createArticleRequest.is_private()).set("rubbish", createArticleRequest.isRubbish()).set("alias", alias).set("plain_content", getPlainSearchTxt(createArticleRequest.getContent())).set("thumbnail", createArticleRequest.getThumbnail()).set("canComment", createArticleRequest.isCanComment()).set("recommended", createArticleRequest.isRecommended()).set("keywords", createArticleRequest.getKeywords()).set("editor_type", createArticleRequest.getEditorType()).set("userId", createArticleRequest.getUserId());
             if (logId == null) {
                 try {
                     boolean result = articleDAO.save();
