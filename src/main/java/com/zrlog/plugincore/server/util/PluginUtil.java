@@ -32,7 +32,7 @@ public class PluginUtil {
 
     private static final Map<String, Process> processMap = new ConcurrentHashMap<>();
 
-    public static void loadJarPlugin() {
+    public static void loadPlugins() {
         try {
             registerHook();
             Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(new PluginScanRunnable(), 0, 5, TimeUnit.SECONDS);

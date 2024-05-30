@@ -18,12 +18,12 @@
         <dependency>
             <groupId>com.hibegin</groupId>
             <artifactId>zrlog-plugin-common</artifactId>
-            <version>3.0.2</version>
+            <version>3.0.3</version>
         </dependency>
         <dependency>
             <groupId>com.hibegin</groupId>
             <artifactId>simplewebserver</artifactId>
-            <version>0.3.114</version>
+            <version>0.3.115</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>

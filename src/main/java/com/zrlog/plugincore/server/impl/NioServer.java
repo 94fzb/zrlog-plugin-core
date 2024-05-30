@@ -11,7 +11,6 @@ import com.zrlog.plugin.type.RunType;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.util.PluginUtil;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.channels.SelectionKey;
@@ -89,8 +88,8 @@ public class NioServer implements ISocketServer {
             selector = Selector.open();
             serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-            LOGGER.info("plugin listening on port -> " + PluginConfig.getInstance().getMasterPort());
-            PluginUtil.loadJarPlugin();
+            LOGGER.info("zrlog-plugin-core-server listening on port -> " + PluginConfig.getInstance().getMasterPort());
+            PluginUtil.loadPlugins();
             LOGGER.info("load plugin files");
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "", e);
