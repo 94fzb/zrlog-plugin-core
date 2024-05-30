@@ -65,13 +65,28 @@ public class ServerActionHandler implements IActionHandler {
         }
     }
 
-    private static void refreshCache() throws Exception {
+    private static void refreshCache(int retryCount) {
         if (RunConstants.runType != RunType.BLOG) {
             return;
         }
-        Map<String, String> requestHeaders = new HashMap<>();
-        requestHeaders.put("X-Plugin-Token", Application.BLOG_PLUGIN_TOKEN);
-        HttpUtils.sendGetRequest("http://localhost:" + Application.BLOG_PORT + "/api/admin/refreshCache", requestHeaders);
+        try {
+            Map<String, String> requestHeaders = new HashMap<>();
+            requestHeaders.put("X-Plugin-Token", Application.BLOG_PLUGIN_TOKEN);
+            HttpUtils.sendGetRequest("http://localhost:" + Application.BLOG_PORT + "/api/admin/refreshCache", requestHeaders);
+        } catch (Exception e) {
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException ex) {
+                //ignore
+            }
+            if (retryCount > 0) {
+                retryCount -= 1;
+                //重试更新，避免主程序还未启动
+                refreshCache(retryCount);
+                return;
+            }
+            LOGGER.warning("Refresh cache failed,  " + e.getMessage());
+        }
     }
 
     @Override
@@ -82,11 +97,7 @@ public class ServerActionHandler implements IActionHandler {
         map.put("runType", RunConstants.runType.toString());
         session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         PluginUtil.registerPlugin(PluginStatus.START, session);
-        try {
-            refreshCache();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        refreshCache(20);
     }
 
     @Override
