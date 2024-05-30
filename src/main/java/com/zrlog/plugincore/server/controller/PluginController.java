@@ -21,10 +21,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PluginController extends Controller {
 
-    private final java.util.logging.Logger LOGGER = LoggerUtil.getLogger(PluginController.class);
+    private static final Logger LOGGER = LoggerUtil.getLogger(PluginController.class);
 
     /**
      * 得到插件列表
