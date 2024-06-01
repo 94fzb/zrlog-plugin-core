@@ -9,7 +9,7 @@
 
     <properties>
         <imageName>plugin-core</imageName>
-        <native.maven.plugin.version>0.9.18</native.maven.plugin.version>
+        <native.maven.plugin.version>0.10.2</native.maven.plugin.version>
         <native.image.mainClass>com.zrlog.plugincore.server.Application</native.image.mainClass>
         <native.image.agentMainClass>com.zrlog.plugincore.server.GraalvmAgentApplication</native.image.agentMainClass>
     </properties>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.hibegin</groupId>
             <artifactId>simplewebserver</artifactId>
-            <version>0.3.119</version>
+            <version>0.3.121</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
@@ -211,9 +211,6 @@
                             <mainClass>${native.image.mainClass}</mainClass>
                             <agent>
                                 <enabled>true</enabled>
-                                <options>
-                                    <option>experimental-class-loader-support</option>
-                                </options>
                             </agent>
                         </configuration>
                     </plugin>
