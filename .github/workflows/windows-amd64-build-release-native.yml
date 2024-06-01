@@ -1,4 +1,4 @@
-name: build on macos arm64 release native
+name: build on Windows amd64 release native
 on:
   push:
     branches:
@@ -10,8 +10,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [ macos-latest ]
-        architecture: [ arm64 ]
+        os: [ windows-latest ]
+        architecture: [ x86 ]
     steps:
       - uses: actions/checkout@v3
         with:
