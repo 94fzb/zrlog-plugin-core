@@ -57,6 +57,7 @@ public class PluginUtil {
                 .replace("-Darwin", "")
                 .replace("-x86_64", "")
                 .replace("-Linux", "")
+                .replace("-Windows", "")
                 .replace("-arm64", "")
                 .replace(".bin", "")
                 .replace(".exe", "")
