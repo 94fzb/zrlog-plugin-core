@@ -5,11 +5,12 @@ sh bin/build-info.sh
 ./mvnw -Pnative package
 basePath=/tmp/download/plugin/core
 mkdir -p ${basePath}
-if [ -f 'target/plugin-core' ];
+binName=plugin-core
+if [ -f "target/${binName}" ];
 then
-  mv target/plugin-core ${basePath}/plugin-core-$(uname -s)-$(uname -m).bin
+  mv target/${binName} ${basePath}/plugin-core-$(uname -s)-$(uname -m).bin
 fi
-if [ -f 'target/plugin-core.exe' ];
+if [ -f "target/${binName}.exe" ];
 then
-  mv target/plugin-core.exe ${basePath}/plugin-core-Windows-$(uname -m).bin
+  mv target/${binName}.exe ${basePath}/${binName}-Windows-$(uname -m).bin
 fi
