@@ -24,7 +24,7 @@ public class GraalvmAgentApplication {
         String basePath = System.getProperty("user.dir").replace("/target", "");
         PathUtil.setRootPath(basePath);
         System.out.println("basePath = " + basePath);
-        File file = new File(basePath + "/src/main/frontend/build");
+        File file = new File(basePath.replace("\\target","") + "/src/main/frontend/build");
         NativeImageUtils.doLoopResourceLoad(file.listFiles(), file.getPath(), "/static");
         Application.nativeAgent = true;
         Application.main(args);
