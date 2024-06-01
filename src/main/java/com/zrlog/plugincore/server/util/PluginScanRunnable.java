@@ -39,7 +39,7 @@ public class PluginScanRunnable implements Runnable {
                 continue;
             }
             File file = new File(filePath);
-            if (!file.getName().endsWith(".jar") && !file.getName().endsWith(".bin")) {
+            if (!file.getName().endsWith(".jar") && !file.getName().endsWith(".bin") && !file.getName().endsWith(".exe")) {
                 continue;
             }
             Optional<PluginVO> first =
