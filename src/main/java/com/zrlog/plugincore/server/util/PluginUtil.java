@@ -64,7 +64,7 @@ public class PluginUtil {
 
     public static String getPluginFile(String pluginName) {
         return StringUtils.isEmpty(Application.NATIVE_INFO) ? pluginName + ".jar" :
-                pluginName + "-" + Application.NATIVE_INFO + ".bin";
+                pluginName + "-" + Application.NATIVE_INFO + (Application.NATIVE_INFO.contains("Window") ? ".exe" : ".bin");
     }
 
     public static void loadPlugin(final File pluginFile, String pluginId) {
