@@ -8,11 +8,14 @@ sh bin/build-info.sh
 basePath=/tmp/download/plugin/core
 mkdir -p ${basePath}
 binName="plugin-core"
-if [ -f "target/${binName}" ];
-then
-  mv target/${binName} ${basePath}/${binName}-$(uname -s)-$(uname -m).bin
-fi
 if [ -f "target/${binName}.exe" ];
 then
-  mv target/${binName}.exe ${basePath}/${binName}-Windows-$(uname -m).exe
+  echo "window"
+  mv "target/${binName}.exe" "${basePath}/${binName}-Windows-$(uname -m).exe"
+  exit 0;
+fi
+if [ -f "target/${binName}" ];
+then
+  echo "unix"
+  mv target/${binName} ${basePath}/${binName}-$(uname -s)-$(uname -m).bin
 fi
