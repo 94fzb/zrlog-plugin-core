@@ -59,6 +59,7 @@ public class PluginUtil {
                 .replace("-Linux", "")
                 .replace("-arm64", "")
                 .replace(".bin", "")
+                .replace(".exe", "")
                 .replace(".jar", "");
     }
 
