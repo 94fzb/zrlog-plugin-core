@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.hibegin</groupId>
             <artifactId>simplewebserver</artifactId>
-            <version>0.3.115</version>
+            <version>0.3.119</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>

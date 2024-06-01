@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 java -version
 sh bin/build-info.sh
 ./mvnw clean package
@@ -5,7 +7,7 @@ sh bin/build-info.sh
 ./mvnw -Pnative package
 basePath=/tmp/download/plugin/core
 mkdir -p ${basePath}
-binName=plugin-core
+binName="plugin-core"
 if [ -f "target/${binName}" ];
 then
   mv target/${binName} ${basePath}/plugin-core-$(uname -s)-$(uname -m).bin

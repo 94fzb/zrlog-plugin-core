@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -58,6 +59,9 @@ public class PluginController extends Controller {
 
     public void download() {
         String downloadUrl = getRequest().getParaToStr("downloadUrl");
+        if (Objects.isNull(downloadUrl)) {
+            return;
+        }
         String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/") + 1);
         String pluginName = PluginUtil.getPluginName(new File(fileName));
         try {
@@ -106,6 +110,6 @@ public class PluginController extends Controller {
         FileUtils.moveOrCopyFile(file.toString(), finalFile, true);
         map.put("url", getBasePath() + "/" + new File(finalFile).getName());
         response.renderJson(map);*/
-        throw new RuntimeException("Not implemented");
+        response.renderJson(new HashMap<>());
     }
 }

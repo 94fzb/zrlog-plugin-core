@@ -29,6 +29,7 @@ public class PluginConfig {
     private BlogRunTime blogRunTime;
 
     private PluginConfig() {
+        this.pluginCore = new PluginCore();
     }
 
     public static PluginConfig getInstance() {
