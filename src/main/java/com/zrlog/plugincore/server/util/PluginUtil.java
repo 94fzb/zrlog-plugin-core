@@ -95,7 +95,9 @@ public class PluginUtil {
                 args.add(PluginConfig.getInstance().getMasterPort() + "");
                 args.add(pluginId);
             } else {
-                CmdUtil.sendCmd("chmod", "a+x", pluginFile.toString());
+                if (File.separatorChar == '/') {
+                    CmdUtil.sendCmd("chmod", "a+x", pluginFile.toString());
+                }
                 args.add(PluginConfig.getInstance().getMasterPort() + "");
                 args.add(pluginId);
                 args.add("-Djava.io.tmpdir=" + tmpDir);
