@@ -237,7 +237,7 @@ public class ServerActionHandler implements IActionHandler {
 
     @Override
     public void loadPublicInfo(IOSession session, MsgPacket msgPacket) {
-        String[] keys = "title,second_title,home,admin_darkMode,admin_color_primary".split(",");
+        String[] keys = "title,second_title,host,admin_darkMode,admin_color_primary".split(",");
         try {
             Map<String, String> response = new HashMap<>();
             for (String key : keys) {
@@ -246,7 +246,8 @@ public class ServerActionHandler implements IActionHandler {
             }
             // convert to publicInfo
             PublicInfo publicInfo = new PublicInfo();
-            publicInfo.setHomeUrl(response.get("home"));
+            publicInfo.setHomeUrl("http://" + response.get("host"));
+            publicInfo.setApiHomeUrl("http://127.0.0.1:" + Application.BLOG_PORT);
             publicInfo.setTitle(response.get("title"));
             publicInfo.setSecondTitle(response.get("second_title"));
             publicInfo.setAdminColorPrimary(response.get("admin_color_primary"));

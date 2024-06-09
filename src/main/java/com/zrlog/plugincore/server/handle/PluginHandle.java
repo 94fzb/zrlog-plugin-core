@@ -137,6 +137,8 @@ public class PluginHandle implements HttpErrorHandle {
                 ext = "json";
             } else if (responseMsgPacket.getContentType() == ContentType.HTML) {
                 ext = "html";
+            } else if (responseMsgPacket.getContentType() == ContentType.XML) {
+                ext = "xml";
             } else {
                 ext = httpRequest.getUri().substring(httpRequest.getUri().lastIndexOf(".") + 1);
             }
