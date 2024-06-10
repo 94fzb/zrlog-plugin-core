@@ -198,7 +198,9 @@ public class PluginUtil {
                     }
                 }
             } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "plugin output error", e);
+                if (RunConstants.runType == RunType.DEV) {
+                    LOGGER.log(Level.SEVERE, "plugin output error", e);
+                }
             } finally {
                 try {
                     destroy(pluginName);
