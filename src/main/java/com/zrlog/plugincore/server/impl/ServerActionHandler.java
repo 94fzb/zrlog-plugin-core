@@ -49,12 +49,9 @@ public class ServerActionHandler implements IActionHandler {
             final IOSession serviceSession = PluginConfig.getInstance().getIOSessionByService(name);
             if (serviceSession != null) {
                 // 消息中转
-                serviceSession.requestService(name, map, new IMsgPacketCallBack() {
-                    @Override
-                    public void handler(MsgPacket responseMsgPacket) {
-                        responseMsgPacket.setMsgId(msgPacket.getMsgId());
-                        session.sendMsg(responseMsgPacket);
-                    }
+                serviceSession.requestService(name, map, responseMsgPacket -> {
+                    responseMsgPacket.setMsgId(msgPacket.getMsgId());
+                    session.sendMsg(responseMsgPacket);
                 });
             } else {
                 // not found service response error
@@ -65,7 +62,7 @@ public class ServerActionHandler implements IActionHandler {
         }
     }
 
-    private static void refreshCache(int retryCount) {
+    private static void doRefreshCache(int retryCount) {
         if (RunConstants.runType != RunType.BLOG) {
             return;
         }
@@ -85,7 +82,7 @@ public class ServerActionHandler implements IActionHandler {
             if (retryCount > 0) {
                 retryCount -= 1;
                 //重试更新，避免主程序还未启动
-                refreshCache(retryCount);
+                doRefreshCache(retryCount);
                 return;
             }
             LOGGER.warning("Refresh cache failed,  " + e.getMessage());
@@ -100,7 +97,7 @@ public class ServerActionHandler implements IActionHandler {
         map.put("runType", RunConstants.runType.toString());
         session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         PluginUtil.registerPlugin(PluginStatus.START, session);
-        refreshCache(20);
+        doRefreshCache(20);
     }
 
     @Override
@@ -164,7 +161,7 @@ public class ServerActionHandler implements IActionHandler {
         }
         session.sendJsonMsg(resultMap, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
         try {
-            refreshCache(20);
+            doRefreshCache(20);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -314,7 +311,7 @@ public class ServerActionHandler implements IActionHandler {
             if (logId == null) {
                 try {
                     boolean result = articleDAO.save();
-                    refreshCache(20);
+                    doRefreshCache(20);
                     map.put("result", result);
                     session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
                 } catch (Exception e) {
@@ -327,7 +324,7 @@ public class ServerActionHandler implements IActionHandler {
                     Map<String, Object> cond = new HashMap<>();
                     cond.put("logId", logId);
                     boolean result = articleDAO.update(cond);
-                    refreshCache(20);
+                    doRefreshCache(20);
                     map.put("result", result);
                     session.sendJsonMsg(map, msgPacket.getMethodStr(), msgPacket.getMsgId(), MsgPacketStatus.RESPONSE_SUCCESS);
                 } catch (Exception e) {
@@ -341,5 +338,10 @@ public class ServerActionHandler implements IActionHandler {
         }
 
 
+    }
+
+    @Override
+    public void refreshCache(IOSession session, MsgPacket msgPacket) {
+        doRefreshCache(20);
     }
 }
