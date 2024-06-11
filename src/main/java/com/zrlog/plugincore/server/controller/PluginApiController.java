@@ -111,4 +111,15 @@ public class PluginApiController extends Controller {
         map.put("message", "移除成功");
         return map;
     }
+
+    @ResponseBody
+    public Map<String, Object> refreshCache() {
+        PluginConfig.getInstance().getSessionMap().values().forEach(e -> {
+            e.sendMsg(ContentType.JSON, new HashMap<>(), ActionType.REFRESH_CACHE.name(), IdUtil.getInt(), MsgPacketStatus.SEND_REQUEST);
+        });
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", 0);
+        map.put("message", "更新缓存成功");
+        return map;
+    }
 }
