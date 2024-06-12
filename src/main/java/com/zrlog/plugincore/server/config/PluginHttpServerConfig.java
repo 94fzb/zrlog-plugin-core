@@ -28,6 +28,7 @@ public class PluginHttpServerConfig extends AbstractServerConfig {
         serverConfig.setHost(RunConstants.runType == RunType.BLOG ? "127.0.0.1" : "0.0.0.0");
         serverConfig.setPort(port);
         serverConfig.setDisableSession(true);
+        serverConfig.setDisableSavePidFile(true);
         serverConfig.getInterceptors().add(PluginInterceptor.class);
         serverConfig.getInterceptors().add(MethodInterceptor.class);
         serverConfig.addErrorHandle(404, new PluginHandle());
