@@ -103,7 +103,7 @@ public class NioServer implements ISocketServer {
     @Override
     public void dispose(IOSession session, SocketChannel channel, SelectionKey key) {
         long start = System.currentTimeMillis();
-        SocketDecode decode = (SocketDecode) session.getAttr().get("_decode");
+        SocketDecode decode = (SocketDecode) session.getSystemAttr().get("_decode");
         try {
             while (!decode.doDecode(session)) {
                 Thread.sleep(100);
