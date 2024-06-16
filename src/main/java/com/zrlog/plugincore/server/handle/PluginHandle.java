@@ -126,6 +126,11 @@ public class PluginHandle implements HttpErrorHandle {
             session.getAttr().put("accessUrl", accessUrl);
             session.getAttr().put("cookie", cookie);
             MsgPacket responseMsgPacket = session.getResponseMsgPacketByMsgId(id);
+            if(Objects.isNull(responseMsgPacket)){
+                LOGGER.warning(httpRequest.getUri() + " -> error, plugin "+session.getPlugin().getName()+" not response");
+                httpResponse.renderCode(500);
+                return;
+            }
             if (responseMsgPacket.getMethodStr().equals(ActionType.HTTP_ATTACHMENT_FILE.name())) {
                 InputStream in = session.getPipeInByMsgId(id);
                 File file = new FileConvertMsgBody().toFile(IOUtil.getByteByInputStream(in));

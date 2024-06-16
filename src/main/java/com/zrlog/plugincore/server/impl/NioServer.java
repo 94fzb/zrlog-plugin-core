@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,6 +34,7 @@ public class NioServer implements ISocketServer {
 
     private Selector selector;
     private final Map<Socket, IOSession> decoderMap = new ConcurrentHashMap<>();
+    private final Executor executor = Executors.newFixedThreadPool(8);
 
     public NioServer() {
     }
@@ -61,7 +64,7 @@ public class NioServer implements ISocketServer {
                         if (channel != null) {
                             IOSession session = decoderMap.get(channel.socket());
                             if (session == null) {
-                                session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode()), new ServerActionHandler());
+                                session = new IOSession(channel, selector, new SocketCodec(new SocketEncode(), new SocketDecode(executor)), new ServerActionHandler());
                                 decoderMap.put(channel.socket(), session);
                             }
                             dispose(session, channel, key);
@@ -100,7 +103,7 @@ public class NioServer implements ISocketServer {
     @Override
     public void dispose(IOSession session, SocketChannel channel, SelectionKey key) {
         long start = System.currentTimeMillis();
-        SocketDecode decode = new SocketDecode();
+        SocketDecode decode = (SocketDecode) session.getAttr().get("_decode");
         try {
             while (!decode.doDecode(session)) {
                 Thread.sleep(100);
