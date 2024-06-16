@@ -7,7 +7,6 @@ public class PluginVO {
 
     private Plugin plugin;
     private PluginStatus status;
-    private String file;
 
     public Plugin getPlugin() {
         return plugin;
@@ -23,13 +22,5 @@ public class PluginVO {
 
     public void setStatus(PluginStatus status) {
         this.status = status;
-    }
-
-    public String getFile() {
-        return file;
-    }
-
-    public void setFile(String file) {
-        this.file = file;
     }
 }

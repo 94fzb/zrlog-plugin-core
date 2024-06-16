@@ -33,7 +33,7 @@ public class PluginScanRunnable implements Runnable {
             return !PluginUtil.isRunningByPluginId(pluginId);
         }).collect(Collectors.toSet());
         for (PluginVO pluginVO : runningPlugins) {
-            File file = new File(pluginVO.getFile());
+            File file = PluginUtil.getPluginFile(pluginVO.getPlugin().getShortName());
             if (!file.getName().endsWith(".jar") && !file.getName().endsWith(".bin") && !file.getName().endsWith(".exe")) {
                 continue;
             }
@@ -51,15 +51,12 @@ public class PluginScanRunnable implements Runnable {
             if (pluginVO.getStatus() != PluginStatus.START) {
                 continue;
             }
-            if (Objects.nonNull(pluginVO.getFile())) {
-                File file = new File(pluginVO.getFile());
-                if (file.exists() && file.length() > 0) {
-                    continue;
-                }
+            File file = PluginUtil.getPluginFile(pluginVO.getPlugin().getShortName());
+            if (file.exists() && file.length() > 0) {
+                continue;
             }
             try {
-                File downloadFile = PluginUtil.downloadPlugin(PluginUtil.getPluginFile(pluginVO.getPlugin().getShortName()));
-                pluginVO.setFile(downloadFile.toString());
+                PluginUtil.downloadPlugin(file.getName());
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "download error", e);
             }

@@ -64,10 +64,6 @@ public class PluginUtil {
                 .replace(".jar", "");
     }
 
-    public static String getPluginFile(String pluginName) {
-        return StringUtils.isEmpty(Application.NATIVE_INFO) ? pluginName + ".jar" :
-                pluginName + "-" + Application.NATIVE_INFO + (Application.NATIVE_INFO.contains("Window") ? ".exe" : ".bin");
-    }
 
     public static void loadPlugin(final File pluginFile, String pluginId) {
         if (pluginFile == null || !pluginFile.exists()) {
@@ -122,9 +118,6 @@ public class PluginUtil {
             throw new IllegalArgumentException("status must be not " + pluginStatus);
         }
         PluginVO pluginVO = new PluginVO();
-        if (RunConstants.runType == RunType.BLOG) {
-            pluginVO.setFile(idFileMap.get(session.getPlugin().getId()).toString());
-        }
         pluginVO.setStatus(pluginStatus);
         pluginVO.setPlugin(session.getPlugin());
         PluginConfig.getInstance().getPluginInfoMap().put(session.getPlugin().getShortName(), pluginVO);
@@ -152,8 +145,9 @@ public class PluginUtil {
                 destroy(pluginName);
             }
             if (RunConstants.runType != RunType.DEV) {
-                if (pluginVO.getFile() != null) {
-                    new File(pluginVO.getFile()).delete();
+                File pluginFile = getPluginFile(pluginName);
+                if (pluginFile.exists()) {
+                    pluginFile.delete();
                 }
             }
         }
@@ -240,6 +234,12 @@ public class PluginUtil {
             }
 
         }
+    }
+
+    public static File getPluginFile(String pluginName) {
+        String filename = StringUtils.isEmpty(Application.NATIVE_INFO) ? pluginName + ".jar" :
+                pluginName + "-" + Application.NATIVE_INFO + (Application.NATIVE_INFO.contains("Window") ? ".exe" : ".bin");
+        return new File(PluginConfig.getInstance().getPluginBasePath() + "/" + filename);
     }
 
     private static File downloadPluginByUrl(String url, String fileName) throws Exception {

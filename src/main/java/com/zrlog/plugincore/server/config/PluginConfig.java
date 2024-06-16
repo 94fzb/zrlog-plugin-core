@@ -151,13 +151,6 @@ public class PluginConfig {
         return pluginCore.getPluginInfoMap().get(pluginName);
     }
 
-    public String getPluginFileByName(String pluginName) {
-        PluginVO pluginVO = pluginCore.getPluginInfoMap().get(pluginName);
-        if (pluginVO != null) {
-            return pluginVO.getFile();
-        }
-        return null;
-    }
 
     public PluginCore getPluginCore() {
         return pluginCore;

@@ -72,7 +72,7 @@ public class PluginController extends Controller {
                         "&pluginName=" + pluginName);
                 return;
             }
-            File pluginFile = PluginUtil.downloadPlugin(PluginUtil.getPluginFile(pluginName));
+            File pluginFile = PluginUtil.downloadPlugin(PluginUtil.getPluginFile(pluginName).getName());
             PluginUtil.loadPlugin(pluginFile, UUID.randomUUID().toString());
             response.redirect("/admin/plugins/downloadResult?message=" + URLEncoder.encode("下载插件成功", StandardCharsets.UTF_8) +
                     "&pluginName=" + pluginName);
