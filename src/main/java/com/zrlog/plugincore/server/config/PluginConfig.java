@@ -61,14 +61,14 @@ public class PluginConfig {
             } else {
                 instance.pluginCore = new Gson().fromJson("{}", PluginCore.class);
             }
-            saveToJsonFileThread();
+            saveToDbThread();
         } catch (SQLException e) {
             LoggerUtil.getLogger(PluginConfig.class).log(Level.SEVERE, "", e);
             instance.pluginCore = new Gson().fromJson("{}", PluginCore.class);
         }
     }
 
-    private static void saveToJsonFileThread() {
+    private static void saveToDbThread() {
         new Thread() {
             @Override
             public void run() {

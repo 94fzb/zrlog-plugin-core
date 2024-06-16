@@ -3,14 +3,12 @@ package com.zrlog.plugincore.server.util;
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.common.LoggerUtil;
 import com.zrlog.plugin.type.RunType;
-import com.zrlog.plugincore.server.Application;
 import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.config.PluginVO;
 import com.zrlog.plugincore.server.type.PluginStatus;
 
 import java.io.File;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,34 +24,21 @@ public class PluginScanRunnable implements Runnable {
             return;
         }
         checkLostFile();
-        Set<String> fileSet =
-                PluginConfig.getInstance().getAllPluginVO().stream().map(PluginVO::getFile).collect(Collectors.toSet());
-        File[] files = new File(PluginConfig.getInstance().getPluginBasePath()).listFiles();
-        if (files != null) {
-            for (File file : files) {
-                fileSet.add(file.toString());
+        Set<PluginVO> runningPlugins = PluginConfig.getInstance().getAllPluginVO().stream().filter((pluginVO) -> {
+            //插件为开启状态，且还没有启动的情况
+            String pluginId = pluginVO.getPlugin().getId();
+            if (Objects.isNull(pluginId)) {
+                return false;
             }
-        }
-        for (String filePath : fileSet) {
-            if (filePath == null) {
-                continue;
-            }
-            File file = new File(filePath);
+            return !PluginUtil.isRunningByPluginId(pluginId);
+        }).collect(Collectors.toSet());
+        for (PluginVO pluginVO : runningPlugins) {
+            File file = new File(pluginVO.getFile());
             if (!file.getName().endsWith(".jar") && !file.getName().endsWith(".bin") && !file.getName().endsWith(".exe")) {
                 continue;
             }
-            Optional<PluginVO> first =
-                    PluginConfig.getInstance().getAllPluginVO().stream().filter(x -> Objects.equals(x.getFile(),
-                            file.toString())).findFirst();
-            if (first.isEmpty()) {
-                return;
-            }
-            PluginVO pluginVO = first.get();
-            //插件为开启状态，且还没有启动的情况
             String pluginId = pluginVO.getPlugin().getId();
-            if (pluginVO.getPlugin().getId() != null && pluginVO.getStatus() == PluginStatus.START && !PluginUtil.isRunningByPluginId(pluginId)) {
-                PluginUtil.loadPlugin(file, pluginId);
-            }
+            PluginUtil.loadPlugin(file, pluginId);
         }
     }
 
@@ -63,12 +48,14 @@ public class PluginScanRunnable implements Runnable {
             return;
         }
         for (PluginVO pluginVO : PluginConfig.getInstance().getAllPluginVO()) {
-            if (pluginVO.getFile() == null) {
+            if (pluginVO.getStatus() != PluginStatus.START) {
                 continue;
             }
-            File file = new File(pluginVO.getFile());
-            if (file.exists() && file.length() > 0) {
-                continue;
+            if (Objects.nonNull(pluginVO.getFile())) {
+                File file = new File(pluginVO.getFile());
+                if (file.exists() && file.length() > 0) {
+                    continue;
+                }
             }
             try {
                 File downloadFile = PluginUtil.downloadPlugin(PluginUtil.getPluginFile(pluginVO.getPlugin().getShortName()));
