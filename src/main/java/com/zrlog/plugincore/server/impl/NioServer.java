@@ -94,7 +94,9 @@ public class NioServer implements ISocketServer {
 
             LOGGER.info("zrlog-plugin-core-server listening on port -> " + PluginConfig.getInstance().getMasterPort());
             PluginUtil.loadPlugins();
-            LOGGER.info("load plugin files");
+            if (RunConstants.runType == RunType.DEV) {
+                LOGGER.info("load plugin files");
+            }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "", e);
         }
