@@ -1,6 +1,5 @@
 package com.zrlog.plugincore.server.handle;
 
-import com.hibegin.common.util.IOUtil;
 import com.hibegin.http.server.api.HttpErrorHandle;
 import com.hibegin.http.server.api.HttpRequest;
 import com.hibegin.http.server.api.HttpResponse;
@@ -20,6 +19,7 @@ import com.zrlog.plugincore.server.config.PluginConfig;
 import com.zrlog.plugincore.server.util.HttpMsgUtil;
 import com.zrlog.plugincore.server.util.StringUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Objects;
@@ -132,8 +132,7 @@ public class PluginHandle implements HttpErrorHandle {
                 return;
             }
             if (responseMsgPacket.getMethodStr().equals(ActionType.HTTP_ATTACHMENT_FILE.name())) {
-                InputStream in = session.getPipeInByMsgId(id);
-                File file = new FileConvertMsgBody().toFile(IOUtil.getByteByInputStream(in));
+                File file = new FileConvertMsgBody().toFile(responseMsgPacket.getData().array());
                 httpResponse.renderFile(file);
                 return;
             }
@@ -147,7 +146,7 @@ public class PluginHandle implements HttpErrorHandle {
             } else {
                 ext = httpRequest.getUri().substring(httpRequest.getUri().lastIndexOf(".") + 1);
             }
-            InputStream in = session.getPipeInByMsgId(id);
+            InputStream in = new ByteArrayInputStream(responseMsgPacket.getData().array());
             httpResponse.addHeader("Content-Type", MimeTypeUtil.getMimeStrByExt(ext));
             httpResponse.write(in, 200);
         } finally {
