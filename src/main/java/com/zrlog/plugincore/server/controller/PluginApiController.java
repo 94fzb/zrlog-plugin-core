@@ -92,12 +92,11 @@ public class PluginApiController extends Controller {
             PluginUtil.loadPlugin(PluginUtil.getPluginFile(pluginName), PluginConfig.getInstance().getPluginVOByName(pluginName).getPlugin().getId());
             map.put("code", 0);
             map.put("message", "插件启动成功");
-            return map;
         } else {
             map.put("code", 1);
             map.put("message", "dev ENV");
-            return map;
         }
+        return map;
     }
 
     @ResponseBody
@@ -105,8 +104,7 @@ public class PluginApiController extends Controller {
         IOSession session = getSession();
         String pluginName = getRequest().getParaToStr("name");
         if (session != null) {
-            session.sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, IdUtil.getInt(),
-                    ActionType.PLUGIN_UNINSTALL.name()));
+            session.sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, IdUtil.getInt(), ActionType.PLUGIN_UNINSTALL.name()));
         }
         PluginUtil.deletePlugin(pluginName);
         Map<String, Object> map = new HashMap<>();
