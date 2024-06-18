@@ -126,8 +126,8 @@ public class PluginHandle implements HttpErrorHandle {
             session.getAttr().put("accessUrl", accessUrl);
             session.getAttr().put("cookie", cookie);
             MsgPacket responseMsgPacket = session.getResponseMsgPacketByMsgId(id);
-            if(Objects.isNull(responseMsgPacket)){
-                LOGGER.warning(httpRequest.getUri() + " -> error, plugin "+session.getPlugin().getName()+" not response");
+            if (Objects.isNull(responseMsgPacket)) {
+                LOGGER.warning(httpRequest.getUri() + " -> error, plugin " + session.getPlugin().getShortName() + " not response");
                 httpResponse.renderCode(500);
                 return;
             }
