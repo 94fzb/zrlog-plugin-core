@@ -2,6 +2,7 @@ package com.zrlog.plugincore.server;
 
 import com.fzb.net.socket.ISocketServer;
 import com.hibegin.common.util.IOUtil;
+import com.hibegin.common.util.ParseArgsUtil;
 import com.hibegin.http.server.WebServerBuilder;
 import com.zrlog.plugin.RunConstants;
 import com.zrlog.plugin.common.ConfigKit;
@@ -36,6 +37,9 @@ public class Application {
 
     public static void main(String[] args) throws IOException {
         init();
+        if (Objects.nonNull(args) && ParseArgsUtil.justTips(args, "plugin-core", (String) ConfigKit.get("version", ""))) {
+            return;
+        }
         if (args != null && args.length > 0 && RunConstants.runType == RunType.DEV) {
             LoggerUtil.getLogger(Application.class).info("args = " + Arrays.toString(args));
         }
