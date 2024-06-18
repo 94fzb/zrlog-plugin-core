@@ -22,7 +22,7 @@ import com.zrlog.plugincore.server.util.HttpMsgUtil;
 import com.zrlog.plugincore.server.util.PluginUtil;
 import com.zrlog.plugincore.server.util.StringUtils;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -87,11 +87,12 @@ public class PluginApiController extends Controller {
         if (RunConstants.runType != RunType.DEV) {
             String pluginName = getRequest().getParaToStr("name");
             PluginUtil.loadPlugin(PluginUtil.getPluginFile(pluginName), PluginConfig.getInstance().getPluginVOByName(pluginName).getPlugin().getId());
-            int id = IdUtil.getInt();
-            getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, id,
+            int msgId = IdUtil.getInt();
+            getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, msgId,
                     ActionType.PLUGIN_START.name()));
             getResponse().addHeader("Content-Type", "text/html");
-            getResponse().write(getSession().getPipeInByMsgId(id), 200);
+            ByteArrayInputStream bin = new ByteArrayInputStream(getSession().getResponseMsgPacketByMsgId(msgId).getData().array());
+            getResponse().write(bin, 200);
         } else {
             getResponse().renderHtmlStr("dev ENV");
         }

@@ -14,6 +14,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -86,12 +87,13 @@ public class PluginController extends Controller {
 
     public void service() {
         String name = getRequest().getParaToStr("name");
-        if (name != null && !"".equals(name)) {
+        if (name != null && !name.isEmpty()) {
             IOSession session = PluginConfig.getInstance().getIOSessionByService(name);
             if (session != null) {
                 int msgId = session.requestService(name, request.decodeParamMap());
                 getResponse().addHeader("Content-Type", "application/json");
-                getResponse().write(session.getPipeInByMsgId(msgId));
+                ByteArrayInputStream bin = new ByteArrayInputStream(session.getResponseMsgPacketByMsgId(msgId).getData().array());
+                getResponse().write(bin);
             } else {
                 getResponse().renderCode(404);
             }
