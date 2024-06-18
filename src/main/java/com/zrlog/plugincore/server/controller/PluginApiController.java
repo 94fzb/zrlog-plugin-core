@@ -22,7 +22,6 @@ import com.zrlog.plugincore.server.util.HttpMsgUtil;
 import com.zrlog.plugincore.server.util.PluginUtil;
 import com.zrlog.plugincore.server.util.StringUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
 
@@ -79,22 +78,25 @@ public class PluginApiController extends Controller {
 
     }
 
-    public void start() throws IOException {
+    @ResponseBody
+    public Map<String, Object> start() throws IOException {
+        Map<String, Object> map = new HashMap<>();
+
         if (getSession() != null) {
-            response.redirect("/admin/plugins/pluginStarted");
-            return;
+            map.put("code", 1);
+            map.put("message", "插件已经启动了");
+            return map;
         }
         if (RunConstants.runType != RunType.DEV) {
             String pluginName = getRequest().getParaToStr("name");
             PluginUtil.loadPlugin(PluginUtil.getPluginFile(pluginName), PluginConfig.getInstance().getPluginVOByName(pluginName).getPlugin().getId());
-            int msgId = IdUtil.getInt();
-            getSession().sendMsg(new MsgPacket(genInfo(), ContentType.JSON, MsgPacketStatus.SEND_REQUEST, msgId,
-                    ActionType.PLUGIN_START.name()));
-            getResponse().addHeader("Content-Type", "text/html");
-            ByteArrayInputStream bin = new ByteArrayInputStream(getSession().getResponseMsgPacketByMsgId(msgId).getData().array());
-            getResponse().write(bin, 200);
+            map.put("code", 0);
+            map.put("message", "插件启动成功");
+            return map;
         } else {
-            getResponse().renderHtmlStr("dev ENV");
+            map.put("code", 1);
+            map.put("message", "dev ENV");
+            return map;
         }
     }
 
