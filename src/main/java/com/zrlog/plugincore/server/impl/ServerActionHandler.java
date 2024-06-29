@@ -244,7 +244,7 @@ public class ServerActionHandler implements IActionHandler {
             // convert to publicInfo
             PublicInfo publicInfo = new PublicInfo();
             publicInfo.setHomeUrl("http://" + response.get("host"));
-            publicInfo.setApiHomeUrl("http://127.0.0.1:" + Application.BLOG_PORT);
+            publicInfo.setApiHomeUrl("http://127.0.0.1:" + (Application.BLOG_PORT > 0 ? Application.BLOG_PORT : 6058));
             publicInfo.setTitle(response.get("title"));
             publicInfo.setSecondTitle(response.get("second_title"));
             publicInfo.setAdminColorPrimary(response.get("admin_color_primary"));

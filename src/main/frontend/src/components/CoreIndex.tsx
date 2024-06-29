@@ -46,10 +46,10 @@ const CoreIndex: React.FC<CoreIndexProps> = ({data}) => {
                 </a>
             </Empty>}
             <div hidden={data.plugins.length === 0}>
-                <Row gutter={[4, 4]} style={{margin: 0, gap: '.25rem'}}>
+                <Row gutter={[4, 4]} style={{marginLeft: -2, marginRight: 0}}>
                     {data.plugins.map((plugin) => {
                         return (
-                            <Col md={6} xxl={4} xs={24} key={plugin.shortName} style={{padding: 0}}>
+                            <Col md={6} xxl={4} xs={24} key={plugin.shortName}>
                                 <Card
                                     cover={
                                         <Image
