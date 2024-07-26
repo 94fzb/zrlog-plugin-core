@@ -1,18 +1,17 @@
 package com.zrlog.plugincore.server.handle;
 
+import com.google.gson.Gson;
 import com.hibegin.http.server.api.HttpErrorHandle;
 import com.hibegin.http.server.api.HttpRequest;
 import com.hibegin.http.server.api.HttpResponse;
 import com.hibegin.http.server.util.MimeTypeUtil;
 import com.zrlog.plugin.IOSession;
 import com.zrlog.plugin.RunConstants;
+import com.zrlog.plugin.common.HexaConversionUtil;
+import com.zrlog.plugin.common.IOUtil;
 import com.zrlog.plugin.common.IdUtil;
 import com.zrlog.plugin.common.LoggerUtil;
-import com.zrlog.plugin.data.codec.ContentType;
-import com.zrlog.plugin.data.codec.HttpRequestInfo;
-import com.zrlog.plugin.data.codec.MsgPacket;
-import com.zrlog.plugin.data.codec.MsgPacketStatus;
-import com.zrlog.plugin.data.codec.convert.FileConvertMsgBody;
+import com.zrlog.plugin.data.codec.*;
 import com.zrlog.plugin.type.ActionType;
 import com.zrlog.plugin.type.RunType;
 import com.zrlog.plugincore.server.config.PluginConfig;
@@ -50,9 +49,7 @@ public class PluginHandle implements HttpErrorHandle {
     }
 
     private static PluginRequestUriInfo parseRequestUri(String uri) {
-        String realUri = uri.replaceFirst("/admin/plugins/", "")
-                .replaceFirst("/p/", "")
-                .replaceFirst("/plugin/", "");
+        String realUri = uri.replaceFirst("/admin/plugins/", "").replaceFirst("/p/", "").replaceFirst("/plugin/", "");
         if (StringUtils.isEmpty(realUri)) {
             return new PluginRequestUriInfo("", "");
         }
@@ -70,6 +67,16 @@ public class PluginHandle implements HttpErrorHandle {
     public static void main(String[] args) {
         PluginRequestUriInfo pluginRequestUriInfo = parseRequestUri("/admin/plugins/oss/assets/js/bootstrap-switch.js");
         System.out.println(pluginRequestUriInfo.getName() + " -> " + pluginRequestUriInfo.getAction());
+    }
+
+    private static File toFileInfo(byte[] data, String saveFilePath) {
+        int fileDescLength = HexaConversionUtil.byteArrayToIntH(HexaConversionUtil.subByts(data, 0, 4));
+        FileDesc fileDesc = new Gson().fromJson(new String(HexaConversionUtil.subByts(data, 4, fileDescLength)), FileDesc.class);
+        int dataLength = HexaConversionUtil.byteArrayToIntH(HexaConversionUtil.subByts(data, fileDescLength + 4 + 32, 4));
+        byte[] fileBytes = HexaConversionUtil.subByts(data, fileDescLength + 8 + 32, dataLength);
+        File resultFile = new File(saveFilePath + "/" + fileDesc.getFileName());
+        IOUtil.writeBytesToFile(fileBytes, resultFile);
+        return resultFile;
     }
 
     @Override
@@ -132,9 +139,19 @@ public class PluginHandle implements HttpErrorHandle {
                 return;
             }
             if (responseMsgPacket.getMethodStr().equals(ActionType.HTTP_ATTACHMENT_FILE.name())) {
-                File file = new FileConvertMsgBody().toFile(responseMsgPacket.getData().array());
-                httpResponse.renderFile(file);
-                return;
+                String tempDirPath = System.getProperty("java.io.tmpdir");
+                File tempDir = new File(tempDirPath);
+
+                if (!tempDir.exists()) {
+                    tempDir.mkdirs(); // 确保目录存在
+                }
+                File file = toFileInfo(responseMsgPacket.getData().array(), tempDirPath);
+                try {
+                    httpResponse.renderFile(file);
+                    return;
+                } finally {
+                    file.delete();
+                }
             }
             String ext;
             if (responseMsgPacket.getContentType() == ContentType.JSON) {
