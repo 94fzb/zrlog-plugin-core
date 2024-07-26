@@ -69,7 +69,7 @@ public class PluginHandle implements HttpErrorHandle {
         System.out.println(pluginRequestUriInfo.getName() + " -> " + pluginRequestUriInfo.getAction());
     }
 
-    private static File toFileInfo(byte[] data, String saveFilePath) {
+    private static File convertToFile(byte[] data, String saveFilePath) {
         int fileDescLength = HexaConversionUtil.byteArrayToIntH(HexaConversionUtil.subByts(data, 0, 4));
         FileDesc fileDesc = new Gson().fromJson(new String(HexaConversionUtil.subByts(data, 4, fileDescLength)), FileDesc.class);
         int dataLength = HexaConversionUtil.byteArrayToIntH(HexaConversionUtil.subByts(data, fileDescLength + 4 + 32, 4));
@@ -145,7 +145,7 @@ public class PluginHandle implements HttpErrorHandle {
                 if (!tempDir.exists()) {
                     tempDir.mkdirs(); // 确保目录存在
                 }
-                File file = toFileInfo(responseMsgPacket.getData().array(), tempDirPath);
+                File file = convertToFile(responseMsgPacket.getData().array(), tempDirPath);
                 try {
                     httpResponse.renderFile(file);
                     return;
