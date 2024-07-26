@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
+basePath=${1}
+mkdir -p ${basePath}
+echo "real target folder ${basePath}"
 
 java -version
 sh bin/build-info.sh
 ./mvnw clean package
 ./mvnw -Pnative -Dagent exec:exec@java-agent -U
 ./mvnw -Pnative package
-basePath=/tmp/download/plugin/core
-mkdir -p ${basePath}
-binName="plugin-core"
+binName=static-plus
 if [ -f "target/${binName}.exe" ];
 then
   echo "window"
