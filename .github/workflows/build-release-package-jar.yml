@@ -32,4 +32,4 @@ jobs:
           mkdir -p /tmp/download
           bash -e bin/build-info.sh
           bash -e ./mvnw clean package assembly:single -DoutputDirectory=/tmp/download/plugin/core
-          bash bin/upload-bin.sh ${{ secrets.SECRET_ID }} ${{ secrets.SECRET_KEY }} ${{ secrets.BUCKET }} /tmp/download plugin/core
+          bash bin/upload-bin.sh ${{ secrets.SECRET_ID }} ${{ secrets.SECRET_KEY }} ${{ secrets.BUCKET }} /tmp/download plugin
