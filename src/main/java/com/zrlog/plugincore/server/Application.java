@@ -88,7 +88,7 @@ public class Application {
     private static void loadHttpServer(Integer serverPort) {
         PluginHttpServerConfig config = new PluginHttpServerConfig(serverPort);
         WebServerBuilder build = new WebServerBuilder.Builder().config(config).build();
-        build.addStartedSuccessHandle(() -> {
+        build.addCreateSuccessHandle(() -> {
             if (nativeAgent) {
                 new Thread(() -> {
                     try {
