@@ -13,6 +13,9 @@ import com.zrlog.plugincore.server.controller.PluginController;
 import com.zrlog.plugincore.server.controller.SettingController;
 import com.zrlog.plugincore.server.handle.PluginHandle;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 public class PluginHttpServerConfig extends AbstractServerConfig {
 
     private final Integer port;
@@ -42,6 +45,8 @@ public class PluginHttpServerConfig extends AbstractServerConfig {
         serverConfig.getRouter().addMapper("/admin/plugins/api", PluginApiController.class);
         serverConfig.getRouter().addMapper("/admin/plugins/setting", SettingController.class);
         serverConfig.addStaticResourceMapper("/admin/plugins/static", "/static/static");
+        serverConfig.setRequestExecutor(Executors.newVirtualThreadPerTaskExecutor());
+        serverConfig.setDecodeExecutor(Executors.newVirtualThreadPerTaskExecutor());
         return serverConfig;
     }
 
