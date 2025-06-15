@@ -45,8 +45,8 @@ public class PluginHttpServerConfig extends AbstractServerConfig {
         serverConfig.getRouter().addMapper("/admin/plugins/api", PluginApiController.class);
         serverConfig.getRouter().addMapper("/admin/plugins/setting", SettingController.class);
         serverConfig.addStaticResourceMapper("/admin/plugins/static", "/static/static");
-        serverConfig.setRequestExecutor(Executors.newVirtualThreadPerTaskExecutor());
-        serverConfig.setDecodeExecutor(Executors.newVirtualThreadPerTaskExecutor());
+        serverConfig.setRequestExecutor(Executors.newFixedThreadPool(50));
+        serverConfig.setDecodeExecutor(Executors.newSingleThreadExecutor(10));
         return serverConfig;
     }
 

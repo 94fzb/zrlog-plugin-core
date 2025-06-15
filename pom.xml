@@ -12,7 +12,7 @@
         <native.maven.plugin.version>0.10.2</native.maven.plugin.version>
         <native.image.mainClass>com.zrlog.plugincore.server.Application</native.image.mainClass>
         <native.image.agentMainClass>com.zrlog.plugincore.server.GraalvmAgentApplication</native.image.agentMainClass>
-        <java.version>21</java.version>
+        <java.version>8</java.version>
     </properties>
 
     <dependencies>
